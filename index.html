@@ -898,10 +898,10 @@
 
             let isim = "";
             let guncelAlisFiyati = 0;
-            if (item.type === "gram24") { isim = "Gram Altin 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }
+            if (item.type === "gram24") { isim = "Gram Altın 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }
             else if (item.type === "gram22") { isim = "22 Ayar Bilezik"; guncelAlisFiyati = canliFiyatlar.gram22a; }
-            else if (item.type === "ceyrek") { isim = "Ceyrek Altin"; guncelAlisFiyati = canliFiyatlar.ceyreka; }
-            else if (item.type === "yarim")  { isim = "Yarim Altin"; guncelAlisFiyati = canliFiyatlar.yarima; }
+            else if (item.type === "ceyrek") { isim = "Çeyrek Altın"; guncelAlisFiyati = canliFiyatlar.ceyreka; }
+            else if (item.type === "yarim")  { isim = "Yarım Altın"; guncelAlisFiyati = canliFiyatlar.yarima; }
             else if (item.type === "ata")    { isim = "Ata Lira"; guncelAlisFiyati = canliFiyatlar.ataa; }
 
             const islem = item.islem || "alis";
@@ -920,28 +920,32 @@
                             <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA TARIHi</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA TARİHİ</div>
                             <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA BiRiM FiYATI</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA BİRİM FİYATI</div>
                             <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GUNCEL BiRiM FiYATI</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GÜNCEL BİRİM FİYATI</div>
                             <div style="font-size:15px; font-weight:bold;">₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">TOPLAM MALiYET</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">TOPLAM MALİYET</div>
                             <div style="font-size:15px; font-weight:bold;">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GUNCEL DEGER</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GÜNCEL DEĞER</div>
                             <div style="font-size:15px; font-weight:bold;">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center; grid-column: span 2;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">KAR / ZARAR</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">KÂR / ZARAR</div>
                             <div style="font-size:18px; font-weight:bold; color:${karRenk};">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde})</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; grid-column: span 2;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">NOT / AÇIKLAMA</div>
+                            <div style="font-size:14px; font-weight:500;">${item.note || '-'}</div>
                         </div>
                     </div>
                 `;
@@ -953,16 +957,20 @@
                             <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIS TARiHi</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIŞ TARİHİ</div>
                             <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIS BiRiM FiYATI</div>
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIŞ BİRİM FİYATI</div>
                             <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
                         </div>
                         <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">TOPLAM GELiR</div>
+                            <div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">TOPLAM GELİR</div>
                             <div style="font-size:15px; font-weight:bold; color:var(--accent-color);">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; grid-column: span 2;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">NOT / AÇIKLAMA</div>
+                            <div style="font-size:14px; font-weight:500;">${item.note || '-'}</div>
                         </div>
                     </div>
                 `;
@@ -1015,7 +1023,7 @@
         function yatirimDuzenle(index) {
             const item = yatirimlarListesi[index];
             if (!item) return;
-            document.getElementById("modalTitle").innerText = "Islemi Duzenle";
+            document.getElementById("modalTitle").innerText = "İşlemi Düzenle";
             document.getElementById("editIndex").value = index;
             document.getElementById("mIslem").value = item.islem || "alis";
             document.getElementById("mType").value = item.type;
@@ -1035,7 +1043,7 @@
             }
             // islemDegisti sadece label gunceller, birim fiyati degistirmez (editIndex != -1)
             const islem = item.islem || "alis";
-            document.getElementById("mCostLabel").innerText = islem === "satis" ? "Toplam Satis Tutari (TL):" : "Toplam Alis Maliyeti (TL):";
+            document.getElementById("mCostLabel").innerText = islem === "satis" ? "Toplam Satış Tutarı (TL):" : "Toplam Alış Maliyeti (TL):";
             document.getElementById("addModal").style.display = "block";
         }
 
