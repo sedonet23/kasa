@@ -279,7 +279,7 @@
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>
                         </div>
-                        <div class="price-row-name">24 Ayar Gram</div>
+                        <div class="price-row-name">Gram 24A</div>
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24s">₺0</div></div>
@@ -323,7 +323,7 @@
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#C8960A"/><circle cx="20" cy="20" r="15" fill="#F5A623"/><circle cx="20" cy="20" r="11" fill="#E8920F"/><circle cx="20" cy="20" r="7" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">ATA</text></svg>
                         </div>
-                        <div class="price-row-name">Cumhuriyet Tam</div>
+                        <div class="price-row-name">Ata Lira</div>
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ataa">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-atas">₺0</div></div>
@@ -396,15 +396,14 @@
         </select>
 
         <label style="font-size: 12px; color: var(--text-muted);">Altın Türü:</label>
-        <select id="mType" onchange="turDegisti()">
-            <option value="gram24">24 Ayar Gram Altın</option>
+        <select id="mType" onchange="turDegisti()">            <option value="gram24">Gram Altın 24A</option>
             <option value="gram22">22 Ayar Bilezik</option>
             <option value="ceyrek">Çeyrek Altın</option>
             <option value="yarim">Yarım Altın</option>
-            <option value="ata">Cumhuriyet Tam Altın</option>
+            <option value="ata">Ata Lira</option>
         </select>
 
-        <label style="font-size: 12px; color: var(--text-muted);">Miktar (Adet veya Gram):</label>
+        <label for-tur="mAmount" style="font-size: 12px; color: var(--text-muted);">Miktar (Adet/Gram):</label>
         <input type="number" id="mAmount" step="0.0001" placeholder="Örn: 3,1348 veya 1" oninput="miktarDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);">
@@ -469,7 +468,22 @@
         </div>
     </div>
 
-    <!-- BÜTÇE İŞLEM EKLEME MODALİ -->
+    <!-- DETAY POPUP MODALi -->
+    <div id="detayModal" class="modal" style="max-width: 360px; max-height: 85vh; overflow-y: auto;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+            <div>
+                <div id="detayBaslik" style="font-size:15px; font-weight:bold; color:var(--accent-color);"></div>
+                <div id="detayNot" style="font-size:11px; color:var(--text-muted); margin-top:2px;"></div>
+            </div>
+            <button class="btn-action" onclick="document.getElementById('detayModal').style.display='none'" style="font-size:18px; color:var(--text-muted);">&#10005;</button>
+        </div>
+        <div id="detayIcerik"></div>
+        <div style="margin-top:14px; display:flex; gap:8px;">
+            <button class="btn btn-active" onclick="document.getElementById('detayModal').style.display='none'" style="flex:1; font-size:13px;">Kapat</button>
+        </div>
+    </div>
+
+    <!-- BUTCE iSLEM EKLEME MODALi -->
     <div id="budgetModal" class="modal">
         <h3 style="margin-top: 0; font-size: 16px;">Gelir / Gider Ekle</h3>
 
@@ -722,11 +736,17 @@
         function turDegisti() {
             const birim = seciliBirimFiyatAl();
             const islem = document.getElementById("mIslem").value;
+            const tur = document.getElementById("mType").value;
             const infoEl = document.getElementById("livePriceInfo");
-            if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
-            // Birim fiyat alanına güncel fiyatı yaz (kullanıcı değiştirmediyse)
+            if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alis" : "Satis"} fiyati)`;
+            // Miktar label dinamik
+            const amountLabel = document.querySelector('label[for-tur="mAmount"]');
+            const birimAdi = (tur === "gram24" || tur === "gram22") ? "Gram" : "Adet";
+            if (amountLabel) amountLabel.childNodes[0].textContent = `Miktar (${birimAdi}): `;
+            // Sadece yeni kayit modunda (editIndex == -1) guncel fiyati yaz
+            const editIndex = parseInt(document.getElementById("editIndex").value);
             const unitEl = document.getElementById("mUnitPrice");
-            if (unitEl && birim > 0) unitEl.value = birim;
+            if (unitEl && birim > 0 && editIndex === -1 && !unitEl.value) unitEl.value = birim;
             if (document.getElementById("mAmount").value) miktarDegisti();
         }
 
@@ -759,7 +779,22 @@
             }
         }
 
-        // PORTFÖY EKRANA BAS
+        // YARDIMCI: Altın türüne göre SVG ikonu
+        function turIkonu(type) {
+            if (type === "gram24") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>`;
+            if (type === "gram22") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#F5A623" stroke-width="6"/><circle cx="20" cy="20" r="17" fill="none" stroke="#E8920F" stroke-width="2" stroke-dasharray="4 4"/><circle cx="20" cy="3" r="3" fill="#F5A623"/></svg>`;
+            if (type === "ceyrek") return `<svg width="32" height="32" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">1/4</text></svg>`;
+            if (type === "yarim")  return `<svg width="32" height="32" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">1/2</text></svg>`;
+            if (type === "ata")    return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#C8960A"/><circle cx="20" cy="20" r="15" fill="#F5A623"/><circle cx="20" cy="20" r="11" fill="#E8920F"/><circle cx="20" cy="20" r="7" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">ATA</text></svg>`;
+            return "&#127885;";
+        }
+
+        // YARDIMCI: Miktar birimi
+        function miktarBirimi(type) {
+            return (type === "gram24" || type === "gram22") ? "Gram" : "Adet";
+        }
+
+        // PORTFOY EKRANA BAS
         function listeyiEkranaBas() {
             const container = document.getElementById("investmentList");
             if (!container) return;
@@ -769,16 +804,30 @@
             let tSatisGelir = 0;
             let tAnlikDeger = 0;
 
-            yatirimlarListesi.forEach((item, index) => {
+            // Tarihe gore sirala (yeniden eskiye)
+            const sirali = yatirimlarListesi
+                .map((item, index) => ({ ...item, _idx: index }))
+                .sort((a, b) => {
+                    const tarihCevir = (t) => {
+                        if (!t) return 0;
+                        const p = t.split('.');
+                        if (p.length === 3) return new Date(p[2], p[1]-1, p[0]).getTime();
+                        return 0;
+                    };
+                    return tarihCevir(b.date) - tarihCevir(a.date);
+                });
+
+            sirali.forEach((item) => {
+                const index = item._idx;
                 const islem = item.islem || "alis";
                 let isim = "";
                 let guncelAlisFiyati = 0;
                 let guncelSatisFiyati = 0;
 
-                if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altın 24A"; }
+                if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altin 24A"; }
                 else if (item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
-                else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
-                else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
+                else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Ceyrek Altin"; }
+                else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarim Altin"; }
                 else if (item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;    guncelAlisFiyati = canliFiyatlar.ataa;    isim = "Ata Lira"; }
 
                 let satButon = "";
@@ -794,23 +843,23 @@
                     tAnlikDeger += anlikDeger;
                     renk = karZarar >= 0 ? "var(--green)" : "var(--red)";
                     detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>`;
-                    etiket = `<span style="font-size:10px; color:var(--green); font-weight:bold;">📥 ALIŞ</span>`;
-                    satButon = `<button class="btn-action" onclick="hizliSat(${index})" style="color:var(--accent-color); font-size:11px;" title="Sat">💰 Sat</button>`;
+                    etiket = `<span style="font-size:10px; color:var(--green); font-weight:bold;">&#128229; ALIS</span>`;
+                    satButon = `<button class="btn-action" onclick="event.stopPropagation(); hizliSat(${index})" style="color:var(--accent-color); font-size:11px;" title="Sat">&#128176; Sat</button>`;
                 } else {
                     tSatisGelir += item.cost;
                     renk = "var(--accent-color)";
                     detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(item.cost).toLocaleString('tr-TR')} gelir</span></div>`;
-                    etiket = `<span style="font-size:10px; color:var(--accent-color); font-weight:bold;">📤 SATIŞ</span>`;
+                    etiket = `<span style="font-size:10px; color:var(--accent-color); font-weight:bold;">&#128228; SATIS</span>`;
                 }
 
                 const itemHtml = `
-                    <div class="list-item">
+                    <div class="list-item" onclick="detayGoster(${index})" style="cursor:pointer;">
                         <div class="item-left">
-                            <div class="item-icon">🏅</div>
+                            <div class="item-icon" style="background:transparent; width:36px; height:36px;">${turIkonu(item.type)}</div>
                             <div>
                                 <div style="display:flex; align-items:center; gap:6px;">${etiket}</div>
                                 <div class="item-details-title">${isim}</div>
-                                <div class="item-details-sub">${item.amount.toString().replace('.', ',')} Adet/Gr • ${item.note.toUpperCase()} • ${item.date || ''}</div>
+                                <div class="item-details-sub">${item.amount.toString().replace('.', ',')} ${miktarBirimi(item.type)} &bull; ${item.note.toUpperCase()} &bull; ${item.date || ''}</div>
                             </div>
                         </div>
                         <div class="item-right">
@@ -819,8 +868,8 @@
                                 ${detay}
                             </div>
                             ${satButon}
-                            <button class="btn-action" onclick="yatirimDuzenle(${index})" title="Düzenle">✏️</button>
-                            <button class="btn-action" onclick="yatirimSil(${index})" style="color: var(--red);" title="Sil">🗑️</button>
+                            <button class="btn-action" onclick="event.stopPropagation(); yatirimDuzenle(${index})" title="Duzenle">&#9999;&#65039;</button>
+                            <button class="btn-action" onclick="event.stopPropagation(); yatirimSil(${index})" style="color: var(--red);" title="Sil">&#128465;&#65039;</button>
                         </div>
                     </div>
                 `;
@@ -840,6 +889,89 @@
                 profitEl.innerText = `${totalProfitPct >= 0 ? '+' : ''}%${totalProfitPct.toFixed(1)}`;
                 profitEl.style.color = totalProfitPct >= 0 ? "var(--green)" : "var(--red)";
             }
+        }
+
+        // DETAY POPUP
+        function detayGoster(index) {
+            const item = yatirimlarListesi[index];
+            if (!item) return;
+
+            let isim = "";
+            let guncelAlisFiyati = 0;
+            if (item.type === "gram24") { isim = "Gram Altin 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }
+            else if (item.type === "gram22") { isim = "22 Ayar Bilezik"; guncelAlisFiyati = canliFiyatlar.gram22a; }
+            else if (item.type === "ceyrek") { isim = "Ceyrek Altin"; guncelAlisFiyati = canliFiyatlar.ceyreka; }
+            else if (item.type === "yarim")  { isim = "Yarim Altin"; guncelAlisFiyati = canliFiyatlar.yarima; }
+            else if (item.type === "ata")    { isim = "Ata Lira"; guncelAlisFiyati = canliFiyatlar.ataa; }
+
+            const islem = item.islem || "alis";
+            const birimFiyat = item.unitPrice > 0 ? item.unitPrice : (item.amount > 0 ? Math.round(item.cost / item.amount) : 0);
+
+            let detayIcerik = "";
+            if (islem === "alis") {
+                const anlikDeger = item.amount * guncelAlisFiyati;
+                const karZarar = anlikDeger - item.cost;
+                const karYuzde = item.cost > 0 ? ((karZarar / item.cost) * 100).toFixed(1) : "0.0";
+                const karRenk = karZarar >= 0 ? "var(--green)" : "var(--red)";
+                detayIcerik = `
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">${miktarBirimi(item.type).toUpperCase()}</div>
+                            <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA TARIHi</div>
+                            <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA BiRiM FiYATI</div>
+                            <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GUNCEL BiRiM FiYATI</div>
+                            <div style="font-size:15px; font-weight:bold;">₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">TOPLAM MALiYET</div>
+                            <div style="font-size:15px; font-weight:bold;">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GUNCEL DEGER</div>
+                            <div style="font-size:15px; font-weight:bold;">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center; grid-column: span 2;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">KAR / ZARAR</div>
+                            <div style="font-size:18px; font-weight:bold; color:${karRenk};">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde})</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                detayIcerik = `
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">${miktarBirimi(item.type).toUpperCase()}</div>
+                            <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIS TARiHi</div>
+                            <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIS BiRiM FiYATI</div>
+                            <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
+                            <div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">TOPLAM GELiR</div>
+                            <div style="font-size:15px; font-weight:bold; color:var(--accent-color);">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById("detayBaslik").innerText = (islem === "alis" ? "Alis" : "Satis") + " - " + isim;
+            document.getElementById("detayNot").innerText = item.note.toUpperCase();
+            document.getElementById("detayIcerik").innerHTML = detayIcerik;
+            document.getElementById("detayModal").style.display = "block";
         }
 
         // YATIRIM KAYDET
@@ -876,25 +1008,28 @@
         function yatirimDuzenle(index) {
             const item = yatirimlarListesi[index];
             if (!item) return;
-            document.getElementById("modalTitle").innerText = "İşlemi Düzenle";
+            document.getElementById("modalTitle").innerText = "Islemi Duzenle";
             document.getElementById("editIndex").value = index;
             document.getElementById("mIslem").value = item.islem || "alis";
             document.getElementById("mType").value = item.type;
             document.getElementById("mAmount").value = item.amount;
             document.getElementById("mCost").value = item.cost;
-            // Kaydedilmiş birim fiyatı varsa onu göster, yoksa hesapla
-            if (item.unitPrice) {
+            // Birim fiyati kayittan al
+            if (item.unitPrice && item.unitPrice > 0) {
                 document.getElementById("mUnitPrice").value = item.unitPrice;
             } else if (item.amount > 0) {
                 document.getElementById("mUnitPrice").value = Math.round(item.cost / item.amount);
             }
             document.getElementById("mNote").value = item.note;
+            // Tarihi kayittan al
             if (item.date) {
                 const parts = item.date.split('.');
                 if (parts.length === 3) document.getElementById("mDate").value = `${parts[2]}-${parts[1]}-${parts[0]}`;
             }
-            islemDegisti();
-            modalAc();
+            // islemDegisti sadece label gunceller, birim fiyati degistirmez (editIndex != -1)
+            const islem = item.islem || "alis";
+            document.getElementById("mCostLabel").innerText = islem === "satis" ? "Toplam Satis Tutari (TL):" : "Toplam Alis Maliyeti (TL):";
+            document.getElementById("addModal").style.display = "block";
         }
 
         async function yatirimSil(index) {
@@ -928,6 +1063,12 @@
             const mm = (bugun.getMonth()+1).toString().padStart(2,'0');
             const dd = bugun.getDate().toString().padStart(2,'0');
             document.getElementById("mDate").value = `${yyyy}-${mm}-${dd}`;
+            // Yeni kayit modunda guncel birimi yaz
+            const editIndex = parseInt(document.getElementById("editIndex").value);
+            if (editIndex === -1) {
+                const birim = seciliBirimFiyatAl();
+                if (birim > 0) document.getElementById("mUnitPrice").value = birim;
+            }
         }
 
         function modalKapat() {
