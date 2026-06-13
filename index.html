@@ -195,31 +195,15 @@
             .grid-prices { grid-template-columns: repeat(5, 1fr); }
         }
 
-        .price-card {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .price-title {
-            color: var(--text-muted);
-            font-size: 11px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .price-val {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .price-buy {
-            color: var(--text-muted);
-            font-size: 11px;
-            margin-top: 3px;
-        }
+        .price-list { display: flex; flex-direction: column; gap: 8px; }
+        .price-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+        .price-row-icon { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .price-row-name { font-size: 13px; font-weight: bold; color: var(--text-color); flex: 1; }
+        .price-row-cols { display: flex; gap: 16px; }
+        .price-col-item { text-align: right; }
+        .price-col-label { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+        .price-col-sell { font-size: 14px; font-weight: bold; color: var(--accent-color); }
+        .price-col-buy { font-size: 14px; font-weight: bold; color: var(--green); }
 
         .grid-summary {
             display: grid;
@@ -398,32 +382,63 @@
                     </div>
                     <span id="updateTime" style="color: var(--accent-color);">Yükleniyor...</span>
                 </div>
-                <div class="grid-prices">
-                    <div class="price-card">
-                        <div class="price-title">Gram 24A</div>
-                        <div class="price-val" id="p-gram24s">₺3.120</div>
-                        <div class="price-buy" id="p-gram24a">A:₺3.105</div>
+                <div class="price-list">
+
+                    <div class="price-row">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>
+                        </div>
+                        <div class="price-row-name">Gram 24A</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24a">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24s">₺0</div></div>
+                        </div>
                     </div>
-                    <div class="price-card">
-                        <div class="price-title">22 Ayar</div>
-                        <div class="price-val" id="p-gram22s">₺2.860</div>
-                        <div class="price-buy" id="p-gram22a">A:₺2.840</div>
+
+                    <div class="price-row">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#F5A623" stroke-width="6"/><circle cx="20" cy="20" r="17" fill="none" stroke="#E8920F" stroke-width="2" stroke-dasharray="4 4"/><circle cx="20" cy="3" r="3" fill="#F5A623"/></svg>
+                        </div>
+                        <div class="price-row-name">22 Ayar</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram22a">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram22s">₺0</div></div>
+                        </div>
                     </div>
-                    <div class="price-card">
-                        <div class="price-title">Çeyrek</div>
-                        <div class="price-val" id="p-ceyreks">₺5.120</div>
-                        <div class="price-buy" id="p-ceyreka">A:₺5.040</div>
+
+                    <div class="price-row">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">¼</text></svg>
+                        </div>
+                        <div class="price-row-name">Çeyrek</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ceyreka">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-ceyreks">₺0</div></div>
+                        </div>
                     </div>
-                    <div class="price-card">
-                        <div class="price-title">Yarım</div>
-                        <div class="price-val" id="p-yarims">₺10.240</div>
-                        <div class="price-buy" id="p-yarima">A:₺10.080</div>
+
+                    <div class="price-row">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">½</text></svg>
+                        </div>
+                        <div class="price-row-name">Yarım</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-yarima">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-yarims">₺0</div></div>
+                        </div>
                     </div>
-                    <div class="price-card" style="grid-column: span 2; max-width: 100%;">
-                        <div class="price-title">Ata Lira</div>
-                        <div class="price-val" id="p-atas">₺21.100</div>
-                        <div class="price-buy" id="p-ataa">A:₺20.850</div>
+
+                    <div class="price-row">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#C8960A"/><circle cx="20" cy="20" r="15" fill="#F5A623"/><circle cx="20" cy="20" r="11" fill="#E8920F"/><circle cx="20" cy="20" r="7" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">ATA</text></svg>
+                        </div>
+                        <div class="price-row-name">Ata Lira</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ataa">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-atas">₺0</div></div>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -671,16 +686,15 @@
 
         function fiyatlariEkranaYaz() {
             document.getElementById("p-gram24s").innerText = "₺" + canliFiyatlar.gram24s.toLocaleString('tr-TR');
-            document.getElementById("p-gram24a").innerText = "A:₺" + canliFiyatlar.gram24a.toLocaleString('tr-TR');
+            document.getElementById("p-gram24a").innerText = "₺" + canliFiyatlar.gram24a.toLocaleString('tr-TR');
             document.getElementById("p-gram22s").innerText = "₺" + canliFiyatlar.gram22s.toLocaleString('tr-TR');
-            document.getElementById("p-gram22a").innerText = "A:₺" + canliFiyatlar.gram22a.toLocaleString('tr-TR');
+            document.getElementById("p-gram22a").innerText = "₺" + canliFiyatlar.gram22a.toLocaleString('tr-TR');
             document.getElementById("p-ceyreks").innerText = "₺" + canliFiyatlar.ceyreks.toLocaleString('tr-TR');
-            document.getElementById("p-ceyreka").innerText = "A:₺" + canliFiyatlar.ceyreka.toLocaleString('tr-TR');
+            document.getElementById("p-ceyreka").innerText = "₺" + canliFiyatlar.ceyreka.toLocaleString('tr-TR');
             document.getElementById("p-yarims").innerText = "₺" + canliFiyatlar.yarims.toLocaleString('tr-TR');
-            document.getElementById("p-yarima").innerText = "A:₺" + canliFiyatlar.yarima.toLocaleString('tr-TR');
+            document.getElementById("p-yarima").innerText = "₺" + canliFiyatlar.yarima.toLocaleString('tr-TR');
             document.getElementById("p-atas").innerText = "₺" + canliFiyatlar.atas.toLocaleString('tr-TR');
-            document.getElementById("p-ataa").innerText = "A:₺" + canliFiyatlar.ataa.toLocaleString('tr-TR');
-            
+            document.getElementById("p-ataa").innerText = "₺" + canliFiyatlar.ataa.toLocaleString('tr-TR');
             turDegisti();
         }
 
