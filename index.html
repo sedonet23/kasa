@@ -824,10 +824,10 @@
                 let guncelAlisFiyati = 0;
                 let guncelSatisFiyati = 0;
 
-                if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altin 24A"; }
+                if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altın 24A"; }
                 else if (item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
-                else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Ceyrek Altin"; }
-                else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarim Altin"; }
+                else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
+                else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
                 else if (item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;    guncelAlisFiyati = canliFiyatlar.ataa;    isim = "Ata Lira"; }
 
                 let satButon = "";
@@ -968,7 +968,14 @@
                 `;
             }
 
-            document.getElementById("detayBaslik").innerText = (islem === "alis" ? "Alis" : "Satis") + " - " + isim;
+            const isimTR = {
+                "gram24": "Gram Altın 24A",
+                "gram22": "22 Ayar Bilezik",
+                "ceyrek": "Çeyrek Altın",
+                "yarim":  "Yarım Altın",
+                "ata":    "Ata Lira"
+            }[item.type] || isim;
+            document.getElementById("detayBaslik").innerText = (islem === "alis" ? "Alış" : "Satış") + " — " + isimTR;
             document.getElementById("detayNot").innerText = item.note.toUpperCase();
             document.getElementById("detayIcerik").innerHTML = detayIcerik;
             document.getElementById("detayModal").style.display = "block";
