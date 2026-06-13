@@ -10,9 +10,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Kasam">
+    <meta name="theme-color" content="#f5a623">
     
-    <link rel="apple-touch-icon" href="https://images.rawpixel.com/image_png_800/czM3Yy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNC1uaW5nLTMwLWdfMS5wbmc.png">
-    <link rel="icon" type="image/png" href="https://images.rawpixel.com/image_png_800/czM3Yy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNC1uaW5nLTMwLWdfMS5wbmc.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -685,27 +687,33 @@
         // MANUEL FİYAT PENCERESİ
         function fiyatAyarlariniAc() {
             document.getElementById("cfg-g24s").value = canliFiyatlar.gram24s;
+            document.getElementById("cfg-g24a").value = canliFiyatlar.gram24a;
+            document.getElementById("cfg-g22s").value = canliFiyatlar.gram22s;
+            document.getElementById("cfg-g22a").value = canliFiyatlar.gram22a;
             document.getElementById("cfg-ceyreks").value = canliFiyatlar.ceyreks;
+            document.getElementById("cfg-ceyreka").value = canliFiyatlar.ceyreka;
+            document.getElementById("cfg-yarims").value = canliFiyatlar.yarims;
+            document.getElementById("cfg-yarima").value = canliFiyatlar.yarima;
             document.getElementById("cfg-atas").value = canliFiyatlar.atas;
+            document.getElementById("cfg-ataa").value = canliFiyatlar.ataa;
             document.getElementById("priceConfigModal").style.display = "block";
         }
 
         function fiyatAyarlariniKaydet() {
-            const g24s = Math.round(parseFloat(document.getElementById("cfg-g24s").value));
+            const g24s  = Math.round(parseFloat(document.getElementById("cfg-g24s").value));
+            const g24a  = Math.round(parseFloat(document.getElementById("cfg-g24a").value));
+            const g22s  = Math.round(parseFloat(document.getElementById("cfg-g22s").value));
+            const g22a  = Math.round(parseFloat(document.getElementById("cfg-g22a").value));
             const ceyreks = Math.round(parseFloat(document.getElementById("cfg-ceyreks").value));
-            const atas = Math.round(parseFloat(document.getElementById("cfg-atas").value));
+            const ceyreka = Math.round(parseFloat(document.getElementById("cfg-ceyreka").value));
+            const yarims  = Math.round(parseFloat(document.getElementById("cfg-yarims").value));
+            const yarima  = Math.round(parseFloat(document.getElementById("cfg-yarima").value));
+            const atas  = Math.round(parseFloat(document.getElementById("cfg-atas").value));
+            const ataa  = Math.round(parseFloat(document.getElementById("cfg-ataa").value));
 
             if(g24s > 0 && ceyreks > 0 && atas > 0) {
-                canliFiyatlar.gram24s = g24s;
-                canliFiyatlar.gram24a = Math.round(g24s * 0.995);
-                canliFiyatlar.gram22s = Math.round(g24s * 0.916);
-                canliFiyatlar.gram22a = Math.round(g24s * 0.905);
-                canliFiyatlar.ceyreks = ceyreks;
-                canliFiyatlar.ceyreka = Math.round(ceyreks * 0.98);
-                canliFiyatlar.yarims = Math.round(ceyreks * 2);
-                canliFiyatlar.yarima = Math.round(ceyreks * 1.96);
-                canliFiyatlar.atas = atas;
-                canliFiyatlar.ataa = Math.round(atas * 0.98);
+                canliFiyatlar = { gram24s: g24s, gram24a: g24a, gram22s: g22s, gram22a: g22a,
+                    ceyreks, ceyreka, yarims, yarima, atas, ataa };
 
                 localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
                 fiyatlariEkranaYaz();
@@ -717,7 +725,6 @@
                 
                 document.getElementById("priceConfigModal").style.display = "none";
             } else {
-                
                 alert("Lütfen geçerli fiyat değerleri giriniz.");
             }
         }
