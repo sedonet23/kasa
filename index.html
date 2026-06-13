@@ -404,11 +404,14 @@
             <option value="ata">Ata Lira</option>
         </select>
 
-        <label style="font-size: 12px; color: var(--text-muted);">
-            Miktar (Adet veya Gram):
-            <span id="livePriceInfo" class="live-label-info">Birim: ₺0</span>
-        </label>
+        <label style="font-size: 12px; color: var(--text-muted);">Miktar (Adet veya Gram):</label>
         <input type="number" id="mAmount" step="0.0001" placeholder="Örn: 3,1348 veya 1" oninput="miktarDegisti()">
+
+        <label style="font-size: 12px; color: var(--text-muted);">
+            Birim Fiyat (TL):
+            <span id="livePriceInfo" class="live-label-info">Güncel fiyat yüklendi</span>
+        </label>
+        <input type="number" id="mUnitPrice" placeholder="Örn: 6580" oninput="birimFiyatDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);" id="mCostLabel">Toplam Tutar (TL):</label>
         <input type="number" id="mCost" placeholder="Örn: 10370" oninput="maliyetDegisti()">
@@ -720,13 +723,25 @@
             const birim = seciliBirimFiyatAl();
             const islem = document.getElementById("mIslem").value;
             const infoEl = document.getElementById("livePriceInfo");
-            if (infoEl) infoEl.innerText = `Birim: ₺${birim.toLocaleString('tr-TR')} (${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
+            if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
+            // Birim fiyat alanına güncel fiyatı yaz (kullanıcı değiştirmediyse)
+            const unitEl = document.getElementById("mUnitPrice");
+            if (unitEl && birim > 0) unitEl.value = birim;
             if (document.getElementById("mAmount").value) miktarDegisti();
+        }
+
+        function birimFiyatDegisti() {
+            // Birim fiyat değişince toplam tutarı güncelle
+            const miktar = parseFloat(document.getElementById("mAmount").value);
+            const birim = parseFloat(document.getElementById("mUnitPrice").value);
+            if (!isNaN(miktar) && !isNaN(birim) && birim > 0) {
+                document.getElementById("mCost").value = Math.round(miktar * birim);
+            }
         }
 
         function miktarDegisti() {
             const miktar = parseFloat(document.getElementById("mAmount").value);
-            const birim = seciliBirimFiyatAl();
+            const birim = parseFloat(document.getElementById("mUnitPrice").value) || seciliBirimFiyatAl();
             if (!isNaN(miktar) && birim > 0) {
                 document.getElementById("mCost").value = Math.round(miktar * birim);
             } else if (document.getElementById("mAmount").value === "") {
@@ -736,7 +751,7 @@
 
         function maliyetDegisti() {
             const maliyet = parseFloat(document.getElementById("mCost").value);
-            const birim = seciliBirimFiyatAl();
+            const birim = parseFloat(document.getElementById("mUnitPrice").value) || seciliBirimFiyatAl();
             if (!isNaN(maliyet) && birim > 0) {
                 document.getElementById("mAmount").value = parseFloat((maliyet / birim).toFixed(4));
             } else if (document.getElementById("mCost").value === "") {
@@ -833,6 +848,7 @@
             const islem = document.getElementById("mIslem").value;
             const amount = parseFloat(document.getElementById("mAmount").value);
             const cost = parseFloat(document.getElementById("mCost").value);
+            const unitPrice = parseFloat(document.getElementById("mUnitPrice").value) || (amount > 0 ? Math.round(cost / amount) : 0);
             const note = document.getElementById("mNote").value || "Genel";
             const editIndex = parseInt(document.getElementById("editIndex").value);
             const dateInput = document.getElementById("mDate").value;
@@ -848,7 +864,7 @@
                 tarihStr = `${bugun.getDate().toString().padStart(2,'0')}.${(bugun.getMonth()+1).toString().padStart(2,'0')}.${bugun.getFullYear()}`;
             }
 
-            const veri = { type, islem, amount, cost, note, date: tarihStr };
+            const veri = { type, islem, amount, cost, unitPrice, note, date: tarihStr };
             if (editIndex > -1) { yatirimlarListesi[editIndex] = veri; } else { yatirimlarListesi.push(veri); }
 
             localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
@@ -866,6 +882,12 @@
             document.getElementById("mType").value = item.type;
             document.getElementById("mAmount").value = item.amount;
             document.getElementById("mCost").value = item.cost;
+            // Kaydedilmiş birim fiyatı varsa onu göster, yoksa hesapla
+            if (item.unitPrice) {
+                document.getElementById("mUnitPrice").value = item.unitPrice;
+            } else if (item.amount > 0) {
+                document.getElementById("mUnitPrice").value = Math.round(item.cost / item.amount);
+            }
             document.getElementById("mNote").value = item.note;
             if (item.date) {
                 const parts = item.date.split('.');
@@ -914,6 +936,7 @@
             document.getElementById("editIndex").value = "-1";
             document.getElementById("mIslem").value = "alis";
             document.getElementById("mAmount").value = "";
+            document.getElementById("mUnitPrice").value = "";
             document.getElementById("mCost").value = "";
             document.getElementById("mNote").value = "";
             document.getElementById("mDate").value = "";
