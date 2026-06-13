@@ -348,6 +348,13 @@
                 </div>
             </div>
 
+            <div style="margin-bottom: 20px;">
+                <div class="section-header">
+                    <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Özetim</h3>
+                </div>
+                <div id="assetSummary" class="list-container"></div>
+            </div>
+
             <div>
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Yatırımlarım</h3>
@@ -888,6 +895,109 @@
             } else {
                 profitEl.innerText = `${totalProfitPct >= 0 ? '+' : ''}%${totalProfitPct.toFixed(1)}`;
                 profitEl.style.color = totalProfitPct >= 0 ? "var(--green)" : "var(--red)";
+            }
+
+            varlikOzetiniEkranaBas();
+        }
+
+        // VARLIK ÖZETİ (net miktarlar ve güncel değerleri)
+        function varlikOzetiniEkranaBas() {
+            const container = document.getElementById("assetSummary");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const turBilgi = {
+                gram24:  { isim: "24A Gram Altın", birim: "Gram" },
+                gram22:  { isim: "22 Ayar Bilezik", birim: "Gram" },
+                ceyrek:  { isim: "Çeyrek Altın",    birim: "Adet" },
+                yarim:   { isim: "Yarım Altın",     birim: "Adet" },
+                ata:     { isim: "Tam Altın",       birim: "Adet" }
+            };
+
+            // Net miktar ve toplam maliyet (sadece elde tutulanlar icin) hesapla
+            const ozet = {};
+            Object.keys(turBilgi).forEach(t => ozet[t] = { net: 0, maliyet: 0 });
+
+            yatirimlarListesi.forEach(item => {
+                if (!ozet[item.type]) return;
+                const islem = item.islem || "alis";
+                if (islem === "alis") {
+                    ozet[item.type].net += item.amount;
+                    ozet[item.type].maliyet += item.cost;
+                } else {
+                    ozet[item.type].net -= item.amount;
+                    // Satılan kismin maliyetini de orantili olarak dustur (varsa)
+                    const oncekiNet = ozet[item.type].net + item.amount;
+                    if (oncekiNet > 0) {
+                        const ortalamaBirimMaliyet = ozet[item.type].maliyet / oncekiNet;
+                        ozet[item.type].maliyet -= ortalamaBirimMaliyet * item.amount;
+                    }
+                }
+            });
+
+            let toplamGuncelDeger = 0;
+            let varAdet = 0;
+
+            Object.keys(turBilgi).forEach(t => {
+                const net = ozet[t].net;
+                if (Math.abs(net) < 0.00001) return; // gosterme
+                varAdet++;
+
+                let guncelAlisFiyati = 0;
+                if (t === "gram24") guncelAlisFiyati = canliFiyatlar.gram24a;
+                else if (t === "gram22") guncelAlisFiyati = canliFiyatlar.gram22a;
+                else if (t === "ceyrek") guncelAlisFiyati = canliFiyatlar.ceyreka;
+                else if (t === "yarim")  guncelAlisFiyati = canliFiyatlar.yarima;
+                else if (t === "ata")    guncelAlisFiyati = canliFiyatlar.ataa;
+
+                const guncelDeger = net * guncelAlisFiyati;
+                toplamGuncelDeger += guncelDeger;
+
+                const maliyet = ozet[t].maliyet;
+                const karZarar = guncelDeger - maliyet;
+                const karYuzde = maliyet > 0 ? (karZarar / maliyet) * 100 : 0;
+                const karRenk = karZarar >= 0 ? "var(--green)" : "var(--red)";
+
+                const miktarStr = (Math.round(net * 10000) / 10000).toString().replace('.', ',');
+
+                const itemHtml = `
+                    <div class="list-item">
+                        <div class="item-left">
+                            <div class="item-icon" style="background:transparent; width:36px; height:36px;">${turIkonu(t)}</div>
+                            <div>
+                                <div class="item-details-title">${turBilgi[t].isim}</div>
+                                <div class="item-details-sub">${miktarStr} ${turBilgi[t].birim} &bull; Güncel alış fiyatı: ₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <div style="text-align:right;">
+                                <div class="item-val">₺${Math.round(guncelDeger).toLocaleString('tr-TR')}</div>
+                                ${maliyet > 0 ? `<div class="item-cost-profit"><span style="color:${karRenk}; font-weight:500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+
+            if (varAdet === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:15px;">Henüz elinizde altın bulunmuyor.</div>`;
+            } else {
+                const toplamHtml = `
+                    <div class="list-item" style="border-color: var(--accent-color);">
+                        <div class="item-left">
+                            <div class="item-icon" style="color: var(--accent-color);">💰</div>
+                            <div>
+                                <div class="item-details-title">Toplam Güncel Varlık Değeri</div>
+                                <div class="item-details-sub">Elinizdeki tüm altınların güncel alış değeri</div>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <div class="item-val" style="color: var(--accent-color); font-size: 17px;">₺${Math.round(toplamGuncelDeger).toLocaleString('tr-TR')}</div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += toplamHtml;
             }
         }
 
