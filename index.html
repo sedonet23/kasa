@@ -496,8 +496,14 @@
 
     <!-- YATIRIM EKLEME MODALİ -->
     <div id="addModal" class="modal">
-        <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni Yatırım Ekle</h3>
+        <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni İşlem Ekle</h3>
         <input type="hidden" id="editIndex" value="-1">
+
+        <label style="font-size: 12px; color: var(--text-muted);">İşlem Türü:</label>
+        <select id="mIslem" onchange="islemDegisti()">
+            <option value="alis">📥 Alış (Altın Aldım)</option>
+            <option value="satis">📤 Satış (Altın Sattım)</option>
+        </select>
 
         <label style="font-size: 12px; color: var(--text-muted);">Altın Türü:</label>
         <select id="mType" onchange="turDegisti()">
@@ -514,7 +520,7 @@
         </label>
         <input type="number" id="mAmount" step="0.0001" placeholder="Örn: 3,1348 veya 1" oninput="miktarDegisti()">
         
-        <label style="font-size: 12px; color: var(--text-muted);">Toplam Alış Maliyeti (TL):</label>
+        <label style="font-size: 12px; color: var(--text-muted);" id="mCostLabel">Toplam Tutar (TL):</label>
         <input type="number" id="mCost" placeholder="Örn: 10370" oninput="maliyetDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);">Not / Açıklama:</label>
@@ -851,18 +857,35 @@
 
         function seciliBirimFiyatAl() {
             const tur = document.getElementById("mType").value;
-            if(tur === "gram24") return canliFiyatlar.gram24s;
-            if(tur === "gram22") return canliFiyatlar.gram22s;
-            if(tur === "ceyrek") return canliFiyatlar.ceyreks;
-            if(tur === "yarim")  return canliFiyatlar.yarims;
-            if(tur === "ata") return canliFiyatlar.atas;
+            const islem = document.getElementById("mIslem").value;
+            // Alış işleminde satış fiyatı, satış işleminde alış fiyatı kullanılır
+            if(islem === "satis") {
+                if(tur === "gram24") return canliFiyatlar.gram24a;
+                if(tur === "gram22") return canliFiyatlar.gram22a;
+                if(tur === "ceyrek") return canliFiyatlar.ceyreka;
+                if(tur === "yarim")  return canliFiyatlar.yarima;
+                if(tur === "ata")    return canliFiyatlar.ataa;
+            } else {
+                if(tur === "gram24") return canliFiyatlar.gram24s;
+                if(tur === "gram22") return canliFiyatlar.gram22s;
+                if(tur === "ceyrek") return canliFiyatlar.ceyreks;
+                if(tur === "yarim")  return canliFiyatlar.yarims;
+                if(tur === "ata")    return canliFiyatlar.atas;
+            }
             return 0;
+        }
+
+        function islemDegisti() {
+            const islem = document.getElementById("mIslem").value;
+            document.getElementById("mCostLabel").innerText = islem === "satis" ? "Toplam Satış Tutarı (TL):" : "Toplam Alış Maliyeti (TL):";
+            turDegisti();
         }
 
         function turDegisti() {
             const birim = seciliBirimFiyatAl();
+            const islem = document.getElementById("mIslem").value;
             const infoEl = document.getElementById("livePriceInfo");
-            if(infoEl) infoEl.innerText = `Birim: ₺${birim.toLocaleString('tr-TR')}`;
+            if(infoEl) infoEl.innerText = `Birim: ₺${birim.toLocaleString('tr-TR')} (${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
             if(document.getElementById("mAmount").value) miktarDegisti();
         }
 
@@ -893,40 +916,60 @@
             if(!container) return;
             container.innerHTML = "";
 
-            let tCost = 0;
-            let tValue = 0;
+            let tAlisMaliyet = 0;
+            let tSatisGelir = 0;
+            let tAnlikDeger = 0;
 
             yatirimlarListesi.forEach((item, index) => {
-                let guncelSatisFiyati = 0;
+                const islem = item.islem || "alis";
                 let isim = "";
+                let guncelAlisFiyati = 0;
+                let guncelSatisFiyati = 0;
 
-                if(item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; isim = "Gram Altın 24A"; }
-                else if(item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; isim = "22 Ayar Bilezik"; }
-                else if(item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; isim = "Çeyrek Altın"; }
-                else if(item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims; isim = "Yarım Altın"; }
-                else if(item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;   isim = "Ata Lira"; }
+                if(item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altın 24A"; }
+                else if(item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
+                else if(item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
+                else if(item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
+                else if(item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;    guncelAlisFiyati = canliFiyatlar.ataa;    isim = "Ata Lira"; }
 
-                const anlikDeger = item.amount * guncelSatisFiyati;
-                const karZarar = anlikDeger - item.cost;
-                const karYuzde = item.cost > 0 ? (karZarar / item.cost) * 100 : 0;
+                let satButon = "";
+                let detay = "";
+                let renk = "var(--text-muted)";
+                let etiket = "";
 
-                tCost += item.cost;
-                tValue += anlikDeger;
+                if(islem === "alis") {
+                    const anlikDeger = item.amount * guncelAlisFiyati;
+                    const karZarar = anlikDeger - item.cost;
+                    const karYuzde = item.cost > 0 ? (karZarar / item.cost) * 100 : 0;
+                    tAlisMaliyet += item.cost;
+                    tAnlikDeger += anlikDeger;
+                    renk = karZarar >= 0 ? "var(--green)" : "var(--red)";
+                    detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>`;
+                    etiket = `<span style="font-size:10px; color:var(--green); font-weight:bold;">📥 ALIŞ</span>`;
+                    satButon = `<button class="btn-action" onclick="hizliSat(${index})" style="color:var(--accent-color); font-size:11px;" title="Sat">💰 Sat</button>`;
+                } else {
+                    tSatisGelir += item.cost;
+                    renk = "var(--accent-color)";
+                    detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(item.cost).toLocaleString('tr-TR')} gelir</span></div>`;
+                    etiket = `<span style="font-size:10px; color:var(--accent-color); font-weight:bold;">📤 SATIŞ</span>`;
+                }
 
                 const itemHtml = `
                     <div class="list-item">
                         <div class="item-left">
                             <div class="item-icon">🏅</div>
                             <div>
+                                <div style="display:flex; align-items:center; gap:6px;">${etiket}</div>
                                 <div class="item-details-title">${isim}</div>
-                                <div class="item-details-sub">${item.amount.toString().replace('.', ',')} Adet/Gr • ${item.note.toUpperCase()}</div>
+                                <div class="item-details-sub">${item.amount.toString().replace('.', ',')} Adet/Gr • ${item.note.toUpperCase()} • ${item.date || ''}</div>
                             </div>
                         </div>
                         <div class="item-right">
-                            <div style="margin-right: 5px;">
-                                <div class="item-val">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
-                                <div class="item-cost-profit"><span style="color: ${karZarar >= 0 ? 'var(--green)' : 'var(--red)'}; font-weight: 500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>
+                            <div style="margin-right: 5px; text-align:right;">
+                                <div class="item-val">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                                ${detay}
                             </div>
+                            ${satButon}
                             <button class="btn-action" onclick="yatirimDuzenle(${index})" title="Düzenle">✏️</button>
                             <button class="btn-action" onclick="yatirimSil(${index})" style="color: var(--red);" title="Sil">🗑️</button>
                         </div>
@@ -935,24 +978,25 @@
                 container.innerHTML += itemHtml;
             });
 
-            const totalProfitVal = tValue - tCost;
-            const totalProfitPct = tCost > 0 ? (totalProfitVal / tCost) * 100 : 0;
+            const netKar = tSatisGelir - tAlisMaliyet + tAnlikDeger;
+            const totalProfitPct = tAlisMaliyet > 0 ? ((tAnlikDeger + tSatisGelir - tAlisMaliyet) / tAlisMaliyet) * 100 : 0;
 
-            document.getElementById("totalCost").innerText = "₺" + Math.round(tCost).toLocaleString('tr-TR');
-            document.getElementById("totalValue").innerText = "₺" + Math.round(tValue).toLocaleString('tr-TR');
+            document.getElementById("totalCost").innerText = "₺" + Math.round(tAlisMaliyet).toLocaleString('tr-TR');
+            document.getElementById("totalValue").innerText = "₺" + Math.round(tAnlikDeger).toLocaleString('tr-TR');
             
             const profitEl = document.getElementById("totalProfit");
-            if(tCost === 0) {
+            if(tAlisMaliyet === 0) {
                 profitEl.innerText = "₺0";
                 profitEl.style.color = "var(--text-color)";
             } else {
-                profitEl.innerText = `${totalProfitVal >= 0 ? '+' : ''}%${totalProfitPct.toFixed(1)}`;
-                profitEl.style.color = totalProfitVal >= 0 ? "var(--green)" : "var(--red)";
+                profitEl.innerText = `${totalProfitPct >= 0 ? '+' : ''}%${totalProfitPct.toFixed(1)}`;
+                profitEl.style.color = totalProfitPct >= 0 ? "var(--green)" : "var(--red)";
             }
         }
 
         async function yatirimKaydet() {
             const type = document.getElementById("mType").value;
+            const islem = document.getElementById("mIslem").value;
             const amount = parseFloat(document.getElementById("mAmount").value);
             const cost = parseFloat(document.getElementById("mCost").value);
             const note = document.getElementById("mNote").value || "Genel";
@@ -970,7 +1014,7 @@
                 tarihStr = `${bugun.getDate().toString().padStart(2,'0')}.${(bugun.getMonth()+1).toString().padStart(2,'0')}.${bugun.getFullYear()}`;
             }
 
-            const veri = { type, amount, cost, note, date: tarihStr };
+            const veri = { type, islem, amount, cost, note, date: tarihStr };
             if(editIndex > -1) { yatirimlarListesi[editIndex] = veri; } else { yatirimlarListesi.push(veri); }
 
             localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
@@ -982,22 +1026,23 @@
         function yatirimDuzenle(index) {
             const item = yatirimlarListesi[index];
             if(!item) return;
-            document.getElementById("modalTitle").innerText = "Yatırımı Düzenle";
+            document.getElementById("modalTitle").innerText = "İşlemi Düzenle";
             document.getElementById("editIndex").value = index;
+            document.getElementById("mIslem").value = item.islem || "alis";
             document.getElementById("mType").value = item.type;
             document.getElementById("mAmount").value = item.amount;
             document.getElementById("mCost").value = item.cost;
             document.getElementById("mNote").value = item.note;
-            // Tarihi date input formatına çevir (DD.MM.YYYY → YYYY-MM-DD)
             if (item.date) {
                 const parts = item.date.split('.');
                 if (parts.length === 3) document.getElementById("mDate").value = `${parts[2]}-${parts[1]}-${parts[0]}`;
             }
+            islemDegisti();
             modalAc();
         }
 
         async function yatirimSil(index) {
-            if(confirm("Bu yatırımı silmek istediğinize emin misiniz?")) {
+            if(confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
                 yatirimlarListesi.splice(index, 1);
                 localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
                 await window.firestoreKaydet("portfoy", yatirimlarListesi);
@@ -1005,9 +1050,23 @@
             }
         }
 
+        function hizliSat(index) {
+            const item = yatirimlarListesi[index];
+            if(!item) return;
+            document.getElementById("modalTitle").innerText = "Altın Sat";
+            document.getElementById("editIndex").value = -1;
+            document.getElementById("mIslem").value = "satis";
+            document.getElementById("mType").value = item.type;
+            document.getElementById("mNote").value = item.note;
+            islemDegisti();
+            document.getElementById("mAmount").value = item.amount;
+            miktarDegisti();
+            modalAc();
+        }
+
         function modalAc() { 
             document.getElementById("addModal").style.display = "block"; 
-            turDegisti();
+            islemDegisti();
             const bugun = new Date();
             const yyyy = bugun.getFullYear();
             const mm = (bugun.getMonth()+1).toString().padStart(2,'0');
@@ -1016,8 +1075,9 @@
         }
         function modalKapat() { 
             document.getElementById("addModal").style.display = "none"; 
-            document.getElementById("modalTitle").innerText = "Yeni Yatırım Ekle";
+            document.getElementById("modalTitle").innerText = "Yeni İşlem Ekle";
             document.getElementById("editIndex").value = "-1";
+            document.getElementById("mIslem").value = "alis";
             document.getElementById("mAmount").value = "";
             document.getElementById("mCost").value = "";
             document.getElementById("mNote").value = "";
