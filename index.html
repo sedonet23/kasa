@@ -520,6 +520,9 @@
         <label style="font-size: 12px; color: var(--text-muted);">Not / Açıklama:</label>
         <input type="text" id="mNote" placeholder="Örn: Yapı Kredi">
 
+        <label style="font-size: 12px; color: var(--text-muted);">Tarih:</label>
+        <input type="date" id="mDate">
+
         <div style="display: flex; gap: 10px; margin-top: 15px;">
             <button class="btn btn-active" onclick="yatirimKaydet()" style="flex: 1; font-size: 13px;">Kaydet</button>
             <button class="btn" onclick="modalKapat()" style="flex: 1; font-size: 13px;">İptal</button>
@@ -951,11 +954,18 @@
             const cost = parseFloat(document.getElementById("mCost").value);
             const note = document.getElementById("mNote").value || "Genel";
             const editIndex = parseInt(document.getElementById("editIndex").value);
-            
+            const dateInput = document.getElementById("mDate").value;
+
             if(!amount || !cost) { alert("Lütfen miktar ve maliyet alanlarını doldurun."); return; }
 
-            const bugun = new Date();
-            const tarihStr = `${bugun.getDate().toString().padStart(2,'0')}.${(bugun.getMonth()+1).toString().padStart(2,'0')}.${bugun.getFullYear()}`;
+            let tarihStr;
+            if (dateInput) {
+                const d = new Date(dateInput);
+                tarihStr = `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
+            } else {
+                const bugun = new Date();
+                tarihStr = `${bugun.getDate().toString().padStart(2,'0')}.${(bugun.getMonth()+1).toString().padStart(2,'0')}.${bugun.getFullYear()}`;
+            }
 
             const veri = { type, amount, cost, note, date: tarihStr };
             if(editIndex > -1) { yatirimlarListesi[editIndex] = veri; } else { yatirimlarListesi.push(veri); }
@@ -975,6 +985,11 @@
             document.getElementById("mAmount").value = item.amount;
             document.getElementById("mCost").value = item.cost;
             document.getElementById("mNote").value = item.note;
+            // Tarihi date input formatına çevir (DD.MM.YYYY → YYYY-MM-DD)
+            if (item.date) {
+                const parts = item.date.split('.');
+                if (parts.length === 3) document.getElementById("mDate").value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
             modalAc();
         }
 
@@ -987,7 +1002,15 @@
             }
         }
 
-        function modalAc() { document.getElementById("addModal").style.display = "block"; turDegisti(); }
+        function modalAc() { 
+            document.getElementById("addModal").style.display = "block"; 
+            turDegisti();
+            const bugun = new Date();
+            const yyyy = bugun.getFullYear();
+            const mm = (bugun.getMonth()+1).toString().padStart(2,'0');
+            const dd = bugun.getDate().toString().padStart(2,'0');
+            document.getElementById("mDate").value = `${yyyy}-${mm}-${dd}`;
+        }
         function modalKapat() { 
             document.getElementById("addModal").style.display = "none"; 
             document.getElementById("modalTitle").innerText = "Yeni Yatırım Ekle";
@@ -995,6 +1018,7 @@
             document.getElementById("mAmount").value = "";
             document.getElementById("mCost").value = "";
             document.getElementById("mNote").value = "";
+            document.getElementById("mDate").value = "";
         }
 
         // ==========================================
