@@ -32,7 +32,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Firestore'a kaydet
         window.firestoreKaydet = async function(koleksiyon, veriListesi) {
             try {
                 const batch = db.batch();
@@ -48,7 +47,6 @@
             }
         };
 
-        // Firestore'dan oku
         window.firestoreYukle = async function(koleksiyon) {
             try {
                 const snapshot = await db.collection(koleksiyon).get();
@@ -65,7 +63,6 @@
     </script>
 
     <style>
-        /* TEMA RENK DEĞİŞKENLERİ */
         :root {
             --bg-color: #0d0d0d;
             --card-bg: #141414;
@@ -113,28 +110,11 @@
             gap: 10px;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .logo-area { display: flex; align-items: center; gap: 8px; }
+        .logo-main { font-size: 22px; font-weight: bold; color: var(--accent-color); }
+        .logo-sub { color: var(--text-muted); font-size: 13px; }
 
-        .logo-main {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .logo-sub {
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
+        .nav-buttons { display: flex; gap: 6px; align-items: center; }
 
         .btn {
             background: transparent;
@@ -155,18 +135,9 @@
             border-color: var(--accent-color);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .page-section {
-            display: none;
-        }
-
-        .page-section.active-page {
-            display: block;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .page-section { display: none; }
+        .page-section.active-page { display: block; }
 
         .prices-container {
             background: var(--card-bg);
@@ -183,16 +154,6 @@
             color: var(--text-muted);
             font-size: 12px;
             margin-bottom: 12px;
-        }
-
-        .grid-prices {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        @media(min-width: 600px) {
-            .grid-prices { grid-template-columns: repeat(5, 1fr); }
         }
 
         .price-list { display: flex; flex-direction: column; gap: 8px; }
@@ -220,30 +181,11 @@
             text-align: center;
         }
 
-        .summary-title {
-            color: var(--text-muted);
-            font-size: 11px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
+        .summary-title { color: var(--text-muted); font-size: 11px; text-transform: uppercase; margin-bottom: 6px; }
+        .summary-val { font-size: 17px; font-weight: bold; }
 
-        .summary-val {
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .list-container { display: flex; flex-direction: column; gap: 10px; }
 
         .list-item {
             background: var(--card-bg);
@@ -255,60 +197,14 @@
             align-items: center;
         }
 
-        .item-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .item-icon {
-            background: var(--panel-bg);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-color);
-            font-size: 16px;
-        }
-
-        .item-details-title {
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .item-details-sub {
-            color: var(--text-muted);
-            font-size: 11px;
-            margin-top: 2px;
-        }
-
-        .item-right {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .item-val {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .item-cost-profit {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .btn-action {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-            padding: 4px;
-        }
+        .item-left { display: flex; align-items: center; gap: 12px; }
+        .item-icon { background: var(--panel-bg); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 16px; }
+        .item-details-title { font-weight: bold; font-size: 14px; }
+        .item-details-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+        .item-right { text-align: right; display: flex; align-items: center; gap: 8px; }
+        .item-val { font-size: 15px; font-weight: bold; }
+        .item-cost-profit { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .btn-action { background: transparent; border: none; cursor: pointer; font-size: 15px; padding: 4px; }
 
         .btn-refresh {
             background: var(--panel-bg);
@@ -335,7 +231,7 @@
             max-width: 320px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-        
+
         .modal input, .modal select {
             width: 100%;
             padding: 10px;
@@ -347,12 +243,7 @@
             box-sizing: border-box;
         }
 
-        .live-label-info {
-            font-size: 11px;
-            color: var(--accent-color);
-            float: right;
-            margin-top: 2px;
-        }
+        .live-label-info { font-size: 11px; color: var(--accent-color); float: right; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -370,7 +261,7 @@
     </div>
 
     <div class="container">
-        
+
         <!-- YATIRIM SAYFASI -->
         <div id="pageYatirim" class="page-section active-page">
             <div class="prices-container">
@@ -482,7 +373,6 @@
                     <div class="summary-val" id="b-netCash">₺0</div>
                 </div>
             </div>
-
             <div>
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Gelir / Gider Hareketleri</h3>
@@ -513,13 +403,13 @@
             <option value="yarim">Yarım Altın</option>
             <option value="ata">Ata Lira</option>
         </select>
-        
+
         <label style="font-size: 12px; color: var(--text-muted);">
-            Miktar (Adet veya Gram): 
+            Miktar (Adet veya Gram):
             <span id="livePriceInfo" class="live-label-info">Birim: ₺0</span>
         </label>
         <input type="number" id="mAmount" step="0.0001" placeholder="Örn: 3,1348 veya 1" oninput="miktarDegisti()">
-        
+
         <label style="font-size: 12px; color: var(--text-muted);" id="mCostLabel">Toplam Tutar (TL):</label>
         <input type="number" id="mCost" placeholder="Örn: 10370" oninput="maliyetDegisti()">
 
@@ -579,7 +469,7 @@
     <!-- BÜTÇE İŞLEM EKLEME MODALİ -->
     <div id="budgetModal" class="modal">
         <h3 style="margin-top: 0; font-size: 16px;">Gelir / Gider Ekle</h3>
-        
+
         <label style="font-size: 12px; color: var(--text-muted);">İşlem Türü:</label>
         <select id="bType">
             <option value="gelir">➕ Gelir</option>
@@ -604,69 +494,66 @@
     <script>
         let yatirimlarListesi = [];
         let butceListesi = [];
-        
+
         let canliFiyatlar = {
             gram24s: 3120, gram24a: 3105, gram22s: 2860, gram22a: 2840,
-            ceyreks: 5120, ceyreka: 5040, yarims: 10240, yarima: 10080, atas: 21100, ataa: 20850
+            ceyreks: 5120, ceyreka: 5040, yarims: 10240, yarima: 10080,
+            atas: 21100, ataa: 20850
         };
 
-        // SAYFA GEÇİŞ YÖNETİMİ
+        // SAYFA GEÇİŞ
         function sayfaDegistir(sayfaIsmi) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
             document.getElementById('navYatirim').classList.remove('btn-active');
             document.getElementById('navButce').classList.remove('btn-active');
 
-            if(sayfaIsmi === 'yatirim') {
+            if (sayfaIsmi === 'yatirim') {
                 document.getElementById('pageYatirim').classList.add('active-page');
                 document.getElementById('navYatirim').classList.add('btn-active');
-            } else if(sayfaIsmi === 'butce') {
+            } else if (sayfaIsmi === 'butce') {
                 document.getElementById('pageButce').classList.add('active-page');
                 document.getElementById('navButce').classList.add('btn-active');
                 butceListesiniEkranaBas();
             }
         }
 
-        // TEMA YÖNETİMİ
+        // TEMA
         function temaYukle() {
-            const hafizadakiTema = localStorage.getItem("kasam_tema") || "dark";
-            document.documentElement.setAttribute("data-theme", hafizadakiTema);
-            document.getElementById("themeBtn").innerText = hafizadakiTema === "light" ? "🌙 Koyu" : "☀️ Açık";
+            const tema = localStorage.getItem("kasam_tema") || "dark";
+            document.documentElement.setAttribute("data-theme", tema);
+            document.getElementById("themeBtn").innerText = tema === "light" ? "🌙 Koyu" : "☀️ Açık";
         }
 
         function temaDegistir() {
             const mevcutTema = document.documentElement.getAttribute("data-theme");
             const yeniTema = mevcutTema === "light" ? "dark" : "light";
-            
             document.documentElement.setAttribute("data-theme", yeniTema);
             localStorage.setItem("kasam_tema", yeniTema);
             document.getElementById("themeBtn").innerText = yeniTema === "light" ? "🌙 Koyu" : "☀️ Açık";
         }
 
+        // VERİ YÜKLEME
         async function hafizadanVeriYukle() {
             temaYukle();
 
-            // Fiyatları localStorage'dan yükle (hızlı başlangıç)
             const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
             if (yerelFiyatlar) {
-                try { 
+                try {
                     const parsed = JSON.parse(yerelFiyatlar);
-                    if(parsed.gram24s > 0) canliFiyatlar = parsed; 
+                    if (parsed.gram24s > 0) canliFiyatlar = parsed;
                 } catch (e) {}
             }
             fiyatlariEkranaYaz();
 
-            // Firestore'dan yükle
             try {
                 const portfoyData = await window.firestoreYukle("portfoy");
                 if (portfoyData && portfoyData.length > 0) {
                     yatirimlarListesi = portfoyData;
                 } else {
-                    // Firestore boşsa localStorage'dan aktar
                     const yerelVeri = localStorage.getItem("kasam_portfoy");
                     if (yerelVeri) {
-                        try { 
+                        try {
                             yatirimlarListesi = JSON.parse(yerelVeri);
-                            // Firestore'a da yaz
                             if (yatirimlarListesi.length > 0) await window.firestoreKaydet("portfoy", yatirimlarListesi);
                         } catch (e) { yatirimlarListesi = []; }
                     }
@@ -678,24 +565,24 @@
                 } else {
                     const yerelButce = localStorage.getItem("kasam_butce");
                     if (yerelButce) {
-                        try { 
+                        try {
                             butceListesi = JSON.parse(yerelButce);
                             if (butceListesi.length > 0) await window.firestoreKaydet("butce", butceListesi);
                         } catch (e) { butceListesi = []; }
                     }
                 }
-            } catch(e) {
-                // Firestore erişilemezse localStorage'dan al
-                console.warn("Firestore erişilemedi, localStorage kullanılıyor:", e);
+            } catch (e) {
+                console.warn("Firestore erişilemedi:", e);
                 const yerelVeri = localStorage.getItem("kasam_portfoy");
-                if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch(e){} }
+                if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch (e) {} }
                 const yerelButce = localStorage.getItem("kasam_butce");
-                if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch(e){} }
+                if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch (e) {} }
             }
 
             listeyiEkranaBas();
         }
 
+        // FİYAT EKRANA YAZ
         function fiyatlariEkranaYaz() {
             document.getElementById("p-gram24s").innerText = "₺" + canliFiyatlar.gram24s.toLocaleString('tr-TR');
             document.getElementById("p-gram24a").innerText = "₺" + canliFiyatlar.gram24a.toLocaleString('tr-TR');
@@ -710,7 +597,7 @@
             turDegisti();
         }
 
-        // MANUEL FİYAT PENCERESİ
+        // MANUEL FİYAT
         function fiyatAyarlariniAc() {
             document.getElementById("cfg-g24s").value = canliFiyatlar.gram24s;
             document.getElementById("cfg-g24a").value = canliFiyatlar.gram24a;
@@ -726,151 +613,99 @@
         }
 
         function fiyatAyarlariniKaydet() {
-            const g24s  = Math.round(parseFloat(document.getElementById("cfg-g24s").value));
-            const g24a  = Math.round(parseFloat(document.getElementById("cfg-g24a").value));
-            const g22s  = Math.round(parseFloat(document.getElementById("cfg-g22s").value));
-            const g22a  = Math.round(parseFloat(document.getElementById("cfg-g22a").value));
+            const g24s = Math.round(parseFloat(document.getElementById("cfg-g24s").value));
+            const g24a = Math.round(parseFloat(document.getElementById("cfg-g24a").value));
+            const g22s = Math.round(parseFloat(document.getElementById("cfg-g22s").value));
+            const g22a = Math.round(parseFloat(document.getElementById("cfg-g22a").value));
             const ceyreks = Math.round(parseFloat(document.getElementById("cfg-ceyreks").value));
             const ceyreka = Math.round(parseFloat(document.getElementById("cfg-ceyreka").value));
-            const yarims  = Math.round(parseFloat(document.getElementById("cfg-yarims").value));
-            const yarima  = Math.round(parseFloat(document.getElementById("cfg-yarima").value));
-            const atas  = Math.round(parseFloat(document.getElementById("cfg-atas").value));
-            const ataa  = Math.round(parseFloat(document.getElementById("cfg-ataa").value));
+            const yarims = Math.round(parseFloat(document.getElementById("cfg-yarims").value));
+            const yarima = Math.round(parseFloat(document.getElementById("cfg-yarima").value));
+            const atas = Math.round(parseFloat(document.getElementById("cfg-atas").value));
+            const ataa = Math.round(parseFloat(document.getElementById("cfg-ataa").value));
 
-            if(g24s > 0 && ceyreks > 0 && atas > 0) {
-                canliFiyatlar = { gram24s: g24s, gram24a: g24a, gram22s: g22s, gram22a: g22a,
-                    ceyreks, ceyreka, yarims, yarima, atas, ataa };
-
+            if (g24s > 0 && ceyreks > 0 && atas > 0) {
+                canliFiyatlar = { gram24s: g24s, gram24a: g24a, gram22s: g22s, gram22a: g22a, ceyreks, ceyreka, yarims, yarima, atas, ataa };
                 localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
                 fiyatlariEkranaYaz();
                 listeyiEkranaBas();
-                
                 const simdi = new Date();
                 document.getElementById("updateTime").innerText = `Düzenlendi • ${simdi.getHours().toString().padStart(2,'0')}:${simdi.getMinutes().toString().padStart(2,'0')}`;
-                document.getElementById("updateTime").style.color = "var(--accent-color)";
-                
                 document.getElementById("priceConfigModal").style.display = "none";
             } else {
                 alert("Lütfen geçerli fiyat değerleri giriniz.");
             }
         }
 
+        // CANLI FİYAT
         async function canliFiyatlariYukle() {
+            const refreshBtn = document.querySelector('.btn-refresh');
+            if (refreshBtn) refreshBtn.innerText = "⏳...";
 
-    const refreshBtn = document.querySelector('.btn-refresh');
-    if (refreshBtn) refreshBtn.innerText = "⏳...";
+            let basarili = false;
 
-    let basarili = false;
-
-    try {
-
-        const response = await fetch(
-            "https://kasam-altin-api.sedonet23.workers.dev/"
-        );
-
-        if (!response.ok) {
-            throw new Error(`API hatası: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Güvenli sayı dönüştürme
-        const sayi = (deger) => {
-            if (!deger) return 0;
-            return parseFloat(String(deger).replace(",", "."));
-        };
-
-        canliFiyatlar = {
-            gram24s: sayi(data.gram24s),
-            gram24a: sayi(data.gram24a),
-
-            gram22s: sayi(data.gram22s),
-            gram22a: sayi(data.gram22a),
-
-            ceyreks: sayi(data.ceyreks),
-            ceyreka: sayi(data.ceyreka),
-
-            yarims: sayi(data.yarims),
-            yarima: sayi(data.yarima),
-
-            atas: sayi(data.atas),
-            ataa: sayi(data.ataa)
-        };
-
-        // Verilerin geçerli olup olmadığını kontrol et
-        if (canliFiyatlar.gram24s > 0) {
-
-            localStorage.setItem(
-                "kasam_son_fiyatlar",
-                JSON.stringify(canliFiyatlar)
-            );
-
-            basarili = true;
-
-        } else {
-            throw new Error("Geçersiz fiyat verisi");
-        }
-
-    } catch (error) {
-
-        console.error("Fiyat güncelleme hatası:", error);
-
-        // Son kaydedilen fiyatları yükle
-        const yerelFiyatlar =
-            localStorage.getItem("kasam_son_fiyatlar");
-
-        if (yerelFiyatlar) {
             try {
-                canliFiyatlar = JSON.parse(yerelFiyatlar);
-            } catch (e) {
-                console.error("Önbellek okuma hatası:", e);
+                const response = await fetch("https://kasam-altin-api.sedonet23.workers.dev/");
+                if (!response.ok) throw new Error(`API hatası: ${response.status}`);
+                const data = await response.json();
+
+                const sayi = (deger) => {
+                    if (!deger) return 0;
+                    return parseFloat(String(deger).replace(",", "."));
+                };
+
+                canliFiyatlar = {
+                    gram24s: sayi(data.gram24s), gram24a: sayi(data.gram24a),
+                    gram22s: sayi(data.gram22s), gram22a: sayi(data.gram22a),
+                    ceyreks: sayi(data.ceyreks), ceyreka: sayi(data.ceyreka),
+                    yarims: sayi(data.yarims),   yarima: sayi(data.yarima),
+                    atas: sayi(data.atas),        ataa: sayi(data.ataa)
+                };
+
+                if (canliFiyatlar.gram24s > 0) {
+                    localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
+                    basarili = true;
+                } else {
+                    throw new Error("Geçersiz fiyat verisi");
+                }
+            } catch (error) {
+                console.error("Fiyat güncelleme hatası:", error);
+                const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
+                if (yerelFiyatlar) {
+                    try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
+                }
             }
+
+            fiyatlariEkranaYaz();
+            if (refreshBtn) refreshBtn.innerText = "🔄 Güncelle";
+
+            const simdi = new Date();
+            const zaman = simdi.getHours().toString().padStart(2,'0') + ":" + simdi.getMinutes().toString().padStart(2,'0');
+            const updateEl = document.getElementById("updateTime");
+            if (updateEl) {
+                updateEl.innerText = `${basarili ? "EKEO" : "Önbellek"} • ${zaman}`;
+                updateEl.style.color = basarili ? "var(--green)" : "var(--accent-color)";
+            }
+
+            listeyiEkranaBas();
         }
-    }
 
-    fiyatlariEkranaYaz();
-
-    if (refreshBtn) refreshBtn.innerText = "🔄 Güncelle";
-
-    const simdi = new Date();
-
-    const zaman =
-        simdi.getHours().toString().padStart(2, '0') +
-        ":" +
-        simdi.getMinutes().toString().padStart(2, '0');
-
-    const updateEl = document.getElementById("updateTime");
-
-    if (updateEl) {
-        updateEl.innerText =
-            `${basarili ? "EKEO" : "Önbellek"} • ${zaman}`;
-
-        updateEl.style.color =
-            basarili
-                ? "var(--green)"
-                : "var(--accent-color)";
-    }
-
-    listeyiEkranaBas();
-}
-
-
+        // MODAL YARDIMCILARI
         function seciliBirimFiyatAl() {
             const tur = document.getElementById("mType").value;
             const islem = document.getElementById("mIslem").value;
-            // Alış işleminde satış fiyatı, satış işleminde alış fiyatı kullanılır
-            if(islem === "satis") {
-                if(tur === "gram24") return canliFiyatlar.gram24a;
-                if(tur === "gram22") return canliFiyatlar.gram22a;
-                if(tur === "ceyrek") return canliFiyatlar.ceyreka;
-                if(tur === "yarim")  return canliFiyatlar.yarima;
-                if(tur === "ata")    return canliFiyatlar.ataa;
+            if (islem === "satis") {
+                if (tur === "gram24") return canliFiyatlar.gram24a;
+                if (tur === "gram22") return canliFiyatlar.gram22a;
+                if (tur === "ceyrek") return canliFiyatlar.ceyreka;
+                if (tur === "yarim")  return canliFiyatlar.yarima;
+                if (tur === "ata")    return canliFiyatlar.ataa;
             } else {
-                if(tur === "gram24") return canliFiyatlar.gram24s;
-                if(tur === "gram22") return canliFiyatlar.gram22s;
-                if(tur === "ceyrek") return canliFiyatlar.ceyreks;
-                if(tur === "yarim")  return canliFiyatlar.yarims;
-                if(tur === "ata")    return canliFiyatlar.atas;
+                if (tur === "gram24") return canliFiyatlar.gram24s;
+                if (tur === "gram22") return canliFiyatlar.gram22s;
+                if (tur === "ceyrek") return canliFiyatlar.ceyreks;
+                if (tur === "yarim")  return canliFiyatlar.yarims;
+                if (tur === "ata")    return canliFiyatlar.atas;
             }
             return 0;
         }
@@ -885,16 +720,16 @@
             const birim = seciliBirimFiyatAl();
             const islem = document.getElementById("mIslem").value;
             const infoEl = document.getElementById("livePriceInfo");
-            if(infoEl) infoEl.innerText = `Birim: ₺${birim.toLocaleString('tr-TR')} (${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
-            if(document.getElementById("mAmount").value) miktarDegisti();
+            if (infoEl) infoEl.innerText = `Birim: ₺${birim.toLocaleString('tr-TR')} (${islem === "satis" ? "Alış" : "Satış"} fiyatı)`;
+            if (document.getElementById("mAmount").value) miktarDegisti();
         }
 
         function miktarDegisti() {
             const miktar = parseFloat(document.getElementById("mAmount").value);
             const birim = seciliBirimFiyatAl();
-            if(!isNaN(miktar) && birim > 0) {
+            if (!isNaN(miktar) && birim > 0) {
                 document.getElementById("mCost").value = Math.round(miktar * birim);
-            } else if(document.getElementById("mAmount").value === "") {
+            } else if (document.getElementById("mAmount").value === "") {
                 document.getElementById("mCost").value = "";
             }
         }
@@ -902,18 +737,17 @@
         function maliyetDegisti() {
             const maliyet = parseFloat(document.getElementById("mCost").value);
             const birim = seciliBirimFiyatAl();
-            if(!isNaN(maliyet) && birim > 0) {
-                const hamMiktar = maliyet / birim;
-                document.getElementById("mAmount").value = parseFloat(hamMiktar.toFixed(4));
-            } else if(document.getElementById("mCost").value === "") {
+            if (!isNaN(maliyet) && birim > 0) {
+                document.getElementById("mAmount").value = parseFloat((maliyet / birim).toFixed(4));
+            } else if (document.getElementById("mCost").value === "") {
                 document.getElementById("mAmount").value = "";
             }
         }
 
-        // PORTFÖYÜ EKRANA BAS
+        // PORTFÖY EKRANA BAS
         function listeyiEkranaBas() {
             const container = document.getElementById("investmentList");
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = "";
 
             let tAlisMaliyet = 0;
@@ -926,18 +760,18 @@
                 let guncelAlisFiyati = 0;
                 let guncelSatisFiyati = 0;
 
-                if(item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altın 24A"; }
-                else if(item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
-                else if(item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
-                else if(item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
-                else if(item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;    guncelAlisFiyati = canliFiyatlar.ataa;    isim = "Ata Lira"; }
+                if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "Gram Altın 24A"; }
+                else if (item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
+                else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
+                else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
+                else if (item.type === "ata")    { guncelSatisFiyati = canliFiyatlar.atas;    guncelAlisFiyati = canliFiyatlar.ataa;    isim = "Ata Lira"; }
 
                 let satButon = "";
                 let detay = "";
                 let renk = "var(--text-muted)";
                 let etiket = "";
 
-                if(islem === "alis") {
+                if (islem === "alis") {
                     const anlikDeger = item.amount * guncelAlisFiyati;
                     const karZarar = anlikDeger - item.cost;
                     const karYuzde = item.cost > 0 ? (karZarar / item.cost) * 100 : 0;
@@ -978,14 +812,13 @@
                 container.innerHTML += itemHtml;
             });
 
-            const netKar = tSatisGelir - tAlisMaliyet + tAnlikDeger;
             const totalProfitPct = tAlisMaliyet > 0 ? ((tAnlikDeger + tSatisGelir - tAlisMaliyet) / tAlisMaliyet) * 100 : 0;
 
             document.getElementById("totalCost").innerText = "₺" + Math.round(tAlisMaliyet).toLocaleString('tr-TR');
             document.getElementById("totalValue").innerText = "₺" + Math.round(tAnlikDeger).toLocaleString('tr-TR');
-            
+
             const profitEl = document.getElementById("totalProfit");
-            if(tAlisMaliyet === 0) {
+            if (tAlisMaliyet === 0) {
                 profitEl.innerText = "₺0";
                 profitEl.style.color = "var(--text-color)";
             } else {
@@ -994,6 +827,7 @@
             }
         }
 
+        // YATIRIM KAYDET
         async function yatirimKaydet() {
             const type = document.getElementById("mType").value;
             const islem = document.getElementById("mIslem").value;
@@ -1003,7 +837,7 @@
             const editIndex = parseInt(document.getElementById("editIndex").value);
             const dateInput = document.getElementById("mDate").value;
 
-            if(!amount || !cost) { alert("Lütfen miktar ve maliyet alanlarını doldurun."); return; }
+            if (!amount || !cost) { alert("Lütfen miktar ve maliyet alanlarını doldurun."); return; }
 
             let tarihStr;
             if (dateInput) {
@@ -1015,7 +849,7 @@
             }
 
             const veri = { type, islem, amount, cost, note, date: tarihStr };
-            if(editIndex > -1) { yatirimlarListesi[editIndex] = veri; } else { yatirimlarListesi.push(veri); }
+            if (editIndex > -1) { yatirimlarListesi[editIndex] = veri; } else { yatirimlarListesi.push(veri); }
 
             localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
             await window.firestoreKaydet("portfoy", yatirimlarListesi);
@@ -1025,7 +859,7 @@
 
         function yatirimDuzenle(index) {
             const item = yatirimlarListesi[index];
-            if(!item) return;
+            if (!item) return;
             document.getElementById("modalTitle").innerText = "İşlemi Düzenle";
             document.getElementById("editIndex").value = index;
             document.getElementById("mIslem").value = item.islem || "alis";
@@ -1042,7 +876,7 @@
         }
 
         async function yatirimSil(index) {
-            if(confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
+            if (confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
                 yatirimlarListesi.splice(index, 1);
                 localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
                 await window.firestoreKaydet("portfoy", yatirimlarListesi);
@@ -1052,7 +886,7 @@
 
         function hizliSat(index) {
             const item = yatirimlarListesi[index];
-            if(!item) return;
+            if (!item) return;
             document.getElementById("modalTitle").innerText = "Altın Sat";
             document.getElementById("editIndex").value = -1;
             document.getElementById("mIslem").value = "satis";
@@ -1064,8 +898,8 @@
             modalAc();
         }
 
-        function modalAc() { 
-            document.getElementById("addModal").style.display = "block"; 
+        function modalAc() {
+            document.getElementById("addModal").style.display = "block";
             islemDegisti();
             const bugun = new Date();
             const yyyy = bugun.getFullYear();
@@ -1073,8 +907,9 @@
             const dd = bugun.getDate().toString().padStart(2,'0');
             document.getElementById("mDate").value = `${yyyy}-${mm}-${dd}`;
         }
-        function modalKapat() { 
-            document.getElementById("addModal").style.display = "none"; 
+
+        function modalKapat() {
+            document.getElementById("addModal").style.display = "none";
             document.getElementById("modalTitle").innerText = "Yeni İşlem Ekle";
             document.getElementById("editIndex").value = "-1";
             document.getElementById("mIslem").value = "alis";
@@ -1084,10 +919,8 @@
             document.getElementById("mDate").value = "";
         }
 
-        // ==========================================
-        // BÜTÇE BÖLÜMÜ ENGINE (YENİ SİSTEM)
-        // ==========================================
-        function butceModalAc() { 
+        // BÜTÇE
+        function butceModalAc() {
             document.getElementById("budgetModal").style.display = "block";
             const bugun = new Date();
             const yyyy = bugun.getFullYear();
@@ -1095,12 +928,12 @@
             const dd = bugun.getDate().toString().padStart(2,'0');
             document.getElementById("bDate").value = `${yyyy}-${mm}-${dd}`;
         }
+
         function butceModalKapat() {
             document.getElementById("budgetModal").style.display = "none";
             document.getElementById("bAmount").value = "";
             document.getElementById("bNote").value = "";
             document.getElementById("bDate").value = "";
-        }
         }
 
         async function butceKaydet() {
@@ -1109,7 +942,7 @@
             const note = document.getElementById("bNote").value || "Diğer";
             const dateInput = document.getElementById("bDate").value;
 
-            if(!amount || amount <= 0) { alert("Lütfen geçerli bir miktar giriniz."); return; }
+            if (!amount || amount <= 0) { alert("Lütfen geçerli bir miktar giriniz."); return; }
 
             let tarihStr;
             if (dateInput) {
@@ -1130,7 +963,7 @@
         }
 
         async function butceSil(index) {
-            if(confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
+            if (confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
                 butceListesi.splice(index, 1);
                 localStorage.setItem("kasam_butce", JSON.stringify(butceListesi));
                 await window.firestoreKaydet("butce", butceListesi);
@@ -1140,16 +973,15 @@
 
         function butceListesiniEkranaBas() {
             const container = document.getElementById("budgetList");
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = "";
 
             let totalIncome = 0;
             let totalExpense = 0;
 
-            // Ters döngü ile en yeni eklenen bütçe hareketi en üstte görünür
-            for(let i = butceListesi.length - 1; i >= 0; i--) {
+            for (let i = butceListesi.length - 1; i >= 0; i--) {
                 const item = butceListesi[i];
-                if(item.type === "gelir") totalIncome += item.amount; else totalExpense += item.amount;
+                if (item.type === "gelir") totalIncome += item.amount; else totalExpense += item.amount;
 
                 const isGelir = item.type === "gelir";
                 const itemHtml = `
@@ -1173,26 +1005,23 @@
             }
 
             const netCash = totalIncome - totalExpense;
-
             document.getElementById("b-totalIncome").innerText = "₺" + totalIncome.toLocaleString('tr-TR');
             document.getElementById("b-totalExpense").innerText = "₺" + totalExpense.toLocaleString('tr-TR');
-            
             const netEl = document.getElementById("b-netCash");
             netEl.innerText = "₺" + netCash.toLocaleString('tr-TR');
             netEl.style.color = netCash >= 0 ? "var(--text-color)" : "var(--red)";
         }
 
-        // BAŞLANGIÇ ÇALIŞTIRICILARI
+        // BAŞLANGIÇ
         temaYukle();
         fiyatlariEkranaYaz();
-        
-        // Firestore hazır olunca verileri yükle
+
         if (window.firestoreHazir) {
             hafizadanVeriYukle();
         } else {
             document.addEventListener('firestoreHazir', hafizadanVeriYukle);
         }
-        
+
         canliFiyatlariYukle();
         setInterval(canliFiyatlariYukle, 60000);
     </script>
