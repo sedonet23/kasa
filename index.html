@@ -318,30 +318,6 @@
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
-        /* V2: PIN Kilit Ekranı */
-        #pinOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: var(--bg-color);
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-        #pinOverlay.goster { display: flex; }
-        .pin-logo { font-size: 28px; font-weight: bold; color: var(--accent-color); }
-        .pin-sub { color: var(--text-muted); font-size: 13px; margin-top: -12px; }
-        .pin-dots { display: flex; gap: 14px; margin: 8px 0; }
-        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-color); transition: background 0.15s; }
-        .pin-dot.dolu { background: var(--accent-color); }
-        .pin-numpad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px; }
-        .pin-key { width: 64px; height: 64px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--border); font-size: 22px; font-weight: bold; color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
-        .pin-key:active { background: var(--accent-color); color: #000; }
-        .pin-hata { color: var(--red); font-size: 13px; min-height: 18px; }
-        .pin-ayar-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .pin-ayar-label { font-size: 14px; }
         .toggle-switch { position: relative; width: 44px; height: 24px; }
         .toggle-switch input { display: none; }
         .toggle-slider { position: absolute; inset: 0; background: var(--panel-bg); border-radius: 12px; cursor: pointer; transition: 0.3s; border: 1px solid var(--border); }
@@ -421,33 +397,6 @@
 </head>
 <body>
 
-    <!-- V2.6: PIN Kilit Ekranı -->
-    <div id="pinOverlay">
-        <div class="pin-logo">🔒 Kasam</div>
-        <div class="pin-sub">PIN kodunuzu girin</div>
-        <div class="pin-dots">
-            <div class="pin-dot" id="pd0"></div>
-            <div class="pin-dot" id="pd1"></div>
-            <div class="pin-dot" id="pd2"></div>
-            <div class="pin-dot" id="pd3"></div>
-        </div>
-        <div class="pin-hata" id="pinHata"></div>
-        <div class="pin-numpad">
-            <button class="pin-key" onclick="pinTus('1')">1</button>
-            <button class="pin-key" onclick="pinTus('2')">2</button>
-            <button class="pin-key" onclick="pinTus('3')">3</button>
-            <button class="pin-key" onclick="pinTus('4')">4</button>
-            <button class="pin-key" onclick="pinTus('5')">5</button>
-            <button class="pin-key" onclick="pinTus('6')">6</button>
-            <button class="pin-key" onclick="pinTus('7')">7</button>
-            <button class="pin-key" onclick="pinTus('8')">8</button>
-            <button class="pin-key" onclick="pinTus('9')">9</button>
-            <button class="pin-key" style="font-size:14px; color:var(--text-muted);" onclick="pinSil()">⌫</button>
-            <button class="pin-key" onclick="pinTus('0')">0</button>
-            <button class="pin-key" style="font-size:13px; color:var(--text-muted);" onclick="pinIptal()">✕</button>
-        </div>
-    </div>
-
     <!-- Alarm Banner -->
     <div id="alarmBanner"></div>
 
@@ -456,9 +405,8 @@
             <span class="logo-main">Kasam</span>
             <span class="logo-sub">SEDAT KARAGÖZ</span>
         </div>
-        <div class="nav-buttons">
-            <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px;">☀️ Açık</button>
-            <button class="btn" onclick="pinAyarlariniAc()" style="font-size: 13px; padding: 6px 10px;" title="PIN Ayarları">🔒</button>
+        <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px; margin-left: auto;">☀️ Açık</button>
+        <div class="nav-buttons" style="width: 100%;">
             <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">Yatırım</button>
             <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">Bütçe</button>
             <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">Hedef</button>
@@ -714,26 +662,6 @@
         </div>
     </div>
 
-    <!-- V2.6: PIN AYARLARI MODALİ -->
-    <div id="pinAyarModal" class="modal" style="max-width: 320px;">
-        <h3 style="margin-top: 0; font-size: 16px;">🔒 PIN Güvenliği</h3>
-        <div class="pin-ayar-row">
-            <span class="pin-ayar-label">PIN Koruması</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="pinToggle" onchange="pinToggleChange()">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-        <div id="pinAyarDetay" style="display:none; margin-top:14px;">
-            <label style="font-size: 12px; color: var(--text-muted);">Yeni 4 Haneli PIN:</label>
-            <input type="password" id="pinYeni" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
-            <label style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display:block;">PIN Tekrar:</label>
-            <input type="password" id="pinTekrar" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
-            <div id="pinAyarHata" style="color:var(--red); font-size:12px; min-height:16px; margin-top:4px;"></div>
-            <button class="btn btn-active" onclick="pinKaydet()" style="width:100%; margin-top:10px; font-size:13px;">PIN Kaydet</button>
-        </div>
-        <button class="btn" onclick="document.getElementById('pinAyarModal').style.display='none'" style="width:100%; margin-top:10px; font-size:13px;">Kapat</button>
-    </div>
     <div id="addModal" class="modal">
         <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni İşlem Ekle</h3>
         <input type="hidden" id="editIndex" value="-1">
@@ -949,18 +877,50 @@
                         } catch (e) { butceListesi = []; }
                     }
                 }
+
+                // V2.7: ALARMLAR FIRESTORE'DAN YÜKLE
+                const alarmData = await window.firestoreYukle("alarmlar");
+                if (alarmData && alarmData.length > 0) {
+                    alarmListesi = alarmData;
+                } else {
+                    const yerelAlarm = localStorage.getItem('kasam_alarmlar');
+                    if (yerelAlarm) {
+                        try {
+                            alarmListesi = JSON.parse(yerelAlarm);
+                            if (alarmListesi.length > 0) await window.firestoreKaydet("alarmlar", alarmListesi);
+                        } catch (e) { alarmListesi = []; }
+                    }
+                }
+                alarmListesiniEkranaBas();
+
+                // V2.7: HEDEFLER FIRESTORE'DAN YÜKLE
+                const hedefData = await window.firestoreYukle("hedefler");
+                if (hedefData && hedefData.length > 0) {
+                    hedefListesi = hedefData;
+                } else {
+                    const yerelHedef = localStorage.getItem('kasam_hedefler');
+                    if (yerelHedef) {
+                        try {
+                            hedefListesi = JSON.parse(yerelHedef);
+                            if (hedefListesi.length > 0) await window.firestoreKaydet("hedefler", hedefListesi);
+                        } catch (e) { hedefListesi = []; }
+                    }
+                }
+                hedefListesiniEkranaBas();
             } catch (e) {
                 console.warn("Firestore erişilemedi:", e);
                 const yerelVeri = localStorage.getItem("kasam_portfoy");
                 if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch (e) {} }
                 const yerelButce = localStorage.getItem("kasam_butce");
                 if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch (e) {} }
+                alarmVerisiniYukle();
+                hedefVerisiniYukle();
             }
 
             listeyiEkranaBas();
         }
 
-        // V2.3: HEDEF VERİSİ YÜKLE (localStorage)
+        // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
         function hedefVerisiniYukle() {
             const yerel = localStorage.getItem('kasam_hedefler');
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
@@ -1026,84 +986,54 @@
         }
 
         // CANLI FİYAT
-        let fiyatYenilemeZamanlayici = null;
-        let suankiInterval = 60000;
-
         async function canliFiyatlariYukle() {
-            const refreshBtns = document.querySelectorAll('.btn-refresh');
-            refreshBtns.forEach(b => { if(b.onclick && b.onclick.toString().includes('canliFiyatlar')) b.innerText = "⏳..."; });
+            const refreshBtn = document.querySelector('.btn-refresh');
+            if (refreshBtn) refreshBtn.innerText = "⏳...";
 
             let basarili = false;
 
-            const sayi = (d) => d ? parseFloat(String(d).replace(",", ".")) : 0;
-
-            // KAYNAK 1: Kendi Worker API
             try {
-                const ctrl = new AbortController();
-                const tOut = setTimeout(() => ctrl.abort(), 8000);
-                const response = await fetch("https://kasam-altin-api.sedonet23.workers.dev/", { signal: ctrl.signal });
-                clearTimeout(tOut);
-                if (!response.ok) throw new Error("HTTP " + response.status);
+                const response = await fetch("https://kasam-altin-api.sedonet23.workers.dev/");
+                if (!response.ok) throw new Error(`API hatası: ${response.status}`);
                 const data = await response.json();
-                const yeni = {
+
+                const sayi = (deger) => {
+                    if (!deger) return 0;
+                    return parseFloat(String(deger).replace(",", "."));
+                };
+
+                canliFiyatlar = {
                     gram24s: sayi(data.gram24s), gram24a: sayi(data.gram24a),
                     gram22s: sayi(data.gram22s), gram22a: sayi(data.gram22a),
                     ceyreks: sayi(data.ceyreks), ceyreka: sayi(data.ceyreka),
-                    yarims:  sayi(data.yarims),  yarima:  sayi(data.yarima),
-                    atas:    sayi(data.atas),    ataa:    sayi(data.ataa)
+                    yarims: sayi(data.yarims),   yarima: sayi(data.yarima),
+                    atas: sayi(data.atas),        ataa: sayi(data.ataa)
                 };
-                if (yeni.gram24s > 100) {
-                    canliFiyatlar = yeni;
+
+                if (canliFiyatlar.gram24s > 0) {
                     localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
                     localStorage.setItem("kasam_son_fiyat_zamani", new Date().toISOString());
                     basarili = true;
-                    suankiInterval = 60000;
-                } else throw new Error("Geçersiz veri");
-            } catch (e1) {
-                console.warn("Worker API başarısız:", e1.message);
-
-                // KAYNAK 2: CoinGecko (gram altın TL fiyatı)
-                try {
-                    const ctrl2 = new AbortController();
-                    const tOut2 = setTimeout(() => ctrl2.abort(), 8000);
-                    const r2 = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=gold&vs_currencies=try", { signal: ctrl2.signal });
-                    clearTimeout(tOut2);
-                    if (!r2.ok) throw new Error("HTTP " + r2.status);
-                    const d2 = await r2.json();
-                    const gramTL = d2?.gold?.try;
-                    if (gramTL && gramTL > 100) {
-                        const g = parseFloat(gramTL);
-                        canliFiyatlar = {
-                            gram24s: Math.round(g * 1.005),       gram24a: Math.round(g * 0.995),
-                            gram22s: Math.round(g * 0.917 * 1.005), gram22a: Math.round(g * 0.917 * 0.995),
-                            ceyreks: Math.round(g * 1.75 * 1.005),  ceyreka: Math.round(g * 1.75 * 0.995),
-                            yarims:  Math.round(g * 3.5 * 1.005),   yarima:  Math.round(g * 3.5 * 0.995),
-                            atas:    Math.round(g * 7.0 * 1.005),   ataa:    Math.round(g * 7.0 * 0.995)
-                        };
-                        localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
-                        localStorage.setItem("kasam_son_fiyat_zamani", new Date().toISOString());
-                        basarili = true;
-                        suankiInterval = 120000;
-                    } else throw new Error("Geçersiz CoinGecko verisi");
-                } catch (e2) {
-                    console.warn("CoinGecko da başarısız:", e2.message);
-                    // SON ÇARE: localStorage önbelleği
-                    const yerel = localStorage.getItem("kasam_son_fiyatlar");
-                    if (yerel) { try { canliFiyatlar = JSON.parse(yerel); } catch(e) {} }
-                    suankiInterval = Math.min(suankiInterval * 2, 300000); // exponential backoff, max 5 dk
+                } else {
+                    throw new Error("Geçersiz fiyat verisi");
+                }
+            } catch (error) {
+                console.error("Fiyat güncelleme hatası:", error);
+                const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
+                if (yerelFiyatlar) {
+                    try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
                 }
             }
 
             fiyatlariEkranaYaz();
-            const refreshBtn2 = document.querySelector('.btn-refresh');
-            if (refreshBtn2) refreshBtn2.innerText = "🔄 Güncelle";
+            if (refreshBtn) refreshBtn.innerText = "🔄 Güncelle";
 
             const simdi = new Date();
             const zaman = simdi.getHours().toString().padStart(2,'0') + ":" + simdi.getMinutes().toString().padStart(2,'0');
             const updateEl = document.getElementById("updateTime");
             if (updateEl) {
                 if (basarili) {
-                    updateEl.innerText = "Canlı fiyat • " + zaman;
+                    updateEl.innerText = `Canlı fiyat • ${zaman}`;
                     updateEl.style.color = "var(--green)";
                 } else {
                     const sonZamanStr = localStorage.getItem("kasam_son_fiyat_zamani");
@@ -1112,30 +1042,18 @@
                         const sonZaman = new Date(sonZamanStr);
                         const farkDk = Math.round((simdi - sonZaman) / 60000);
                         if (farkDk < 1) oncekiMetin = "az önce";
-                        else if (farkDk < 60) oncekiMetin = farkDk + " dk önce";
-                        else if (farkDk < 1440) oncekiMetin = Math.round(farkDk / 60) + " sa önce";
-                        else oncekiMetin = Math.round(farkDk / 1440) + " gün önce";
+                        else if (farkDk < 60) oncekiMetin = `${farkDk} dk önce`;
+                        else if (farkDk < 1440) oncekiMetin = `${Math.round(farkDk / 60)} sa önce`;
+                        else oncekiMetin = `${Math.round(farkDk / 1440)} gün önce`;
                     }
-                    updateEl.innerText = "⚠️ Bağlantı yok • son: " + oncekiMetin;
+                    updateEl.innerText = `⚠️ Bağlantı yok, son fiyat: ${oncekiMetin}`;
                     updateEl.style.color = "var(--red)";
                 }
             }
 
             listeyiEkranaBas();
             alarmlariKontrolEt();
-
-            // Zamanlayıcıyı sıfırla
-            if (fiyatYenilemeZamanlayici) clearInterval(fiyatYenilemeZamanlayici);
-            fiyatYenilemeZamanlayici = setInterval(canliFiyatlariYukle, suankiInterval);
         }
-
-        // Pull-to-refresh (sayfanın en üstündeyken aşağı çekince yenile)
-        let ptcBaslangic = 0;
-        document.addEventListener('touchstart', e => { ptcBaslangic = e.touches[0].clientY; }, { passive: true });
-        document.addEventListener('touchend', e => {
-            const fark = e.changedTouches[0].clientY - ptcBaslangic;
-            if (fark > 90 && window.scrollY === 0) canliFiyatlariYukle();
-        }, { passive: true });
 
         // MODAL YARDIMCILARI
         function seciliBirimFiyatAl() {
@@ -1905,6 +1823,7 @@
             if (!fiyat || fiyat <= 0) { alert('Lütfen geçerli bir hedef fiyat girin.'); return; }
             alarmListesi.push({ tur, kosul, fiyat, not, aktif: true, tetiklendi: false, olusturma: new Date().toISOString() });
             localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
             alarmModalKapat();
             alarmListesiniEkranaBas();
             bildirimIzinKontrol();
@@ -1914,6 +1833,7 @@
             if (confirm('Bu alarmı silmek istediğinize emin misiniz?')) {
                 alarmListesi.splice(i, 1);
                 localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
                 alarmListesiniEkranaBas();
             }
         }
@@ -1922,6 +1842,7 @@
             alarmListesi[i].tetiklendi = false;
             alarmListesi[i].aktif = true;
             localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
             alarmListesiniEkranaBas();
         }
 
@@ -1984,6 +1905,7 @@
             });
             if (degisti) {
                 localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
                 alarmListesiniEkranaBas();
                 // Nav butonunda kırmızı nokta göster
                 const navBtn = document.getElementById('navAlarm');
@@ -2202,6 +2124,7 @@
             if (editIdx >= 0) { hedefListesi[editIdx] = item; } else { hedefListesi.push(item); }
 
             localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
             hedefModalKapat();
             hedefListesiniEkranaBas();
         }
@@ -2210,6 +2133,7 @@
             if (confirm('Bu hedefi silmek istediğinize emin misiniz?')) {
                 hedefListesi.splice(i, 1);
                 localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
                 hedefListesiniEkranaBas();
             }
         }
@@ -2271,102 +2195,9 @@
             });
         }
 
-        // ===== V2.6: PIN SİSTEMİ =====
-        let pinGirisi = '';
-        let pinModu = 'giris'; // 'giris' | 'yeniPin' | 'yeniPinTekrar'
-        let pinGecici = '';
-
-        function pinBaslat() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            if (kaydedilmis) {
-                document.getElementById('pinOverlay').classList.add('goster');
-            }
-        }
-
-        function pinTus(rakam) {
-            if (pinGirisi.length >= 4) return;
-            pinGirisi += rakam;
-            pinDotsGuncelle();
-            if (pinGirisi.length === 4) {
-                setTimeout(pinKontrol, 150);
-            }
-        }
-
-        function pinSil() {
-            pinGirisi = pinGirisi.slice(0, -1);
-            pinDotsGuncelle();
-        }
-
-        function pinIptal() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            if (!kaydedilmis) document.getElementById('pinOverlay').classList.remove('goster');
-        }
-
-        function pinDotsGuncelle() {
-            for (let i = 0; i < 4; i++) {
-                const el = document.getElementById('pd' + i);
-                if (el) el.classList.toggle('dolu', i < pinGirisi.length);
-            }
-        }
-
-        function pinKontrol() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            const hataEl = document.getElementById('pinHata');
-            if (pinGirisi === kaydedilmis) {
-                document.getElementById('pinOverlay').classList.remove('goster');
-                hataEl.innerText = '';
-                pinGirisi = '';
-                pinDotsGuncelle();
-            } else {
-                hataEl.innerText = '❌ Yanlış PIN. Tekrar deneyin.';
-                pinGirisi = '';
-                pinDotsGuncelle();
-                setTimeout(() => { hataEl.innerText = ''; }, 2000);
-            }
-        }
-
-        function pinAyarlariniAc() {
-            const var_ = !!localStorage.getItem('kasam_pin');
-            document.getElementById('pinToggle').checked = var_;
-            document.getElementById('pinAyarDetay').style.display = var_ ? 'block' : 'none';
-            document.getElementById('pinYeni').value = '';
-            document.getElementById('pinTekrar').value = '';
-            document.getElementById('pinAyarHata').innerText = '';
-            document.getElementById('pinAyarModal').style.display = 'block';
-        }
-
-        function pinToggleChange() {
-            const acik = document.getElementById('pinToggle').checked;
-            document.getElementById('pinAyarDetay').style.display = acik ? 'block' : 'none';
-            if (!acik) {
-                localStorage.removeItem('kasam_pin');
-                document.getElementById('pinAyarHata').innerText = 'PIN koruması kaldırıldı.';
-                setTimeout(() => { document.getElementById('pinAyarHata').innerText = ''; }, 2000);
-            }
-        }
-
-        function pinKaydet() {
-            const yeni = document.getElementById('pinYeni').value;
-            const tekrar = document.getElementById('pinTekrar').value;
-            const hataEl = document.getElementById('pinAyarHata');
-            if (yeni.length !== 4 || !/^\d{4}$/.test(yeni)) { hataEl.innerText = 'PIN 4 haneli rakam olmalı.'; return; }
-            if (yeni !== tekrar) { hataEl.innerText = 'PIN kodları eşleşmiyor.'; return; }
-            localStorage.setItem('kasam_pin', yeni);
-            hataEl.style.color = 'var(--green)';
-            hataEl.innerText = '✅ PIN başarıyla kaydedildi!';
-            document.getElementById('pinYeni').value = '';
-            document.getElementById('pinTekrar').value = '';
-            setTimeout(() => {
-                hataEl.innerText = '';
-                hataEl.style.color = 'var(--red)';
-                document.getElementById('pinAyarModal').style.display = 'none';
-            }, 1500);
-        }
-
         // BAŞLANGIÇ
         temaYukle();
         fiyatlariEkranaYaz();
-        pinBaslat();
 
         if (window.firestoreHazir) {
             hafizadanVeriYukle();
@@ -2374,7 +2205,8 @@
             document.addEventListener('firestoreHazir', hafizadanVeriYukle);
         }
 
-        canliFiyatlariYukle(); // İlk yüklemede çağır, sonrasını kendi yönetir
+        canliFiyatlariYukle();
+        setInterval(canliFiyatlariYukle, 60000);
     </script>
 </body>
 </html>
