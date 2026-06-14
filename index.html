@@ -72,7 +72,7 @@
         window.firestoreTekilSil = async function(koleksiyon, silinenIndex, toplamUzunluk) {
             try {
                 const batch = db.batch();
-                // silinenIndex'ten sonraki tum dokumanlari bir oncekinin yerine tasi
+                // silinenIndex'ten sonraki tüm dokümanlari bir oncekinin yerine tasi
                 for (let i = silinenIndex + 1; i <= toplamUzunluk; i++) {
                     const kaynak = await db.collection(koleksiyon).doc(`item_${i}`).get();
                     const hedefRef = db.collection(koleksiyon).doc(`item_${i - 1}`);
@@ -82,7 +82,7 @@
                         batch.delete(hedefRef);
                     }
                 }
-                // Son (artik fazla olan) dokumani sil
+                // Son (artık fazla olan) dokümanı sil
                 batch.delete(db.collection(koleksiyon).doc(`item_${toplamUzunluk}`));
                 await batch.commit();
             } catch (e) {
@@ -283,7 +283,7 @@
 
         .live-label-info { font-size: 11px; color: var(--accent-color); float: right; margin-top: 2px; }
 
-        /* V2: Pasta Grafiği */
+        /* Pasta Grafiği */
         .chart-wrapper {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -298,7 +298,7 @@
         .pie-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; }
         .pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-        /* V2: Hedef Sistemi */
+        /* Hedef Sistemi */
         .hedef-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -313,7 +313,7 @@
         .progress-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(to right, var(--accent-color), #ff9500); transition: width 0.6s ease; }
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
-        /* V2: Filtre Butonları */
+        /* Filtre Butonları */
         .filtre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
@@ -325,7 +325,7 @@
         .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
 
-        /* V2.2: Fiyat Alarmı */
+        /* Fiyat Alarmı */
         .alarm-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -407,9 +407,9 @@
         </div>
         <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px; margin-left: auto;">☀️ Açık</button>
         <div class="nav-buttons" style="width: 100%;">
-            <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">Yatırım</button>
+            <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">💎 Yatırım</button>
             <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">📈 Grafik</button>
-            <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">Hedef</button>
+            <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">🎯 Hedef</button>
             <button class="btn" id="navAlarm" onclick="sayfaDegistir('alarm')">🔔 Alarm</button>
         </div>
     </div>
@@ -421,7 +421,7 @@
             <div class="prices-container">
                 <div class="prices-header">
                     <div style="display: flex; align-items: center;">
-                        <span>📊 Finans Paneli</span>
+                        <span>📊 Finans</span>
                         <button class="btn-refresh" onclick="canliFiyatlariYukle()">🔄 Güncelle</button>
                         <button class="btn-refresh" onclick="fiyatAyarlariniAc()" style="color: var(--accent-color);">⚙️ Fiyatları Ayarla</button>
                     </div>
