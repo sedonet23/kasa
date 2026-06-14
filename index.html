@@ -411,7 +411,7 @@
         </select>
 
         <label for-tur="mAmount" style="font-size: 12px; color: var(--text-muted);">Miktar (Adet/Gram):</label>
-        <input type="number" id="mAmount" step="0.0001" placeholder="Örn: 3,1348 veya 1" oninput="miktarDegisti()">
+        <input type="number" id="mAmount" step="0.0001" placeholder="Örn:1" oninput="miktarDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);">
             Birim Fiyat (TL):
@@ -423,7 +423,7 @@
         <input type="number" id="mCost" placeholder="Örn: 10370" oninput="maliyetDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);">Not / Açıklama:</label>
-        <input type="text" id="mNote" placeholder="Örn: Yapı Kredi">
+        <input type="text" id="mNote" placeholder="Örn: Kuyumcu">
 
         <label style="font-size: 12px; color: var(--text-muted);">Tarih:</label>
         <input type="date" id="mDate">
@@ -745,15 +745,18 @@
             const islem = document.getElementById("mIslem").value;
             const tur = document.getElementById("mType").value;
             const infoEl = document.getElementById("livePriceInfo");
-            if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alis" : "Satis"} fiyati)`;
+            if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alış" : "Satış"} Fiyatı)`;
             // Miktar label dinamik
             const amountLabel = document.querySelector('label[for-tur="mAmount"]');
             const birimAdi = (tur === "gram24" || tur === "gram22") ? "Gram" : "Adet";
             if (amountLabel) amountLabel.childNodes[0].textContent = `Miktar (${birimAdi}): `;
-            // Sadece yeni kayit modunda (editIndex == -1) guncel fiyati yaz
+            // Yeni kayit modunda (editIndex == -1) tur degisince guncel fiyati her zaman yaz
             const editIndex = parseInt(document.getElementById("editIndex").value);
             const unitEl = document.getElementById("mUnitPrice");
-            if (unitEl && birim > 0 && editIndex === -1 && !unitEl.value) unitEl.value = birim;
+            if (unitEl && birim > 0 && editIndex === -1) {
+                unitEl.value = birim;
+                birimFiyatDegisti();
+            }
             if (document.getElementById("mAmount").value) miktarDegisti();
         }
 
@@ -1087,14 +1090,14 @@
             }
 
             const isimTR = {
-                "gram24": "Gram Altın 24A",
+                "gram24": "24 Ayar Gram Altın",
                 "gram22": "22 Ayar Bilezik",
                 "ceyrek": "Çeyrek Altın",
                 "yarim":  "Yarım Altın",
-                "ata":    "Ata Lira"
+                "ata":    "Tam Altın"
             }[item.type] || isim;
             document.getElementById("detayBaslik").innerText = (islem === "alis" ? "Alış" : "Satış") + " — " + isimTR;
-            document.getElementById("detayNot").innerText = item.note.toUpperCase();
+            //document.getElementById("detayNot").innerText = item.note.toUpperCase();
             document.getElementById("detayIcerik").innerHTML = detayIcerik;
             document.getElementById("detayModal").style.display = "block";
         }
