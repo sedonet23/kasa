@@ -949,18 +949,66 @@
                         } catch (e) { butceListesi = []; }
                     }
                 }
+
+                // V2.7: ALARMLAR FIRESTORE'DAN YÜKLE
+                const alarmData = await window.firestoreYukle("alarmlar");
+                if (alarmData && alarmData.length > 0) {
+                    alarmListesi = alarmData;
+                } else {
+                    const yerelAlarm = localStorage.getItem('kasam_alarmlar');
+                    if (yerelAlarm) {
+                        try {
+                            alarmListesi = JSON.parse(yerelAlarm);
+                            if (alarmListesi.length > 0) await window.firestoreKaydet("alarmlar", alarmListesi);
+                        } catch (e) { alarmListesi = []; }
+                    }
+                }
+                alarmListesiniEkranaBas();
+
+                // V2.7: HEDEFLER FIRESTORE'DAN YÜKLE
+                const hedefData = await window.firestoreYukle("hedefler");
+                if (hedefData && hedefData.length > 0) {
+                    hedefListesi = hedefData;
+                } else {
+                    const yerelHedef = localStorage.getItem('kasam_hedefler');
+                    if (yerelHedef) {
+                        try {
+                            hedefListesi = JSON.parse(yerelHedef);
+                            if (hedefListesi.length > 0) await window.firestoreKaydet("hedefler", hedefListesi);
+                        } catch (e) { hedefListesi = []; }
+                    }
+                }
+                hedefListesiniEkranaBas();
+
+                // V2.7: PIN FIRESTORE'DAN YÜKLE
+                const pinData = await window.firestoreYukle("ayarlar");
+                const pinKaydi = pinData ? pinData.find(d => d._id === 'pin') : null;
+                if (pinKaydi && pinKaydi.pin) {
+                    localStorage.setItem('kasam_pin', pinKaydi.pin);
+                } else if (pinKaydi && pinKaydi.pin === '') {
+                    localStorage.removeItem('kasam_pin');
+                } else {
+                    const yerelPin = localStorage.getItem('kasam_pin');
+                    if (yerelPin) {
+                        await window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: yerelPin });
+                    }
+                }
+                pinBaslat();
             } catch (e) {
                 console.warn("Firestore erişilemedi:", e);
                 const yerelVeri = localStorage.getItem("kasam_portfoy");
                 if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch (e) {} }
                 const yerelButce = localStorage.getItem("kasam_butce");
                 if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch (e) {} }
+                alarmVerisiniYukle();
+                hedefVerisiniYukle();
+                pinBaslat();
             }
 
             listeyiEkranaBas();
         }
 
-        // V2.3: HEDEF VERİSİ YÜKLE (localStorage)
+        // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
         function hedefVerisiniYukle() {
             const yerel = localStorage.getItem('kasam_hedefler');
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
@@ -1863,6 +1911,7 @@
             if (!fiyat || fiyat <= 0) { alert('Lütfen geçerli bir hedef fiyat girin.'); return; }
             alarmListesi.push({ tur, kosul, fiyat, not, aktif: true, tetiklendi: false, olusturma: new Date().toISOString() });
             localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
             alarmModalKapat();
             alarmListesiniEkranaBas();
             bildirimIzinKontrol();
@@ -1872,6 +1921,7 @@
             if (confirm('Bu alarmı silmek istediğinize emin misiniz?')) {
                 alarmListesi.splice(i, 1);
                 localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
                 alarmListesiniEkranaBas();
             }
         }
@@ -1880,6 +1930,7 @@
             alarmListesi[i].tetiklendi = false;
             alarmListesi[i].aktif = true;
             localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
             alarmListesiniEkranaBas();
         }
 
@@ -1942,6 +1993,7 @@
             });
             if (degisti) {
                 localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("alarmlar", alarmListesi);
                 alarmListesiniEkranaBas();
                 // Nav butonunda kırmızı nokta göster
                 const navBtn = document.getElementById('navAlarm');
@@ -2160,6 +2212,7 @@
             if (editIdx >= 0) { hedefListesi[editIdx] = item; } else { hedefListesi.push(item); }
 
             localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
             hedefModalKapat();
             hedefListesiniEkranaBas();
         }
@@ -2168,6 +2221,7 @@
             if (confirm('Bu hedefi silmek istediğinize emin misiniz?')) {
                 hedefListesi.splice(i, 1);
                 localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
                 hedefListesiniEkranaBas();
             }
         }
@@ -2298,6 +2352,7 @@
             document.getElementById('pinAyarDetay').style.display = acik ? 'block' : 'none';
             if (!acik) {
                 localStorage.removeItem('kasam_pin');
+                if (window.firestoreTekilKaydet) window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: '' });
                 document.getElementById('pinAyarHata').innerText = 'PIN koruması kaldırıldı.';
                 setTimeout(() => { document.getElementById('pinAyarHata').innerText = ''; }, 2000);
             }
@@ -2310,6 +2365,7 @@
             if (yeni.length !== 4 || !/^\d{4}$/.test(yeni)) { hataEl.innerText = 'PIN 4 haneli rakam olmalı.'; return; }
             if (yeni !== tekrar) { hataEl.innerText = 'PIN kodları eşleşmiyor.'; return; }
             localStorage.setItem('kasam_pin', yeni);
+            if (window.firestoreTekilKaydet) window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: yeni });
             hataEl.style.color = 'var(--green)';
             hataEl.innerText = '✅ PIN başarıyla kaydedildi!';
             document.getElementById('pinYeni').value = '';
