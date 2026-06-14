@@ -166,6 +166,13 @@
             border-color: var(--accent-color);
         }
 
+        button.btn-active,
+        button.btn.btn-active,
+        .nav-buttons button.btn-active,
+        .filtre-btn.aktif {
+            color: #000 !important;
+        }
+
         .container { max-width: 1200px; margin: 0 auto; }
         .page-section { display: none; }
         .page-section.active-page { display: block; }
@@ -275,9 +282,174 @@
         }
 
         .live-label-info { font-size: 11px; color: var(--accent-color); float: right; margin-top: 2px; }
+
+        /* V2: Pasta Grafiği */
+        .chart-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .chart-title { font-size: 13px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        #pieCanvas { flex-shrink: 0; }
+        .pie-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .pie-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+        .pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+        /* V2: Hedef Sistemi */
+        .hedef-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 15px;
+            margin-bottom: 10px;
+        }
+        .hedef-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .hedef-baslik { font-weight: bold; font-size: 14px; }
+        .hedef-yuzde { font-size: 13px; font-weight: bold; color: var(--accent-color); }
+        .progress-bar-bg { background: var(--panel-bg); border-radius: 6px; height: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(to right, var(--accent-color), #ff9500); transition: width 0.6s ease; }
+        .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+        /* V2: Filtre Butonları */
+        .filtre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+        .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
+
+        /* V2: PIN Kilit Ekranı */
+        #pinOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--bg-color);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        #pinOverlay.goster { display: flex; }
+        .pin-logo { font-size: 28px; font-weight: bold; color: var(--accent-color); }
+        .pin-sub { color: var(--text-muted); font-size: 13px; margin-top: -12px; }
+        .pin-dots { display: flex; gap: 14px; margin: 8px 0; }
+        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-color); transition: background 0.15s; }
+        .pin-dot.dolu { background: var(--accent-color); }
+        .pin-numpad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px; }
+        .pin-key { width: 64px; height: 64px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--border); font-size: 22px; font-weight: bold; color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+        .pin-key:active { background: var(--accent-color); color: #000; }
+        .pin-hata { color: var(--red); font-size: 13px; min-height: 18px; }
+        .pin-ayar-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .pin-ayar-label { font-size: 14px; }
+        .toggle-switch { position: relative; width: 44px; height: 24px; }
+        .toggle-switch input { display: none; }
+        .toggle-slider { position: absolute; inset: 0; background: var(--panel-bg); border-radius: 12px; cursor: pointer; transition: 0.3s; border: 1px solid var(--border); }
+        .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: 0.3s; }
+        .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
+
+        /* V2.2: Fiyat Alarmı */
+        .alarm-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .alarm-item.tetiklendi {
+            border-color: var(--accent-color);
+            background: rgba(255,204,0,0.06);
+        }
+        .alarm-item.pasif {
+            opacity: 0.5;
+        }
+        .alarm-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+        .alarm-badge.yukari { background: rgba(46,204,113,0.18); color: var(--green); }
+        .alarm-badge.asagi  { background: rgba(255,77,77,0.18);  color: var(--red); }
+        .alarm-badge.ok     { background: rgba(255,204,0,0.18);  color: var(--accent-color); }
+
+        /* Bildirim Banner */
+        #alarmBanner {
+            display: none;
+            position: fixed;
+            top: 16px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 12px 20px;
+            border-radius: 14px;
+            z-index: 9998;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+            max-width: 340px;
+            width: 90%;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; top: 0; }
+            to   { opacity: 1; top: 16px; }
+        }
+
+        /* Bildirim izin butonu */
+        #bildirimIzinBar {
+            display: none;
+            background: rgba(255,204,0,0.12);
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- V2.6: PIN Kilit Ekranı -->
+    <div id="pinOverlay">
+        <div class="pin-logo">🔒 Kasam</div>
+        <div class="pin-sub">PIN kodunuzu girin</div>
+        <div class="pin-dots">
+            <div class="pin-dot" id="pd0"></div>
+            <div class="pin-dot" id="pd1"></div>
+            <div class="pin-dot" id="pd2"></div>
+            <div class="pin-dot" id="pd3"></div>
+        </div>
+        <div class="pin-hata" id="pinHata"></div>
+        <div class="pin-numpad">
+            <button class="pin-key" onclick="pinTus('1')">1</button>
+            <button class="pin-key" onclick="pinTus('2')">2</button>
+            <button class="pin-key" onclick="pinTus('3')">3</button>
+            <button class="pin-key" onclick="pinTus('4')">4</button>
+            <button class="pin-key" onclick="pinTus('5')">5</button>
+            <button class="pin-key" onclick="pinTus('6')">6</button>
+            <button class="pin-key" onclick="pinTus('7')">7</button>
+            <button class="pin-key" onclick="pinTus('8')">8</button>
+            <button class="pin-key" onclick="pinTus('9')">9</button>
+            <button class="pin-key" style="font-size:14px; color:var(--text-muted);" onclick="pinSil()">⌫</button>
+            <button class="pin-key" onclick="pinTus('0')">0</button>
+            <button class="pin-key" style="font-size:13px; color:var(--text-muted);" onclick="pinIptal()">✕</button>
+        </div>
+    </div>
+
+    <!-- Alarm Banner -->
+    <div id="alarmBanner"></div>
 
     <div class="header">
         <div class="logo-area">
@@ -286,8 +458,11 @@
         </div>
         <div class="nav-buttons">
             <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px;">☀️ Açık</button>
+            <button class="btn" onclick="pinAyarlariniAc()" style="font-size: 13px; padding: 6px 10px;" title="PIN Ayarları">🔒</button>
             <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">Yatırım</button>
             <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">Bütçe</button>
+            <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">Hedef</button>
+            <button class="btn" id="navAlarm" onclick="sayfaDegistir('alarm')">🔔 Alarm</button>
         </div>
     </div>
 
@@ -383,6 +558,14 @@
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Özetim</h3>
                 </div>
+                <!-- V2.1: Portföy Dağılımı Pasta Grafiği -->
+                <div class="chart-wrapper" id="pastaGrafikWrapper" style="display:none;">
+                    <div class="chart-title">🥧 Portföy Dağılımı</div>
+                    <div class="chart-row">
+                        <canvas id="pieCanvas" width="120" height="120"></canvas>
+                        <div class="pie-legend" id="pieLegend"></div>
+                    </div>
+                </div>
                 <div id="assetSummary" class="list-container"></div>
             </div>
 
@@ -395,6 +578,17 @@
                         <input type="file" id="yatirimYedekDosya" accept="application/json,.json" style="display:none" onchange="yatirimYedekYukle(event)">
                         <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
                     </div>
+                </div>
+                <!-- V2.5: Gelişmiş Filtreler -->
+                <div class="filtre-row" id="filtreRow">
+                    <button class="filtre-btn aktif" onclick="filtreAyarla('hepsi', this)">Tümü</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('satis', this)">📤 Satışlar</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('gram24', this)">24A Gram</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('gram22', this)">22A Bilezik</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('ceyrek', this)">Çeyrek</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('yarim', this)">Yarım</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('ata', this)">Tam</button>
                 </div>
                 <div id="investmentList" class="list-container"></div>
             </div>
@@ -416,6 +610,11 @@
                     <div class="summary-val" id="b-netCash">₺0</div>
                 </div>
             </div>
+            <!-- V2.4: Kategori Grafiği -->
+            <div class="chart-wrapper" id="butceGrafikWrapper" style="display:none;">
+                <div class="chart-title">📊 Gider Dağılımı</div>
+                <canvas id="butceGrafik"></canvas>
+            </div>
             <div>
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Gelir / Gider Hareketleri</h3>
@@ -425,9 +624,116 @@
             </div>
         </div>
 
+        <!-- V2.3: HEDEF SAYFASI -->
+        <div id="pageHedef" class="page-section">
+            <div class="section-header">
+                <h3 style="margin: 0; font-weight: 500; font-size: 16px;">🎯 Hedeflerim</h3>
+                <button class="btn btn-active" onclick="hedefModalAc()" style="padding: 5px 12px; font-size: 13px;">+ Hedef Ekle</button>
+            </div>
+            <div id="hedefList" class="list-container"></div>
+        </div>
+
+        <!-- V2.2: ALARM SAYFASI -->
+        <div id="pageAlarm" class="page-section">
+            <div id="bildirimIzinBar">
+                <span>🔔 Tarayıcı bildirimleri için izin verin</span>
+                <button class="btn btn-active" onclick="bildirimIzniIste()" style="padding: 5px 12px; font-size: 13px; white-space:nowrap;">İzin Ver</button>
+            </div>
+            <div class="section-header">
+                <h3 style="margin: 0; font-weight: 500; font-size: 16px;">🔔 Fiyat Alarmlarım</h3>
+                <button class="btn btn-active" onclick="alarmModalAc()" style="padding: 5px 12px; font-size: 13px;">+ Alarm Ekle</button>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; padding: 0 2px;">
+                Fiyatlar her 60 saniyede güncellenir. Uygulama açıkken alarm tetiklendiğinde bildirim ve ses gelir.
+            </div>
+            <div id="alarmList" class="list-container"></div>
+        </div>
+
     </div>
 
-    <!-- YATIRIM EKLEME MODALİ -->
+    <!-- V2.2: ALARM EKLEME MODALİ -->
+    <div id="alarmModal" class="modal">
+        <h3 style="margin-top: 0; font-size: 16px;">🔔 Fiyat Alarmı Kur</h3>
+
+        <label style="font-size: 12px; color: var(--text-muted);">Altın Türü:</label>
+        <select id="alTur">
+            <option value="gram24s">24A Gram Altın — Satış</option>
+            <option value="gram24a">24A Gram Altın — Alış</option>
+            <option value="gram22s">22 Ayar Bilezik — Satış</option>
+            <option value="gram22a">22 Ayar Bilezik — Alış</option>
+            <option value="ceyreks">Çeyrek Altın — Satış</option>
+            <option value="ceyreka">Çeyrek Altın — Alış</option>
+            <option value="yarims">Yarım Altın — Satış</option>
+            <option value="yarima">Yarım Altın — Alış</option>
+            <option value="atas">Tam Altın — Satış</option>
+            <option value="ataa">Tam Altın — Alış</option>
+        </select>
+
+        <label style="font-size: 12px; color: var(--text-muted);">Koşul:</label>
+        <select id="alKosul">
+            <option value="gte">≥ Fiyat ulaşınca veya geçince (yukarı)</option>
+            <option value="lte">≤ Fiyat düşünce veya altına inince (aşağı)</option>
+        </select>
+
+        <label style="font-size: 12px; color: var(--text-muted);">Hedef Fiyat (₺):</label>
+        <input type="number" id="alFiyat" placeholder="Örn: 4500">
+
+        <label style="font-size: 12px; color: var(--text-muted);">Not (isteğe bağlı):</label>
+        <input type="text" id="alNot" placeholder="Örn: Çeyrek almak için">
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-active" onclick="alarmKaydet()" style="flex: 1; font-size: 13px;">Kaydet</button>
+            <button class="btn" onclick="alarmModalKapat()" style="flex: 1; font-size: 13px;">İptal</button>
+        </div>
+    </div>
+
+    <!-- V2.3: HEDEF EKLEME MODALİ -->
+    <div id="hedefModal" class="modal">
+        <h3 id="hedefModalTitle" style="margin-top: 0; font-size: 16px;">Yeni Hedef Ekle</h3>
+        <input type="hidden" id="hedefEditIndex" value="-1">
+
+        <label style="font-size: 12px; color: var(--text-muted);">Hedef Adı:</label>
+        <input type="text" id="hBaslik" placeholder="Örn: 100 Gram Altın">
+
+        <label style="font-size: 12px; color: var(--text-muted);">Hedef Türü:</label>
+        <select id="hTur">
+            <option value="tlDeger">₺ Değer (TL)</option>
+            <option value="gram24">24A Gram Altın (Gram)</option>
+            <option value="gram22">22 Ayar Bilezik (Gram)</option>
+            <option value="ceyrek">Çeyrek Altın (Adet)</option>
+            <option value="yarim">Yarım Altın (Adet)</option>
+            <option value="ata">Tam Altın (Adet)</option>
+        </select>
+
+        <label style="font-size: 12px; color: var(--text-muted);">Hedef Miktar:</label>
+        <input type="number" id="hHedef" placeholder="Örn: 100">
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-active" onclick="hedefKaydet()" style="flex: 1; font-size: 13px;">Kaydet</button>
+            <button class="btn" onclick="hedefModalKapat()" style="flex: 1; font-size: 13px;">İptal</button>
+        </div>
+    </div>
+
+    <!-- V2.6: PIN AYARLARI MODALİ -->
+    <div id="pinAyarModal" class="modal" style="max-width: 320px;">
+        <h3 style="margin-top: 0; font-size: 16px;">🔒 PIN Güvenliği</h3>
+        <div class="pin-ayar-row">
+            <span class="pin-ayar-label">PIN Koruması</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="pinToggle" onchange="pinToggleChange()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div id="pinAyarDetay" style="display:none; margin-top:14px;">
+            <label style="font-size: 12px; color: var(--text-muted);">Yeni 4 Haneli PIN:</label>
+            <input type="password" id="pinYeni" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
+            <label style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display:block;">PIN Tekrar:</label>
+            <input type="password" id="pinTekrar" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
+            <div id="pinAyarHata" style="color:var(--red); font-size:12px; min-height:16px; margin-top:4px;"></div>
+            <button class="btn btn-active" onclick="pinKaydet()" style="width:100%; margin-top:10px; font-size:13px;">PIN Kaydet</button>
+        </div>
+        <button class="btn" onclick="document.getElementById('pinAyarModal').style.display='none'" style="width:100%; margin-top:10px; font-size:13px;">Kapat</button>
+    </div>
     <div id="addModal" class="modal">
         <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni İşlem Ekle</h3>
         <input type="hidden" id="editIndex" value="-1">
@@ -566,6 +872,8 @@
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
             document.getElementById('navYatirim').classList.remove('btn-active');
             document.getElementById('navButce').classList.remove('btn-active');
+            document.getElementById('navHedef').classList.remove('btn-active');
+            document.getElementById('navAlarm').classList.remove('btn-active');
 
             if (sayfaIsmi === 'yatirim') {
                 document.getElementById('pageYatirim').classList.add('active-page');
@@ -574,6 +882,16 @@
                 document.getElementById('pageButce').classList.add('active-page');
                 document.getElementById('navButce').classList.add('btn-active');
                 butceListesiniEkranaBas();
+            } else if (sayfaIsmi === 'hedef') {
+                document.getElementById('pageHedef').classList.add('active-page');
+                document.getElementById('navHedef').classList.add('btn-active');
+                hedefListesiniEkranaBas();
+            } else if (sayfaIsmi === 'alarm') {
+                document.getElementById('pageAlarm').classList.add('active-page');
+                document.getElementById('navAlarm').classList.add('btn-active');
+                document.getElementById('navAlarm').innerText = '🔔 Alarm'; // kırmızı noktayı temizle
+                alarmListesiniEkranaBas();
+                bildirimIzinKontrol();
             }
         }
 
@@ -641,6 +959,13 @@
 
             listeyiEkranaBas();
         }
+
+        // V2.3: HEDEF VERİSİ YÜKLE (localStorage)
+        function hedefVerisiniYukle() {
+            const yerel = localStorage.getItem('kasam_hedefler');
+            if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
+        }
+        hedefVerisiniYukle();
 
         // FİYAT EKRANA YAZ
         function fiyatlariEkranaYaz() {
@@ -767,6 +1092,7 @@
             }
 
             listeyiEkranaBas();
+            alarmlariKontrolEt();
         }
 
         // MODAL YARDIMCILARI
@@ -907,9 +1233,16 @@
             if (!container) return;
             container.innerHTML = "";
 
+            // V2.5: Filtre uygula
+            const filtreli = yatirimlarListesi.filter(item => {
+                if (aktifFiltre === 'hepsi') return true;
+                if (aktifFiltre === 'alis' || aktifFiltre === 'satis') return (item.islem || 'alis') === aktifFiltre;
+                return item.type === aktifFiltre;
+            });
+
             // Tarihe gore sirala (yeniden eskiye)
-            const sirali = yatirimlarListesi
-                .map((item, index) => ({ ...item, _idx: index }))
+            const sirali = filtreli
+                .map((item) => ({ ...item, _idx: yatirimlarListesi.indexOf(item) }))
                 .sort((a, b) => {
                     const tarihCevir = (t) => {
                         if (!t) return 0;
@@ -1070,6 +1403,9 @@
                 `;
                 container.innerHTML += toplamHtml;
             }
+
+            // V2.1: Pasta grafiği çiz
+            pastaGrafikiCiz(ozet);
         }
 
         // DETAY POPUP
@@ -1488,11 +1824,507 @@
             const netEl = document.getElementById("b-netCash");
             netEl.innerText = "₺" + netCash.toLocaleString('tr-TR');
             netEl.style.color = netCash >= 0 ? "var(--text-color)" : "var(--red)";
+
+            // V2.4: Bütçe kategori grafiği
+            setTimeout(butceGrafikiCiz, 50);
+        }
+
+        // ===== V2.2: FİYAT ALARMI SİSTEMİ =====
+        let alarmListesi = [];
+
+        const ALARM_TUR_ISIM = {
+            gram24s: '24A Gram — Satış', gram24a: '24A Gram — Alış',
+            gram22s: '22A Bilezik — Satış', gram22a: '22A Bilezik — Alış',
+            ceyreks: 'Çeyrek — Satış', ceyreka: 'Çeyrek — Alış',
+            yarims:  'Yarım — Satış',  yarima:  'Yarım — Alış',
+            atas:    'Tam Altın — Satış', ataa:  'Tam Altın — Alış'
+        };
+
+        function alarmVerisiniYukle() {
+            try { alarmListesi = JSON.parse(localStorage.getItem('kasam_alarmlar') || '[]'); } catch(e) { alarmListesi = []; }
+        }
+        alarmVerisiniYukle();
+
+        function alarmModalAc() {
+            document.getElementById('alFiyat').value = '';
+            document.getElementById('alNot').value = '';
+            document.getElementById('alarmModal').style.display = 'block';
+        }
+
+        function alarmModalKapat() {
+            document.getElementById('alarmModal').style.display = 'none';
+        }
+
+        function alarmKaydet() {
+            const tur = document.getElementById('alTur').value;
+            const kosul = document.getElementById('alKosul').value;
+            const fiyat = parseFloat(document.getElementById('alFiyat').value);
+            const not = document.getElementById('alNot').value.trim();
+            if (!fiyat || fiyat <= 0) { alert('Lütfen geçerli bir hedef fiyat girin.'); return; }
+            alarmListesi.push({ tur, kosul, fiyat, not, aktif: true, tetiklendi: false, olusturma: new Date().toISOString() });
+            localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            alarmModalKapat();
+            alarmListesiniEkranaBas();
+            bildirimIzinKontrol();
+        }
+
+        function alarmSil(i) {
+            if (confirm('Bu alarmı silmek istediğinize emin misiniz?')) {
+                alarmListesi.splice(i, 1);
+                localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                alarmListesiniEkranaBas();
+            }
+        }
+
+        function alarmSifirla(i) {
+            alarmListesi[i].tetiklendi = false;
+            alarmListesi[i].aktif = true;
+            localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+            alarmListesiniEkranaBas();
+        }
+
+        function alarmListesiniEkranaBas() {
+            const container = document.getElementById('alarmList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (alarmListesi.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:30px;">Henüz alarm kurulmamış.<br><br>🔔 Fiyat hedefi belirleyerek alarm ekleyin.</div>`;
+                return;
+            }
+
+            alarmListesi.forEach((alarm, i) => {
+                const guncelFiyat = canliFiyatlar[alarm.tur] || 0;
+                const kosulMetin = alarm.kosul === 'gte' ? '≥' : '≤';
+                const yonClass = alarm.kosul === 'gte' ? 'yukari' : 'asagi';
+                const yonEmoji = alarm.kosul === 'gte' ? '📈' : '📉';
+                const durum = alarm.tetiklendi
+                    ? `<span class="alarm-badge ok">✅ TETİKLENDİ</span>`
+                    : (alarm.aktif ? `<span class="alarm-badge ${yonClass}">${yonEmoji} Bekliyor</span>` : `<span class="alarm-badge" style="background:var(--panel-bg); color:var(--text-muted);">⏸ Pasif</span>`);
+
+                const sifirBtn = alarm.tetiklendi
+                    ? `<button class="btn-action" onclick="alarmSifirla(${i})" title="Alarmı sıfırla" style="font-size:12px;">🔄</button>`
+                    : '';
+
+                container.innerHTML += `
+                    <div class="alarm-item ${alarm.tetiklendi ? 'tetiklendi' : ''} ${!alarm.aktif && !alarm.tetiklendi ? 'pasif' : ''}">
+                        <div>
+                            <div style="font-weight:bold; font-size:14px;">${ALARM_TUR_ISIM[alarm.tur] || alarm.tur} ${durum}</div>
+                            <div style="font-size:13px; margin-top:4px;">
+                                Hedef: <span style="color:var(--accent-color); font-weight:bold;">${kosulMetin} ₺${alarm.fiyat.toLocaleString('tr-TR')}</span>
+                                &nbsp;•&nbsp; Güncel: <span style="font-weight:bold;">₺${guncelFiyat.toLocaleString('tr-TR')}</span>
+                            </div>
+                            ${alarm.not ? `<div style="font-size:11px; color:var(--text-muted); margin-top:3px;">📝 ${alarm.not}</div>` : ''}
+                        </div>
+                        <div style="display:flex; gap:4px; align-items:center;">
+                            ${sifirBtn}
+                            <button class="btn-action" onclick="alarmSil(${i})" style="color:var(--red);">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Alarm kontrol — her fiyat güncellendiğinde çağrılır
+        function alarmlariKontrolEt() {
+            let degisti = false;
+            alarmListesi.forEach((alarm, i) => {
+                if (!alarm.aktif || alarm.tetiklendi) return;
+                const guncel = canliFiyatlar[alarm.tur];
+                if (!guncel) return;
+                const tetiklendi = alarm.kosul === 'gte' ? guncel >= alarm.fiyat : guncel <= alarm.fiyat;
+                if (tetiklendi) {
+                    alarmListesi[i].tetiklendi = true;
+                    alarmListesi[i].aktif = false;
+                    degisti = true;
+                    alarmBildirimGonder(alarm, guncel);
+                }
+            });
+            if (degisti) {
+                localStorage.setItem('kasam_alarmlar', JSON.stringify(alarmListesi));
+                alarmListesiniEkranaBas();
+                // Nav butonunda kırmızı nokta göster
+                const navBtn = document.getElementById('navAlarm');
+                if (navBtn) navBtn.innerText = '🔔 Alarm 🔴';
+            }
+        }
+
+        function alarmBildirimGonder(alarm, guncelFiyat) {
+            const isim = ALARM_TUR_ISIM[alarm.tur] || alarm.tur;
+            const kosulMetin = alarm.kosul === 'gte' ? '≥' : '≤';
+            const mesaj = `🔔 ${isim}\n${kosulMetin} ₺${alarm.fiyat.toLocaleString('tr-TR')} hedefine ulaştı!\nGüncel: ₺${guncelFiyat.toLocaleString('tr-TR')}`;
+
+            // Ekran içi banner
+            const banner = document.getElementById('alarmBanner');
+            if (banner) {
+                banner.innerHTML = `🔔 <b>${isim}</b><br>₺${guncelFiyat.toLocaleString('tr-TR')} — Hedefe ulaştı!${alarm.not ? '<br><small>' + alarm.not + '</small>' : ''}`;
+                banner.style.display = 'block';
+                setTimeout(() => { banner.style.display = 'none'; }, 7000);
+            }
+
+            // Tarayıcı bildirimi
+            if (Notification.permission === 'granted') {
+                new Notification('🔔 Kasam — Fiyat Alarmı', {
+                    body: mesaj,
+                    icon: 'icon-192.png',
+                    tag: 'kasam-alarm-' + Date.now()
+                });
+            }
+
+            // Ses (kısa bip)
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.15, 0.3].forEach(t => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.frequency.value = 880;
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.12);
+                    osc.start(ctx.currentTime + t);
+                    osc.stop(ctx.currentTime + t + 0.12);
+                });
+            } catch(e) {}
+        }
+
+        // Bildirim izni
+        function bildirimIzinKontrol() {
+            const bar = document.getElementById('bildirimIzinBar');
+            if (!bar) return;
+            if (Notification.permission === 'default') {
+                bar.style.display = 'flex';
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function bildirimIzniIste() {
+            Notification.requestPermission().then(p => {
+                bildirimIzinKontrol();
+                if (p === 'granted') {
+                    new Notification('✅ Kasam', { body: 'Bildirimler etkinleştirildi! Fiyat alarmları çalışacak.' });
+                }
+            });
+        }
+
+        // ===== V2.5: FİLTRE SİSTEMİ =====
+        let aktifFiltre = 'hepsi';
+
+        function filtreAyarla(filtre, btn) {
+            aktifFiltre = filtre;
+            document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            btn.classList.add('aktif');
+            listeyiEkranaBas();
+        }
+
+        // ===== V2.1: PASTA GRAFİĞİ =====
+        const PIE_RENKLER = {
+            gram24: '#F5A623',
+            gram22: '#E8920F',
+            ceyrek: '#2ecc71',
+            yarim:  '#3498db',
+            ata:    '#9b59b6'
+        };
+
+        function pastaGrafikiCiz(ozet) {
+            const canvas = document.getElementById('pieCanvas');
+            const legend = document.getElementById('pieLegend');
+            const wrapper = document.getElementById('pastaGrafikWrapper');
+            if (!canvas || !legend) return;
+
+            const parcalar = [];
+            let toplam = 0;
+
+            Object.keys(TUR_BILGI).forEach(t => {
+                const net = ozet[t].net;
+                if (net <= 0) return;
+                const deger = net * turGuncelAlisFiyati(t);
+                if (deger > 0) { parcalar.push({ t, deger }); toplam += deger; }
+            });
+
+            if (parcalar.length === 0) { wrapper.style.display = 'none'; return; }
+            wrapper.style.display = 'block';
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 120, 120);
+            let aci = -Math.PI / 2;
+            const cx = 60, cy = 60, r = 54;
+
+            parcalar.forEach(p => {
+                const dilim = (p.deger / toplam) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, aci, aci + dilim);
+                ctx.closePath();
+                ctx.fillStyle = PIE_RENKLER[p.t] || '#aaa';
+                ctx.fill();
+                aci += dilim;
+            });
+
+            // Ortada delik (donut)
+            ctx.beginPath();
+            ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+            const bg = getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim();
+            ctx.fillStyle = bg || '#141414';
+            ctx.fill();
+
+            legend.innerHTML = parcalar.map(p => {
+                const yuzde = ((p.deger / toplam) * 100).toFixed(1);
+                return `<div class="pie-legend-item"><div class="pie-dot" style="background:${PIE_RENKLER[p.t]}"></div><span style="color:var(--text-muted)">${TUR_BILGI[p.t].isim}</span><span style="margin-left:auto;font-weight:bold;">%${yuzde}</span></div>`;
+            }).join('');
+        }
+
+        // ===== V2.4: BÜTÇE KATEGORİ GRAFİĞİ =====
+        function butceGrafikiCiz() {
+            const canvas = document.getElementById('butceGrafik');
+            const wrapper = document.getElementById('butceGrafikWrapper');
+            if (!canvas) return;
+
+            const kategoriler = {};
+            butceListesi.forEach(item => {
+                if (item.type !== 'gider') return;
+                const kat = item.note || 'Diğer';
+                kategoriler[kat] = (kategoriler[kat] || 0) + item.amount;
+            });
+
+            const girdi = Object.entries(kategoriler).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            if (girdi.length === 0) { wrapper.style.display = 'none'; return; }
+            wrapper.style.display = 'block';
+
+            const toplam = girdi.reduce((s, [, v]) => s + v, 0);
+            const renkler = ['#F5A623','#2ecc71','#3498db','#9b59b6','#e74c3c','#1abc9c'];
+            const barH = 20, gap = 10, pad = 8;
+            const topPad = 10;
+            const genislik = canvas.offsetWidth || 280;
+            canvas.width = genislik;
+            canvas.height = topPad + girdi.length * (barH + gap);
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+            const textMain = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+
+            girdi.forEach(([kat, val], i) => {
+                const y = topPad + i * (barH + gap);
+                const yuzde = val / toplam;
+                const maxW = canvas.width - pad * 2 - 90;
+                const barW = yuzde * maxW;
+
+                ctx.fillStyle = textColor;
+                ctx.font = '11px Segoe UI';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(kat.length > 14 ? kat.slice(0, 13) + '…' : kat, pad, y + barH / 2);
+
+                const barX = pad + 90;
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.roundRect(barX, y, maxW, barH, 4);
+                ctx.fill();
+
+                ctx.fillStyle = renkler[i % renkler.length];
+                ctx.beginPath();
+                ctx.roundRect(barX, y, barW, barH, 4);
+                ctx.fill();
+
+                ctx.fillStyle = textMain;
+                ctx.font = 'bold 11px Segoe UI';
+                ctx.fillText(`%${(yuzde * 100).toFixed(0)}`, barX + barW + 5, y + barH / 2);
+            });
+        }
+
+        // ===== V2.3: HEDEF SİSTEMİ =====
+        let hedefListesi = [];
+
+        function hedefModalAc() {
+            document.getElementById('hedefEditIndex').value = '-1';
+            document.getElementById('hedefModalTitle').innerText = 'Yeni Hedef Ekle';
+            document.getElementById('hBaslik').value = '';
+            document.getElementById('hTur').value = 'tlDeger';
+            document.getElementById('hHedef').value = '';
+            document.getElementById('hedefModal').style.display = 'block';
+        }
+
+        function hedefModalKapat() {
+            document.getElementById('hedefModal').style.display = 'none';
+        }
+
+        function hedefKaydet() {
+            const baslik = document.getElementById('hBaslik').value.trim();
+            const tur = document.getElementById('hTur').value;
+            const hedef = parseFloat(document.getElementById('hHedef').value);
+            if (!baslik || !hedef || hedef <= 0) { alert('Lütfen tüm alanları doldurun.'); return; }
+
+            const editIdx = parseInt(document.getElementById('hedefEditIndex').value);
+            const item = { baslik, tur, hedef };
+            if (editIdx >= 0) { hedefListesi[editIdx] = item; } else { hedefListesi.push(item); }
+
+            localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+            hedefModalKapat();
+            hedefListesiniEkranaBas();
+        }
+
+        function hedefSil(i) {
+            if (confirm('Bu hedefi silmek istediğinize emin misiniz?')) {
+                hedefListesi.splice(i, 1);
+                localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
+                hedefListesiniEkranaBas();
+            }
+        }
+
+        function hedefMevcutHesapla(tur) {
+            const ozet = netPozisyonlariHesapla();
+            if (tur === 'tlDeger') {
+                let top = 0;
+                Object.keys(TUR_BILGI).forEach(t => { if (ozet[t].net > 0) top += ozet[t].net * turGuncelAlisFiyati(t); });
+                return top;
+            }
+            return ozet[tur] ? Math.max(0, ozet[tur].net) : 0;
+        }
+
+        function hedefBirimAdi(tur) {
+            if (tur === 'tlDeger') return '₺';
+            return TUR_BILGI[tur] ? TUR_BILGI[tur].birim : '';
+        }
+
+        function hedefDegerFormat(tur, val) {
+            if (tur === 'tlDeger') return '₺' + Math.round(val).toLocaleString('tr-TR');
+            return (Math.round(val * 1000) / 1000).toLocaleString('tr-TR') + ' ' + hedefBirimAdi(tur);
+        }
+
+        function hedefListesiniEkranaBas() {
+            const container = document.getElementById('hedefList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (hedefListesi.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:30px;">Henüz hedef eklenmemiş.<br><br>🎯 Altın veya TL bazlı hedefler ekleyin.</div>`;
+                return;
+            }
+
+            hedefListesi.forEach((item, i) => {
+                const mevcut = hedefMevcutHesapla(item.tur);
+                const yuzde = Math.min(100, item.hedef > 0 ? (mevcut / item.hedef) * 100 : 0);
+                const renk = yuzde >= 100 ? 'var(--green)' : 'var(--accent-color)';
+                const emoji = yuzde >= 100 ? '✅' : '🎯';
+
+                container.innerHTML += `
+                    <div class="hedef-item">
+                        <div class="hedef-header">
+                            <div class="hedef-baslik">${emoji} ${item.baslik}</div>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <span class="hedef-yuzde" style="color:${renk};">%${yuzde.toFixed(0)}</span>
+                                <button class="btn-action" onclick="hedefSil(${i})" style="color:var(--red);">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width:${yuzde}%; background:${yuzde>=100?'var(--green)':'linear-gradient(to right, var(--accent-color), #ff9500)'};"></div>
+                        </div>
+                        <div class="hedef-alt">
+                            <span>${hedefDegerFormat(item.tur, mevcut)}</span>
+                            <span>Hedef: ${hedefDegerFormat(item.tur, item.hedef)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ===== V2.6: PIN SİSTEMİ =====
+        let pinGirisi = '';
+        let pinModu = 'giris'; // 'giris' | 'yeniPin' | 'yeniPinTekrar'
+        let pinGecici = '';
+
+        function pinBaslat() {
+            const kaydedilmis = localStorage.getItem('kasam_pin');
+            if (kaydedilmis) {
+                document.getElementById('pinOverlay').classList.add('goster');
+            }
+        }
+
+        function pinTus(rakam) {
+            if (pinGirisi.length >= 4) return;
+            pinGirisi += rakam;
+            pinDotsGuncelle();
+            if (pinGirisi.length === 4) {
+                setTimeout(pinKontrol, 150);
+            }
+        }
+
+        function pinSil() {
+            pinGirisi = pinGirisi.slice(0, -1);
+            pinDotsGuncelle();
+        }
+
+        function pinIptal() {
+            const kaydedilmis = localStorage.getItem('kasam_pin');
+            if (!kaydedilmis) document.getElementById('pinOverlay').classList.remove('goster');
+        }
+
+        function pinDotsGuncelle() {
+            for (let i = 0; i < 4; i++) {
+                const el = document.getElementById('pd' + i);
+                if (el) el.classList.toggle('dolu', i < pinGirisi.length);
+            }
+        }
+
+        function pinKontrol() {
+            const kaydedilmis = localStorage.getItem('kasam_pin');
+            const hataEl = document.getElementById('pinHata');
+            if (pinGirisi === kaydedilmis) {
+                document.getElementById('pinOverlay').classList.remove('goster');
+                hataEl.innerText = '';
+                pinGirisi = '';
+                pinDotsGuncelle();
+            } else {
+                hataEl.innerText = '❌ Yanlış PIN. Tekrar deneyin.';
+                pinGirisi = '';
+                pinDotsGuncelle();
+                setTimeout(() => { hataEl.innerText = ''; }, 2000);
+            }
+        }
+
+        function pinAyarlariniAc() {
+            const var_ = !!localStorage.getItem('kasam_pin');
+            document.getElementById('pinToggle').checked = var_;
+            document.getElementById('pinAyarDetay').style.display = var_ ? 'block' : 'none';
+            document.getElementById('pinYeni').value = '';
+            document.getElementById('pinTekrar').value = '';
+            document.getElementById('pinAyarHata').innerText = '';
+            document.getElementById('pinAyarModal').style.display = 'block';
+        }
+
+        function pinToggleChange() {
+            const acik = document.getElementById('pinToggle').checked;
+            document.getElementById('pinAyarDetay').style.display = acik ? 'block' : 'none';
+            if (!acik) {
+                localStorage.removeItem('kasam_pin');
+                document.getElementById('pinAyarHata').innerText = 'PIN koruması kaldırıldı.';
+                setTimeout(() => { document.getElementById('pinAyarHata').innerText = ''; }, 2000);
+            }
+        }
+
+        function pinKaydet() {
+            const yeni = document.getElementById('pinYeni').value;
+            const tekrar = document.getElementById('pinTekrar').value;
+            const hataEl = document.getElementById('pinAyarHata');
+            if (yeni.length !== 4 || !/^\d{4}$/.test(yeni)) { hataEl.innerText = 'PIN 4 haneli rakam olmalı.'; return; }
+            if (yeni !== tekrar) { hataEl.innerText = 'PIN kodları eşleşmiyor.'; return; }
+            localStorage.setItem('kasam_pin', yeni);
+            hataEl.style.color = 'var(--green)';
+            hataEl.innerText = '✅ PIN başarıyla kaydedildi!';
+            document.getElementById('pinYeni').value = '';
+            document.getElementById('pinTekrar').value = '';
+            setTimeout(() => {
+                hataEl.innerText = '';
+                hataEl.style.color = 'var(--red)';
+                document.getElementById('pinAyarModal').style.display = 'none';
+            }, 1500);
         }
 
         // BAŞLANGIÇ
         temaYukle();
         fiyatlariEkranaYaz();
+        pinBaslat();
 
         if (window.firestoreHazir) {
             hafizadanVeriYukle();
