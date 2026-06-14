@@ -318,30 +318,6 @@
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
-        /* V2: PIN Kilit Ekranı */
-        #pinOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: var(--bg-color);
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-        #pinOverlay.goster { display: flex; }
-        .pin-logo { font-size: 28px; font-weight: bold; color: var(--accent-color); }
-        .pin-sub { color: var(--text-muted); font-size: 13px; margin-top: -12px; }
-        .pin-dots { display: flex; gap: 14px; margin: 8px 0; }
-        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-color); transition: background 0.15s; }
-        .pin-dot.dolu { background: var(--accent-color); }
-        .pin-numpad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px; }
-        .pin-key { width: 64px; height: 64px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--border); font-size: 22px; font-weight: bold; color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
-        .pin-key:active { background: var(--accent-color); color: #000; }
-        .pin-hata { color: var(--red); font-size: 13px; min-height: 18px; }
-        .pin-ayar-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .pin-ayar-label { font-size: 14px; }
         .toggle-switch { position: relative; width: 44px; height: 24px; }
         .toggle-switch input { display: none; }
         .toggle-slider { position: absolute; inset: 0; background: var(--panel-bg); border-radius: 12px; cursor: pointer; transition: 0.3s; border: 1px solid var(--border); }
@@ -421,33 +397,6 @@
 </head>
 <body>
 
-    <!-- V2.6: PIN Kilit Ekranı -->
-    <div id="pinOverlay">
-        <div class="pin-logo">🔒 Kasam</div>
-        <div class="pin-sub">PIN kodunuzu girin</div>
-        <div class="pin-dots">
-            <div class="pin-dot" id="pd0"></div>
-            <div class="pin-dot" id="pd1"></div>
-            <div class="pin-dot" id="pd2"></div>
-            <div class="pin-dot" id="pd3"></div>
-        </div>
-        <div class="pin-hata" id="pinHata"></div>
-        <div class="pin-numpad">
-            <button class="pin-key" onclick="pinTus('1')">1</button>
-            <button class="pin-key" onclick="pinTus('2')">2</button>
-            <button class="pin-key" onclick="pinTus('3')">3</button>
-            <button class="pin-key" onclick="pinTus('4')">4</button>
-            <button class="pin-key" onclick="pinTus('5')">5</button>
-            <button class="pin-key" onclick="pinTus('6')">6</button>
-            <button class="pin-key" onclick="pinTus('7')">7</button>
-            <button class="pin-key" onclick="pinTus('8')">8</button>
-            <button class="pin-key" onclick="pinTus('9')">9</button>
-            <button class="pin-key" style="font-size:14px; color:var(--text-muted);" onclick="pinSil()">⌫</button>
-            <button class="pin-key" onclick="pinTus('0')">0</button>
-            <button class="pin-key" style="font-size:13px; color:var(--text-muted);" onclick="pinIptal()">✕</button>
-        </div>
-    </div>
-
     <!-- Alarm Banner -->
     <div id="alarmBanner"></div>
 
@@ -458,7 +407,6 @@
         </div>
         <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px; margin-left: auto;">☀️ Açık</button>
         <div class="nav-buttons" style="width: 100%;">
-            <button class="btn" onclick="pinAyarlariniAc()" style="font-size: 13px; padding: 6px 10px;" title="PIN Ayarları">🔒</button>
             <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">Yatırım</button>
             <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">Bütçe</button>
             <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">Hedef</button>
@@ -714,26 +662,6 @@
         </div>
     </div>
 
-    <!-- V2.6: PIN AYARLARI MODALİ -->
-    <div id="pinAyarModal" class="modal" style="max-width: 320px;">
-        <h3 style="margin-top: 0; font-size: 16px;">🔒 PIN Güvenliği</h3>
-        <div class="pin-ayar-row">
-            <span class="pin-ayar-label">PIN Koruması</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="pinToggle" onchange="pinToggleChange()">
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-        <div id="pinAyarDetay" style="display:none; margin-top:14px;">
-            <label style="font-size: 12px; color: var(--text-muted);">Yeni 4 Haneli PIN:</label>
-            <input type="password" id="pinYeni" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
-            <label style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display:block;">PIN Tekrar:</label>
-            <input type="password" id="pinTekrar" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="• • • •" style="letter-spacing:8px; font-size:20px; text-align:center;">
-            <div id="pinAyarHata" style="color:var(--red); font-size:12px; min-height:16px; margin-top:4px;"></div>
-            <button class="btn btn-active" onclick="pinKaydet()" style="width:100%; margin-top:10px; font-size:13px;">PIN Kaydet</button>
-        </div>
-        <button class="btn" onclick="document.getElementById('pinAyarModal').style.display='none'" style="width:100%; margin-top:10px; font-size:13px;">Kapat</button>
-    </div>
     <div id="addModal" class="modal">
         <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni İşlem Ekle</h3>
         <input type="hidden" id="editIndex" value="-1">
@@ -979,21 +907,6 @@
                     }
                 }
                 hedefListesiniEkranaBas();
-
-                // V2.7: PIN FIRESTORE'DAN YÜKLE
-                const pinData = await window.firestoreYukle("ayarlar");
-                const pinKaydi = pinData ? pinData.find(d => d._id === 'pin') : null;
-                if (pinKaydi && pinKaydi.pin) {
-                    localStorage.setItem('kasam_pin', pinKaydi.pin);
-                } else if (pinKaydi && pinKaydi.pin === '') {
-                    localStorage.removeItem('kasam_pin');
-                } else {
-                    const yerelPin = localStorage.getItem('kasam_pin');
-                    if (yerelPin) {
-                        await window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: yerelPin });
-                    }
-                }
-                pinBaslat();
             } catch (e) {
                 console.warn("Firestore erişilemedi:", e);
                 const yerelVeri = localStorage.getItem("kasam_portfoy");
@@ -1002,7 +915,6 @@
                 if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch (e) {} }
                 alarmVerisiniYukle();
                 hedefVerisiniYukle();
-                pinBaslat();
             }
 
             listeyiEkranaBas();
@@ -2283,104 +2195,9 @@
             });
         }
 
-        // ===== V2.6: PIN SİSTEMİ =====
-        let pinGirisi = '';
-        let pinModu = 'giris'; // 'giris' | 'yeniPin' | 'yeniPinTekrar'
-        let pinGecici = '';
-
-        function pinBaslat() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            if (kaydedilmis) {
-                document.getElementById('pinOverlay').classList.add('goster');
-            }
-        }
-
-        function pinTus(rakam) {
-            if (pinGirisi.length >= 4) return;
-            pinGirisi += rakam;
-            pinDotsGuncelle();
-            if (pinGirisi.length === 4) {
-                setTimeout(pinKontrol, 150);
-            }
-        }
-
-        function pinSil() {
-            pinGirisi = pinGirisi.slice(0, -1);
-            pinDotsGuncelle();
-        }
-
-        function pinIptal() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            if (!kaydedilmis) document.getElementById('pinOverlay').classList.remove('goster');
-        }
-
-        function pinDotsGuncelle() {
-            for (let i = 0; i < 4; i++) {
-                const el = document.getElementById('pd' + i);
-                if (el) el.classList.toggle('dolu', i < pinGirisi.length);
-            }
-        }
-
-        function pinKontrol() {
-            const kaydedilmis = localStorage.getItem('kasam_pin');
-            const hataEl = document.getElementById('pinHata');
-            if (pinGirisi === kaydedilmis) {
-                document.getElementById('pinOverlay').classList.remove('goster');
-                hataEl.innerText = '';
-                pinGirisi = '';
-                pinDotsGuncelle();
-            } else {
-                hataEl.innerText = '❌ Yanlış PIN. Tekrar deneyin.';
-                pinGirisi = '';
-                pinDotsGuncelle();
-                setTimeout(() => { hataEl.innerText = ''; }, 2000);
-            }
-        }
-
-        function pinAyarlariniAc() {
-            const var_ = !!localStorage.getItem('kasam_pin');
-            document.getElementById('pinToggle').checked = var_;
-            document.getElementById('pinAyarDetay').style.display = var_ ? 'block' : 'none';
-            document.getElementById('pinYeni').value = '';
-            document.getElementById('pinTekrar').value = '';
-            document.getElementById('pinAyarHata').innerText = '';
-            document.getElementById('pinAyarModal').style.display = 'block';
-        }
-
-        function pinToggleChange() {
-            const acik = document.getElementById('pinToggle').checked;
-            document.getElementById('pinAyarDetay').style.display = acik ? 'block' : 'none';
-            if (!acik) {
-                localStorage.removeItem('kasam_pin');
-                if (window.firestoreTekilKaydet) window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: '' });
-                document.getElementById('pinAyarHata').innerText = 'PIN koruması kaldırıldı.';
-                setTimeout(() => { document.getElementById('pinAyarHata').innerText = ''; }, 2000);
-            }
-        }
-
-        function pinKaydet() {
-            const yeni = document.getElementById('pinYeni').value;
-            const tekrar = document.getElementById('pinTekrar').value;
-            const hataEl = document.getElementById('pinAyarHata');
-            if (yeni.length !== 4 || !/^\d{4}$/.test(yeni)) { hataEl.innerText = 'PIN 4 haneli rakam olmalı.'; return; }
-            if (yeni !== tekrar) { hataEl.innerText = 'PIN kodları eşleşmiyor.'; return; }
-            localStorage.setItem('kasam_pin', yeni);
-            if (window.firestoreTekilKaydet) window.firestoreTekilKaydet("ayarlar", "pin", { _id: 'pin', pin: yeni });
-            hataEl.style.color = 'var(--green)';
-            hataEl.innerText = '✅ PIN başarıyla kaydedildi!';
-            document.getElementById('pinYeni').value = '';
-            document.getElementById('pinTekrar').value = '';
-            setTimeout(() => {
-                hataEl.innerText = '';
-                hataEl.style.color = 'var(--red)';
-                document.getElementById('pinAyarModal').style.display = 'none';
-            }, 1500);
-        }
-
         // BAŞLANGIÇ
         temaYukle();
         fiyatlariEkranaYaz();
-        pinBaslat();
 
         if (window.firestoreHazir) {
             hafizadanVeriYukle();
