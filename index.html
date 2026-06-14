@@ -859,15 +859,53 @@
             return (type === "gram24" || type === "gram22") ? "Gram" : "Adet";
         }
 
+        // YARDIMCI: Tur bilgisi ve net poz1syon hesaplama (Varlik Ozeti ve ozet kartlar icin paylasilir)
+        const TUR_BILGI = {
+            gram24:  { isim: "24A Gram Altın", birim: "Gram" },
+            gram22:  { isim: "22 Ayar Bilezik", birim: "Gram" },
+            ceyrek:  { isim: "Çeyrek Altın",    birim: "Adet" },
+            yarim:   { isim: "Yarım Altın",     birim: "Adet" },
+            ata:     { isim: "Tam Altın",       birim: "Adet" }
+        };
+
+        function netPozisyonlariHesapla() {
+            const ozet = {};
+            Object.keys(TUR_BILGI).forEach(t => ozet[t] = { net: 0, maliyet: 0 });
+
+            yatirimlarListesi.forEach(item => {
+                if (!ozet[item.type]) return;
+                const islem = item.islem || "alis";
+                if (islem === "alis") {
+                    ozet[item.type].net += item.amount;
+                    ozet[item.type].maliyet += item.cost;
+                } else {
+                    ozet[item.type].net -= item.amount;
+                    // Satılan kismin maliyetini de orantili olarak dustur (varsa)
+                    const oncekiNet = ozet[item.type].net + item.amount;
+                    if (oncekiNet > 0) {
+                        const ortalamaBirimMaliyet = ozet[item.type].maliyet / oncekiNet;
+                        ozet[item.type].maliyet -= ortalamaBirimMaliyet * item.amount;
+                    }
+                }
+            });
+
+            return ozet;
+        }
+
+        function turGuncelAlisFiyati(t) {
+            if (t === "gram24") return canliFiyatlar.gram24a;
+            if (t === "gram22") return canliFiyatlar.gram22a;
+            if (t === "ceyrek") return canliFiyatlar.ceyreka;
+            if (t === "yarim")  return canliFiyatlar.yarima;
+            if (t === "ata")    return canliFiyatlar.ataa;
+            return 0;
+        }
+
         // PORTFOY EKRANA BAS
         function listeyiEkranaBas() {
             const container = document.getElementById("investmentList");
             if (!container) return;
             container.innerHTML = "";
-
-            let tAlisMaliyet = 0;
-            let tSatisGelir = 0;
-            let tAnlikDeger = 0;
 
             // Tarihe gore sirala (yeniden eskiye)
             const sirali = yatirimlarListesi
@@ -904,14 +942,11 @@
                     const anlikDeger = item.amount * guncelAlisFiyati;
                     const karZarar = anlikDeger - item.cost;
                     const karYuzde = item.cost > 0 ? (karZarar / item.cost) * 100 : 0;
-                    tAlisMaliyet += item.cost;
-                    tAnlikDeger += anlikDeger;
                     renk = karZarar >= 0 ? "var(--green)" : "var(--red)";
                     detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>`;
                     etiket = `<span style="font-size:10px; color:var(--green); font-weight:bold;">&#128229; ALIŞ</span>`;
                     satButon = `<button class="btn-action" onclick="event.stopPropagation(); hizliSat(${index})" style="color:var(--accent-color); font-size:11px;" title="Sat">&#128176; Sat</button>`;
                 } else {
-                    tSatisGelir += item.cost;
                     renk = "var(--accent-color)";
                     detay = `<div class="item-cost-profit"><span style="color:${renk}; font-weight:500;">₺${Math.round(item.cost).toLocaleString('tr-TR')} gelir</span></div>`;
                     etiket = `<span style="font-size:10px; color:var(--accent-color); font-weight:bold;">&#128228; SATIŞ</span>`;
@@ -941,13 +976,24 @@
                 container.innerHTML += itemHtml;
             });
 
-            const totalProfitPct = tAlisMaliyet > 0 ? ((tAnlikDeger + tSatisGelir - tAlisMaliyet) / tAlisMaliyet) * 100 : 0;
+            // ÜST KARTLAR: net poz1syona gore hesapla (alis - satis sonrasi kalan miktarlar)
+            const ozet = netPozisyonlariHesapla();
+            let tNetMaliyet = 0;
+            let tNetDeger = 0;
+            Object.keys(TUR_BILGI).forEach(t => {
+                const net = ozet[t].net;
+                if (net <= 0) return; // elde hic yok veya negatif (anormal durum), katma
+                tNetMaliyet += ozet[t].maliyet;
+                tNetDeger += net * turGuncelAlisFiyati(t);
+            });
 
-            document.getElementById("totalCost").innerText = "₺" + Math.round(tAlisMaliyet).toLocaleString('tr-TR');
-            document.getElementById("totalValue").innerText = "₺" + Math.round(tAnlikDeger).toLocaleString('tr-TR');
+            const totalProfitPct = tNetMaliyet > 0 ? ((tNetDeger - tNetMaliyet) / tNetMaliyet) * 100 : 0;
+
+            document.getElementById("totalCost").innerText = "₺" + Math.round(tNetMaliyet).toLocaleString('tr-TR');
+            document.getElementById("totalValue").innerText = "₺" + Math.round(tNetDeger).toLocaleString('tr-TR');
 
             const profitEl = document.getElementById("totalProfit");
-            if (tAlisMaliyet === 0) {
+            if (tNetMaliyet === 0) {
                 profitEl.innerText = "₺0";
                 profitEl.style.color = "var(--text-color)";
             } else {
@@ -964,50 +1010,17 @@
             if (!container) return;
             container.innerHTML = "";
 
-            const turBilgi = {
-                gram24:  { isim: "24A Gram Altın", birim: "Gram" },
-                gram22:  { isim: "22 Ayar Bilezik", birim: "Gram" },
-                ceyrek:  { isim: "Çeyrek Altın",    birim: "Adet" },
-                yarim:   { isim: "Yarım Altın",     birim: "Adet" },
-                ata:     { isim: "Tam Altın",       birim: "Adet" }
-            };
-
-            // Net miktar ve toplam maliyet (sadece elde tutulanlar icin) hesapla
-            const ozet = {};
-            Object.keys(turBilgi).forEach(t => ozet[t] = { net: 0, maliyet: 0 });
-
-            yatirimlarListesi.forEach(item => {
-                if (!ozet[item.type]) return;
-                const islem = item.islem || "alis";
-                if (islem === "alis") {
-                    ozet[item.type].net += item.amount;
-                    ozet[item.type].maliyet += item.cost;
-                } else {
-                    ozet[item.type].net -= item.amount;
-                    // Satılan kismin maliyetini de orantili olarak dustur (varsa)
-                    const oncekiNet = ozet[item.type].net + item.amount;
-                    if (oncekiNet > 0) {
-                        const ortalamaBirimMaliyet = ozet[item.type].maliyet / oncekiNet;
-                        ozet[item.type].maliyet -= ortalamaBirimMaliyet * item.amount;
-                    }
-                }
-            });
+            const ozet = netPozisyonlariHesapla();
 
             let toplamGuncelDeger = 0;
             let varAdet = 0;
 
-            Object.keys(turBilgi).forEach(t => {
+            Object.keys(TUR_BILGI).forEach(t => {
                 const net = ozet[t].net;
                 if (Math.abs(net) < 0.00001) return; // gosterme
                 varAdet++;
 
-                let guncelAlisFiyati = 0;
-                if (t === "gram24") guncelAlisFiyati = canliFiyatlar.gram24a;
-                else if (t === "gram22") guncelAlisFiyati = canliFiyatlar.gram22a;
-                else if (t === "ceyrek") guncelAlisFiyati = canliFiyatlar.ceyreka;
-                else if (t === "yarim")  guncelAlisFiyati = canliFiyatlar.yarima;
-                else if (t === "ata")    guncelAlisFiyati = canliFiyatlar.ataa;
-
+                const guncelAlisFiyati = turGuncelAlisFiyati(t);
                 const guncelDeger = net * guncelAlisFiyati;
                 toplamGuncelDeger += guncelDeger;
 
@@ -1023,8 +1036,8 @@
                         <div class="item-left">
                             <div class="item-icon" style="background:transparent; width:36px; height:36px;">${turIkonu(t)}</div>
                             <div>
-                                <div class="item-details-title">${turBilgi[t].isim}</div>
-                                <div class="item-details-sub">${miktarStr} ${turBilgi[t].birim} &bull; Güncel alış fiyatı: ₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
+                                <div class="item-details-title">${TUR_BILGI[t].isim}</div>
+                                <div class="item-details-sub">${miktarStr} ${TUR_BILGI[t].birim} &bull; Güncel alış fiyatı: ₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
                             </div>
                         </div>
                         <div class="item-right">
