@@ -328,9 +328,9 @@
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
         /* V2: Filtre Butonları */
-        .filtre-row { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+        .filtre-row { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
         .filtre-row::-webkit-scrollbar { display: none; }
-        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 10px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
         .toggle-switch { position: relative; width: 44px; height: 24px; }
@@ -340,7 +340,7 @@
         .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
 
-        /* Fiyat Alarmı */
+        /* V2.2: Fiyat Alarmı */
         .alarm-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -426,7 +426,12 @@
             <span class="logo-main">Kasam</span>
             <span class="logo-sub">SEDAT KARAGÖZ</span>
         </div>
-        <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px; margin-left: auto;">☀️ Açık</button>
+        <div style="display:flex; gap:6px; margin-left:auto; align-items:center;">
+            <button class="btn" onclick="tamYedekIndir()" style="font-size: 12px; padding: 6px 10px;" title="Tüm verileri yedekle">💾 Yedek</button>
+            <button class="btn" onclick="document.getElementById('tamYedekDosya').click()" style="font-size: 12px; padding: 6px 10px;" title="Yedekten geri yükle">📂 Geri Yükle</button>
+            <input type="file" id="tamYedekDosya" accept="application/json,.json" style="display:none" onchange="tamYedekYukle(event)">
+            <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px;">☀️ Açık</button>
+        </div>
         <div class="nav-buttons" style="width: 100%;">
             <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">💎 Yatırım</button>
             <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">📈 Grafik</button>
@@ -541,12 +546,7 @@
             <div>
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Yatırımlarım</h3>
-                    <div style="display:flex; gap:6px;">
-                        <button class="btn-refresh" onclick="yatirimYedekIndir()" title="Yatırım verilerini JSON olarak indir">⬇️ Yedekle</button>
-                        <button class="btn-refresh" onclick="document.getElementById('yatirimYedekDosya').click()" title="Yedekten geri yükle">⬆️ Geri Yükle</button>
-                        <input type="file" id="yatirimYedekDosya" accept="application/json,.json" style="display:none" onchange="yatirimYedekYukle(event)">
-                        <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
-                    </div>
+                    <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
                 </div>
                 <!-- V2.5: Gelişmiş Filtreler -->
                 <div class="filtre-row" id="filtreRow">
@@ -581,7 +581,7 @@
                     </div>
                     <div class="filtre-row" id="grafikTurRow">
                         <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                        <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Gram</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
@@ -912,67 +912,60 @@
         async function hafizadanVeriYukle() {
             temaYukle();
 
-            const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
-            if (yerelFiyatlar) {
-                try {
-                    const parsed = JSON.parse(yerelFiyatlar);
-                    if (parsed.gram24s > 0) canliFiyatlar = parsed;
-                } catch (e) {}
-            }
-            fiyatlariEkranaYaz();
+            // 1. ADIM: localStorage'dan aninda goster (sifir bekleme)
+            try { const p = JSON.parse(localStorage.getItem("kasam_son_fiyatlar")); if (p && p.gram24s > 0) canliFiyatlar = p; } catch(e) {}
+            try { const p = JSON.parse(localStorage.getItem("kasam_portfoy")); if (Array.isArray(p)) yatirimlarListesi = p; } catch(e) {}
+            try { const p = JSON.parse(localStorage.getItem("kasam_alarmlar")); if (Array.isArray(p)) alarmListesi = p; } catch(e) {}
+            try { const p = JSON.parse(localStorage.getItem("kasam_hedefler")); if (Array.isArray(p)) hedefListesi = p; } catch(e) {}
 
+            fiyatlariEkranaYaz();
+            listeyiEkranaBas();
+            alarmListesiniEkranaBas();
+            hedefListesiniEkranaBas();
+
+            // 2. ADIM: Firestore'dan paralel cek, fark varsa guncelle
             try {
-                const portfoyData = await window.firestoreYukle("portfoy");
+                const [portfoyData, alarmData, hedefData] = await Promise.all([
+                    window.firestoreYukle("portfoy"),
+                    window.firestoreYukle("alarmlar"),
+                    window.firestoreYukle("hedefler")
+                ]);
+
+                let degisti = false;
+
                 if (portfoyData && portfoyData.length > 0) {
                     yatirimlarListesi = portfoyData;
-                } else {
-                    const yerelVeri = localStorage.getItem("kasam_portfoy");
-                    if (yerelVeri) {
-                        try {
-                            yatirimlarListesi = JSON.parse(yerelVeri);
-                            if (yatirimlarListesi.length > 0) await window.firestoreKaydet("portfoy", yatirimlarListesi);
-                        } catch (e) { yatirimlarListesi = []; }
-                    }
+                    localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
+                    degisti = true;
+                } else if (yatirimlarListesi.length > 0) {
+                    window.firestoreKaydet("portfoy", yatirimlarListesi);
                 }
 
-                // V2.7: ALARMLAR FIRESTORE'DAN YÜKLE
-                const alarmData = await window.firestoreYukle("alarmlar");
                 if (alarmData && alarmData.length > 0) {
                     alarmListesi = alarmData;
-                } else {
-                    const yerelAlarm = localStorage.getItem('kasam_alarmlar');
-                    if (yerelAlarm) {
-                        try {
-                            alarmListesi = JSON.parse(yerelAlarm);
-                            if (alarmListesi.length > 0) await window.firestoreKaydet("alarmlar", alarmListesi);
-                        } catch (e) { alarmListesi = []; }
-                    }
+                    localStorage.setItem("kasam_alarmlar", JSON.stringify(alarmListesi));
+                    degisti = true;
+                } else if (alarmListesi.length > 0) {
+                    window.firestoreKaydet("alarmlar", alarmListesi);
                 }
-                alarmListesiniEkranaBas();
 
-                // V2.7: HEDEFLER FIRESTORE'DAN YÜKLE
-                const hedefData = await window.firestoreYukle("hedefler");
                 if (hedefData && hedefData.length > 0) {
                     hedefListesi = hedefData;
-                } else {
-                    const yerelHedef = localStorage.getItem('kasam_hedefler');
-                    if (yerelHedef) {
-                        try {
-                            hedefListesi = JSON.parse(yerelHedef);
-                            if (hedefListesi.length > 0) await window.firestoreKaydet("hedefler", hedefListesi);
-                        } catch (e) { hedefListesi = []; }
-                    }
+                    localStorage.setItem("kasam_hedefler", JSON.stringify(hedefListesi));
+                    degisti = true;
+                } else if (hedefListesi.length > 0) {
+                    window.firestoreKaydet("hedefler", hedefListesi);
                 }
-                hedefListesiniEkranaBas();
-            } catch (e) {
-                console.warn("Firestore erişilemedi:", e);
-                const yerelVeri = localStorage.getItem("kasam_portfoy");
-                if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch (e) {} }
-                alarmVerisiniYukle();
-                hedefVerisiniYukle();
-            }
 
-            listeyiEkranaBas();
+                if (degisti) {
+                    listeyiEkranaBas();
+                    alarmListesiniEkranaBas();
+                    hedefListesiniEkranaBas();
+                }
+            } catch (e) {
+                console.warn("Firestore erisilemedii:", e);
+                // localStorage zaten yuklu, devam
+            }
         }
 
         // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
@@ -1509,114 +1502,6 @@
             document.getElementById("detayModal").style.display = "block";
         }
 
-        // YEDEKLEME (Yatırım verileri)
-        function yatirimYedekIndir() {
-            const yedek = {
-                tip: "kasam_yatirim_yedek",
-                tarih: new Date().toISOString(),
-                yatirimlarListesi: yatirimlarListesi
-            };
-            const blob = new Blob([JSON.stringify(yedek, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            const simdi = new Date();
-            const dosyaAdi = `kasam_yatirim_yedek_${simdi.getFullYear()}-${(simdi.getMonth()+1).toString().padStart(2,'0')}-${simdi.getDate().toString().padStart(2,'0')}.json`;
-            a.href = url;
-            a.download = dosyaAdi;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // YEDEK KAYIT DOĞRULAMA: bir kaydın gecerli olup olmadigini kontrol eder
-        const GECERLI_TURLER = ["gram24", "gram22", "ceyrek", "yarim", "ata"];
-        const GECERLI_ISLEMLER = ["alis", "satis"];
-
-        function yedekKaydiGecerliMi(item) {
-            if (!item || typeof item !== "object") return false;
-            if (!GECERLI_TURLER.includes(item.type)) return false;
-            if (item.islem !== undefined && !GECERLI_ISLEMLER.includes(item.islem)) return false;
-            if (typeof item.amount !== "number" || isNaN(item.amount) || item.amount <= 0) return false;
-            if (typeof item.cost !== "number" || isNaN(item.cost) || item.cost < 0) return false;
-            if (item.unitPrice !== undefined && (typeof item.unitPrice !== "number" || isNaN(item.unitPrice))) return false;
-            if (item.note !== undefined && typeof item.note !== "string") return false;
-            if (item.date !== undefined && item.date !== null) {
-                if (typeof item.date !== "string") return false;
-                const parts = item.date.split('.');
-                if (parts.length !== 3) return false;
-            }
-            return true;
-        }
-
-        // GERİ YÜKLEME (Yatırım verileri)
-        function yatirimYedekYukle(event) {
-            const dosya = event.target.files[0];
-            if (!dosya) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const veri = JSON.parse(e.target.result);
-                    let yeniListe = null;
-
-                    if (Array.isArray(veri)) {
-                        yeniListe = veri;
-                    } else if (veri && Array.isArray(veri.yatirimlarListesi)) {
-                        yeniListe = veri.yatirimlarListesi;
-                    }
-
-                    if (!yeniListe) {
-                        alert("Geçersiz yedek dosyası: 'yatirimlarListesi' alanı bulunamadı.");
-                        return;
-                    }
-
-                    if (yeniListe.length === 0) {
-                        alert("Yedek dosyasında hiç kayıt bulunmuyor.");
-                        return;
-                    }
-
-                    // Her kaydi dogrula
-                    const gecersizSatirlar = [];
-                    yeniListe.forEach((item, i) => {
-                        if (!yedekKaydiGecerliMi(item)) gecersizSatirlar.push(i + 1);
-                    });
-
-                    if (gecersizSatirlar.length > 0) {
-                        alert(`Yedek dosyasında ${gecersizSatirlar.length} geçersiz kayıt bulundu (satır: ${gecersizSatirlar.slice(0, 10).join(", ")}${gecersizSatirlar.length > 10 ? '...' : ''}).\n\nGeri yükleme işlemi güvenlik açısından durduruldu, lütfen yedek dosyasını kontrol edin.`);
-                        return;
-                    }
-
-                    // Eksik alanlari varsayilanla tamamla (islem, note)
-                    yeniListe = yeniListe.map(item => ({
-                        type: item.type,
-                        islem: item.islem || "alis",
-                        amount: item.amount,
-                        cost: item.cost,
-                        unitPrice: item.unitPrice || Math.round(item.cost / item.amount),
-                        note: item.note || "Genel",
-                        date: item.date || ""
-                    }));
-
-                    if (!confirm(`Bu yedekte ${yeniListe.length} geçerli yatırım kaydı bulunuyor. Mevcut yatırım verilerinizin üzerine yazılacak. Devam edilsin mi?`)) {
-                        return;
-                    }
-
-                    yatirimlarListesi = yeniListe;
-                    localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
-                    await window.firestoreKaydet("portfoy", yatirimlarListesi);
-                    listeyiEkranaBas();
-                    alert("Yatırım verileri başarıyla geri yüklendi.");
-                } catch (err) {
-                    console.error("Yedek yükleme hatası:", err);
-                    alert("Dosya okunamadı. Lütfen geçerli bir yedek (JSON) dosyası seçin.");
-                } finally {
-                    event.target.value = "";
-                }
-            };
-            reader.readAsText(dosya);
-        }
-
         // YATIRIM KAYDET
         async function yatirimKaydet() {
             const type = document.getElementById("mType").value;
@@ -1748,6 +1633,7 @@
         };
 
         // Fiyat geçmişini yükle (Firestore + localStorage)
+        let fiyatGecmisiYuklendi = false;
         async function fiyatGecmisiniYukle() {
             try {
                 if (window.firestoreYukle) {
@@ -1755,15 +1641,17 @@
                     if (data && data.length > 0) {
                         fiyatGecmisi = data.sort((a, b) => new Date(a.zaman) - new Date(b.zaman));
                         localStorage.setItem("kasam_fiyat_gecmisi", JSON.stringify(fiyatGecmisi));
+                        fiyatGecmisiYuklendi = true;
                         return;
                     }
                 }
-            } catch (e) { console.warn("Fiyat geçmişi Firestore'dan yüklenemedi:", e); }
+            } catch (e) { console.warn("Fiyat geçmişi Firestore'dan yuklenemedi:", e); }
 
             const yerel = localStorage.getItem("kasam_fiyat_gecmisi");
             if (yerel) {
                 try { fiyatGecmisi = JSON.parse(yerel); } catch (e) { fiyatGecmisi = []; }
             }
+            fiyatGecmisiYuklendi = true;
         }
 
         // Anlık fiyatı geçmişe kaydet
@@ -1816,6 +1704,7 @@
 
         // Saatlik otomatik kayıt kontrolü (uygulama açıkken)
         function saatlikKayitKontrolEt() {
+            if (!fiyatGecmisiYuklendi) return; // gecmis yuklenmeden yazma
             const sonZamanStr = localStorage.getItem("kasam_son_grafik_kayit");
             const simdi = new Date();
             if (!sonZamanStr) {
@@ -2656,6 +2545,7 @@
         }
 
         // Varlık değeri geçmişini yükle
+        let varlikGecmisiYuklendi = false;
         async function varlikGecmisiniYukle() {
             try {
                 if (window.firestoreYukle) {
@@ -2663,12 +2553,14 @@
                     if (data && data.length > 0) {
                         varlikGecmisi = data.sort((a, b) => new Date(a.zaman) - new Date(b.zaman));
                         localStorage.setItem("kasam_varlik_gecmisi", JSON.stringify(varlikGecmisi));
+                        varlikGecmisiYuklendi = true;
                         return;
                     }
                 }
-            } catch (e) { console.warn("Varlık geçmişi Firestore'dan yüklenemedi:", e); }
+            } catch (e) { console.warn("Varlik gecmisi Firestore'dan yuklenemedi:", e); }
             const yerel = localStorage.getItem("kasam_varlik_gecmisi");
             if (yerel) { try { varlikGecmisi = JSON.parse(yerel); } catch (e) { varlikGecmisi = []; } }
+            varlikGecmisiYuklendi = true;
         }
 
         // Anlık varlık değerini hesapla
@@ -2922,11 +2814,130 @@
 
         // Saatlik varlık kaydı kontrolü (fiyat geçmişiyle birlikte çalışır)
         function saatlikVarlikKayitKontrolEt() {
+            if (!varlikGecmisiYuklendi) return; // gecmis yuklenmeden yazma
             const sonZamanStr = localStorage.getItem("kasam_son_varlik_kayit");
             const simdi = new Date();
             if (!sonZamanStr) { varlikGecmisineKaydet(false); return; }
             const farkMs = simdi - new Date(sonZamanStr);
             if (farkMs >= 60 * 60 * 1000) varlikGecmisineKaydet(false);
+        }
+
+
+        // ===== TAM VERİ YEDEKLEMESİ =====
+        function tamYedekIndir() {
+            const portfoyAdet = JSON.parse(localStorage.getItem("kasam_portfoy") || "[]").length;
+            const fiyatAdet = JSON.parse(localStorage.getItem("kasam_fiyat_gecmisi") || "[]").length;
+            const varlikAdet = JSON.parse(localStorage.getItem("kasam_varlik_gecmisi") || "[]").length;
+            const alarmAdet = JSON.parse(localStorage.getItem("kasam_alarmlar") || "[]").length;
+            const hedefAdet = JSON.parse(localStorage.getItem("kasam_hedefler") || "[]").length;
+
+            if (!confirm(`💾 Yedek alınacak:\n\n📦 ${portfoyAdet} yatırım kaydı\n📈 ${fiyatAdet} fiyat geçmişi\n💰 ${varlikAdet} varlık geçmişi\n📢 ${alarmAdet} alarm\n🎯 ${hedefAdet} hedef\n\nDevam edilsin mi?`)) return;
+
+            const yedek = {
+                tip: "kasam_tam_yedek",
+                versiyon: 2,
+                tarih: new Date().toISOString(),
+                veri: {
+                    kasam_portfoy:          JSON.parse(localStorage.getItem("kasam_portfoy") || "[]"),
+                    kasam_alarmlar:         JSON.parse(localStorage.getItem("kasam_alarmlar") || "[]"),
+                    kasam_hedefler:         JSON.parse(localStorage.getItem("kasam_hedefler") || "[]"),
+                    kasam_fiyat_gecmisi:    JSON.parse(localStorage.getItem("kasam_fiyat_gecmisi") || "[]"),
+                    kasam_varlik_gecmisi:   JSON.parse(localStorage.getItem("kasam_varlik_gecmisi") || "[]"),
+                    kasam_son_fiyatlar:     JSON.parse(localStorage.getItem("kasam_son_fiyatlar") || "{}"),
+                    kasam_son_fiyat_zamani: localStorage.getItem("kasam_son_fiyat_zamani") || "",
+                    kasam_son_grafik_kayit: localStorage.getItem("kasam_son_grafik_kayit") || "",
+                    kasam_son_varlik_kayit: localStorage.getItem("kasam_son_varlik_kayit") || "",
+                    kasam_tema:             localStorage.getItem("kasam_tema") || "dark"
+                }
+            };
+
+            const json = JSON.stringify(yedek, null, 2);
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            const simdi = new Date();
+            const dosyaAdi = `kasam_tam_yedek_${simdi.getFullYear()}-${(simdi.getMonth()+1).toString().padStart(2,'0')}-${simdi.getDate().toString().padStart(2,'0')}_${simdi.getHours().toString().padStart(2,'0')}${simdi.getMinutes().toString().padStart(2,'0')}.json`;
+            a.href = url;
+            a.download = dosyaAdi;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+
+        }
+
+        async function tamYedekYukle(event) {
+            const dosya = event.target.files[0];
+            if (!dosya) return;
+            event.target.value = "";
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const yedek = JSON.parse(e.target.result);
+
+                    if (yedek.tip !== "kasam_tam_yedek") {
+                        alert("❌ Bu bir Kasam tam yedek dosyası değil.\nSadece 'kasam_tam_yedek' formatındaki dosyalar kabul edilir.");
+                        return;
+                    }
+
+                    const v = yedek.veri;
+                    const portfoyAdet = (v.kasam_portfoy || []).length;
+                    const fiyatAdet = (v.kasam_fiyat_gecmisi || []).length;
+                    const varlikAdet = (v.kasam_varlik_gecmisi || []).length;
+                    const tarih = yedek.tarih ? new Date(yedek.tarih).toLocaleString("tr-TR") : "Bilinmiyor";
+
+                    if (!confirm(`📦 Yedek Bilgisi:\n\nTarih: ${tarih}\n${portfoyAdet} yatırım kaydı\n${fiyatAdet} fiyat geçmişi\n${varlikAdet} varlık geçmişi\n\n⚠️ Mevcut tüm verilerinizin üzerine yazılacak.\nDevam edilsin mi?`)) return;
+
+                    // localStorage'a yaz
+                    if (v.kasam_portfoy)          localStorage.setItem("kasam_portfoy", JSON.stringify(v.kasam_portfoy));
+                    if (v.kasam_alarmlar)          localStorage.setItem("kasam_alarmlar", JSON.stringify(v.kasam_alarmlar));
+                    if (v.kasam_hedefler)          localStorage.setItem("kasam_hedefler", JSON.stringify(v.kasam_hedefler));
+                    if (v.kasam_fiyat_gecmisi)     localStorage.setItem("kasam_fiyat_gecmisi", JSON.stringify(v.kasam_fiyat_gecmisi));
+                    if (v.kasam_varlik_gecmisi)    localStorage.setItem("kasam_varlik_gecmisi", JSON.stringify(v.kasam_varlik_gecmisi));
+                    if (v.kasam_son_fiyatlar)      localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(v.kasam_son_fiyatlar));
+                    if (v.kasam_son_fiyat_zamani)  localStorage.setItem("kasam_son_fiyat_zamani", v.kasam_son_fiyat_zamani);
+                    if (v.kasam_son_grafik_kayit)  localStorage.setItem("kasam_son_grafik_kayit", v.kasam_son_grafik_kayit);
+                    if (v.kasam_son_varlik_kayit)  localStorage.setItem("kasam_son_varlik_kayit", v.kasam_son_varlik_kayit);
+                    if (v.kasam_tema)              localStorage.setItem("kasam_tema", v.kasam_tema);
+
+                    // Bellek değişkenlerine yükle
+                    yatirimlarListesi  = v.kasam_portfoy || [];
+                    alarmListesi       = v.kasam_alarmlar || [];
+                    hedefListesi       = v.kasam_hedefler || [];
+                    fiyatGecmisi       = v.kasam_fiyat_gecmisi || [];
+                    varlikGecmisi      = v.kasam_varlik_gecmisi || [];
+
+                    if (v.kasam_son_fiyatlar && v.kasam_son_fiyatlar.gram24s > 0) {
+                        canliFiyatlar = v.kasam_son_fiyatlar;
+                    }
+
+                    // Firestore'a da yaz
+                    try {
+                        if (window.firestoreKaydet) {
+                            await window.firestoreKaydet("portfoy", yatirimlarListesi);
+                            await window.firestoreKaydet("alarmlar", alarmListesi);
+                            await window.firestoreKaydet("hedefler", hedefListesi);
+                            await window.firestoreKaydet("fiyatGecmisi", fiyatGecmisi);
+                            await window.firestoreKaydet("varlikGecmisi", varlikGecmisi);
+                        }
+                    } catch(fe) { console.warn("Firestore sync hatası:", fe); }
+
+                    // Ekranı yenile
+                    temaYukle();
+                    fiyatlariEkranaYaz();
+                    listeyiEkranaBas();
+                    alarmListesiniEkranaBas();
+                    hedefListesiniEkranaBas();
+
+                    alert("✅ Tüm veriler başarıyla geri yüklendi!");
+                } catch(err) {
+                    console.error("Yedek yükleme hatası:", err);
+                    alert("❌ Dosya okunamadı. Geçerli bir Kasam yedek dosyası seçin.");
+                }
+            };
+            reader.readAsText(dosya);
         }
 
         // BAŞLANGIÇ
@@ -2940,9 +2951,8 @@
         }
 
         canliFiyatlariYukle().then(async () => {
-            // Fiyat geçmişini ve varlık geçmişini yükle, sonra saatlik kontrol et
-            await fiyatGecmisiniYukle();
-            await varlikGecmisiniYukle();
+            // Fiyat ve varlik gecmisini paralel yukle
+            await Promise.all([fiyatGecmisiniYukle(), varlikGecmisiniYukle()]);
             saatlikKayitKontrolEt();
             saatlikVarlikKayitKontrolEt();
         });
