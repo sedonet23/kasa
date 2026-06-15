@@ -313,7 +313,7 @@
         .progress-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(to right, var(--accent-color), #ff9500); transition: width 0.6s ease; }
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
-        /* V2: Filtre Butonları */
+        /* Filtre Butonları */
         .filtre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
@@ -325,7 +325,7 @@
         .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
 
-        /* V2.2: Fiyat Alarmı */
+        /* Fiyat Alarmı */
         .alarm-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -506,7 +506,7 @@
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Özetim</h3>
                 </div>
-                <!-- V2.1: Portföy Dağılımı Pasta Grafiği -->
+                <!-- Portföy Dağılımı Pasta Grafiği -->
                 <div class="chart-wrapper" id="pastaGrafikWrapper" style="display:none;">
                     <div class="chart-title">🥧 Portföy Dağılımı</div>
                     <div class="chart-row">
@@ -527,7 +527,7 @@
                         <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
                     </div>
                 </div>
-                <!-- V2.5: Gelişmiş Filtreler -->
+                <!-- Gelişmiş Filtreler -->
                 <div class="filtre-row" id="filtreRow">
                     <button class="filtre-btn aktif" onclick="filtreAyarla('hepsi', this)">Tümü</button>
                     <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
@@ -549,9 +549,9 @@
                     <span>📈 Fiyat Geçmişi</span>
                     <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
                 </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 4px;">
+                <div style="display:flex; gap:3px; flex-wrap:wrap; margin-bottom: 4px;">
                     <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
+                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Gram</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
@@ -588,7 +588,7 @@
             </div>
         </div>
 
-        <!-- V2.3: HEDEF SAYFASI -->
+        <!-- HEDEF SAYFASI -->
         <div id="pageHedef" class="page-section">
             <div class="section-header">
                 <h3 style="margin: 0; font-weight: 500; font-size: 16px;">🎯 Hedeflerim</h3>
@@ -597,7 +597,7 @@
             <div id="hedefList" class="list-container"></div>
         </div>
 
-        <!-- V2.2: ALARM SAYFASI -->
+        <!-- ALARM SAYFASI -->
         <div id="pageAlarm" class="page-section">
             <div id="bildirimIzinBar">
                 <span>📢 Tarayıcı bildirimleri için izin verin</span>
@@ -615,7 +615,7 @@
 
     </div>
 
-    <!-- V2.2: ALARM EKLEME MODALİ -->
+    <!-- ALARM EKLEME MODALİ -->
     <div id="alarmModal" class="modal">
         <h3 style="margin-top: 0; font-size: 16px;">📢 Fiyat Alarmı Kur</h3>
 
@@ -651,7 +651,7 @@
         </div>
     </div>
 
-    <!-- V2.3: HEDEF EKLEME MODALİ -->
+    <!-- HEDEF EKLEME MODALİ -->
     <div id="hedefModal" class="modal">
         <h3 id="hedefModalTitle" style="margin-top: 0; font-size: 16px;">Yeni Hedef Ekle</h3>
         <input type="hidden" id="hedefEditIndex" value="-1">
@@ -893,7 +893,7 @@
                 }
                 alarmListesiniEkranaBas();
 
-                // V2.7: HEDEFLER FIRESTORE'DAN YÜKLE
+                // HEDEFLER FIRESTORE'DAN YÜKLE
                 const hedefData = await window.firestoreYukle("hedefler");
                 if (hedefData && hedefData.length > 0) {
                     hedefListesi = hedefData;
@@ -920,7 +920,7 @@
             listeyiEkranaBas();
         }
 
-        // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
+        // HEDEF VERİSİ YÜKLE (localStorage - yedek)
         function hedefVerisiniYukle() {
             const yerel = localStorage.getItem('kasam_hedefler');
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
@@ -1193,7 +1193,7 @@
             if (!container) return;
             container.innerHTML = "";
 
-            // V2.5: Filtre uygula
+            // Filtre uygula
             const filtreli = yatirimlarListesi.filter(item => {
                 if (aktifFiltre === 'hepsi') return true;
                 if (aktifFiltre === 'alis' || aktifFiltre === 'satis') return (item.islem || 'alis') === aktifFiltre;
@@ -1364,7 +1364,7 @@
                 container.innerHTML += toplamHtml;
             }
 
-            // V2.1: Pasta grafiği çiz
+            // Pasta grafiği çiz
             pastaGrafikiCiz(ozet);
         }
 
@@ -2499,10 +2499,10 @@
             await fiyatGecmisiniYukle();
             saatlikKayitKontrolEt();
         });
-        setInterval(canliFiyatlariYukle, 60000);
+        setInterval(canliFiyatlariYukle, 10000);
 
         // Saatte bir otomatik kayıt kontrolü (uygulama açıkken)
-        setInterval(saatlikKayitKontrolEt, 60000);
+        setInterval(saatlikKayitKontrolEt, 10000);
     </script>
 </body>
 </html>
