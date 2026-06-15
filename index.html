@@ -293,10 +293,31 @@
         }
         .chart-title { font-size: 13px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
         .chart-row { display: flex; align-items: center; gap: 10px; }
-        #pieCanvas { flex-shrink: 0; }
+        #pieCanvas { flex-shrink: 0; cursor: pointer; }
         .pie-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-        .pie-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+        .pie-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; cursor: pointer; padding: 3px 5px; border-radius: 6px; transition: background 0.15s; }
+        .pie-legend-item:hover { background: var(--panel-bg); }
         .pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        /* Pasta popup */
+        #pastaPopup {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            z-index: 1200;
+            min-width: 240px;
+            max-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        #pastaPopupKapat {
+            position: absolute; top: 10px; right: 12px;
+            background: transparent; border: none; cursor: pointer;
+            font-size: 18px; color: var(--text-muted);
+        }
 
         /* V2: Hedef Sistemi */
         .hedef-item {
@@ -314,8 +335,9 @@
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
         /* V2: Filtre Butonları */
-        .filtre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+        .filtre-row { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+        .filtre-row::-webkit-scrollbar { display: none; }
+        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
         .toggle-switch { position: relative; width: 44px; height: 24px; }
@@ -510,7 +532,7 @@
                 <div class="chart-wrapper" id="pastaGrafikWrapper" style="display:none;">
                     <div class="chart-title">🥧 Portföy Dağılımı</div>
                     <div class="chart-row">
-                        <canvas id="pieCanvas" width="120" height="120"></canvas>
+                        <canvas id="pieCanvas" width="140" height="140" style="width:140px;height:140px;"></canvas>
                         <div class="pie-legend" id="pieLegend"></div>
                     </div>
                 </div>
@@ -542,57 +564,94 @@
             </div>
         </div>
 
-        <!-- GRAFİK SAYFASI: Fiyat Geçmişi -->
+        <!-- GRAFİK SAYFASI: Fiyat Geçmişi + Varlık Değeri -->
         <div id="pageButce" class="page-section">
-            <div class="prices-container" style="margin-bottom: 15px;">
-                <div class="prices-header" style="margin-bottom: 8px;">
-                    <span>📈 Fiyat Geçmişi</span>
-                    <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
-                </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 4px;">
-                    <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
-                </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 4px;">
-                    <button class="filtre-btn aktif" onclick="grafikPeriyotSec('gunluk', this)">Günlük</button>
-                    <button class="filtre-btn" onclick="grafikPeriyotSec('haftalik', this)">Haftalık</button>
-                </div>
+
+            <!-- Grafik sekme seçici -->
+            <div class="filtre-row" id="grafikSekmeRow" style="margin-bottom:14px;">
+                <button class="filtre-btn aktif" id="sekmeFiyat" onclick="grafikSekmeSecGrafik('fiyat', this)">📊 Fiyat Geçmişi</button>
+                <button class="filtre-btn" id="sekmeVarlik" onclick="grafikSekmeSecGrafik('varlik', this)">💰 Varlık Değeri</button>
             </div>
-            <div class="grid-summary" id="fiyatMinMaxKartlari" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
-                <div class="summary-card">
-                    <div class="summary-title" style="color: var(--green);">En Düşük Alış</div>
-                    <div class="summary-val" id="fiyatAlisEnDusuk" style="color: var(--green);">₺0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title" style="color: var(--green);">En Yüksek Alış</div>
-                    <div class="summary-val" id="fiyatAlisEnYuksek" style="color: var(--green);">₺0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title" style="color: var(--red);">En Düşük Satış</div>
-                    <div class="summary-val" id="fiyatSatisEnDusuk" style="color: var(--red);">₺0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title" style="color: var(--red);">En Yüksek Satış</div>
-                    <div class="summary-val" id="fiyatSatisEnYuksek" style="color: var(--red);">₺0</div>
-                </div>
-            </div>
-            <div class="chart-wrapper" id="fiyatGrafikWrapper" style="position:relative;">
-                <div class="chart-title" id="fiyatGrafikBaslik">📊 24A Gram Altın - Alış/Satış</div>
-                <canvas id="fiyatGrafik" style="width:100%; height:220px; touch-action:none;"></canvas>
-                <div id="fiyatTooltip" style="display:none; position:absolute; pointer-events:none; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.25); white-space:nowrap; z-index:10;"></div>
-            </div>
-            <div>
-                <div class="section-header">
-                    <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Kayıt Geçmişi</h3>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <input type="date" id="fiyatGecmisTarih" onchange="fiyatGecmisListesiniEkranaBas()" style="background:var(--input-bg); color:var(--text-color); border:1px solid var(--border); border-radius:6px; padding:5px 8px; font-size:13px;">
-                        <button class="btn-refresh" onclick="document.getElementById('fiyatGecmisTarih').value=''; fiyatGecmisListesiniEkranaBas();" title="Son 7 günü göster">✖️</button>
+
+            <!-- FİYAT GEÇMİŞİ PANELİ -->
+            <div id="panelFiyat">
+                <div class="prices-container" style="margin-bottom: 15px;">
+                    <div class="prices-header" style="margin-bottom: 8px;">
+                        <span>📈 Fiyat Geçmişi</span>
+                        <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
+                    </div>
+                    <div class="filtre-row" id="grafikTurRow">
+                        <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
+                    </div>
+                    <div class="filtre-row" id="grafikPeriyotRow">
+                        <button class="filtre-btn aktif" onclick="grafikPeriyotSec('gunluk', this)">Günlük</button>
+                        <button class="filtre-btn" onclick="grafikPeriyotSec('haftalik', this)">Haftalık</button>
                     </div>
                 </div>
-                <div id="fiyatGecmisListesi" class="list-container"></div>
+                <div class="grid-summary" id="fiyatMinMaxKartlari" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
+                    <div class="summary-card">
+                        <div class="summary-title" style="color: var(--green);">En Düşük (Alış)</div>
+                        <div class="summary-val" id="fiyatEnDusuk" style="color: var(--green);">₺0</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-title" style="color: var(--red);">En Yüksek (Satış)</div>
+                        <div class="summary-val" id="fiyatEnYuksek" style="color: var(--red);">₺0</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="fiyatGrafikWrapper" style="position:relative;">
+                    <div class="chart-title" id="fiyatGrafikBaslik">📊 24A Gram Altın - Alış/Satış</div>
+                    <canvas id="fiyatGrafik" style="width:100%; height:220px; touch-action:none;"></canvas>
+                    <div id="fiyatTooltip" style="display:none; position:absolute; pointer-events:none; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.25); white-space:nowrap; z-index:10;"></div>
+                </div>
+                <div>
+                    <div class="section-header">
+                        <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Kayıt Geçmişi</h3>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <input type="date" id="fiyatGecmisTarih" onchange="fiyatGecmisListesiniEkranaBas()" style="background:var(--input-bg); color:var(--text-color); border:1px solid var(--border); border-radius:6px; padding:5px 8px; font-size:13px;">
+                            <button class="btn-refresh" onclick="document.getElementById('fiyatGecmisTarih').value=''; fiyatGecmisListesiniEkranaBas();" title="Son 7 günü göster">✖️</button>
+                        </div>
+                    </div>
+                    <div id="fiyatGecmisListesi" class="list-container"></div>
+                </div>
+            </div>
+
+            <!-- VARLIK DEĞERİ PANELİ -->
+            <div id="panelVarlik" style="display:none;">
+                <div class="prices-container" style="margin-bottom: 15px;">
+                    <div class="prices-header" style="margin-bottom: 8px;">
+                        <span>💰 Varlık Değeri Geçmişi</span>
+                        <button class="btn btn-active" onclick="varlikGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
+                    </div>
+                    <div class="filtre-row" id="varlikPeriyotRow">
+                        <button class="filtre-btn aktif" onclick="varlikPeriyotSec('gunluk', this)">Günlük</button>
+                        <button class="filtre-btn" onclick="varlikPeriyotSec('haftalik', this)">Haftalık</button>
+                    </div>
+                </div>
+                <div class="grid-summary" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
+                    <div class="summary-card">
+                        <div class="summary-title" style="color: var(--green);">En Düşük</div>
+                        <div class="summary-val" id="varlikEnDusuk" style="color: var(--green);">₺0</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-title" style="color: var(--accent-color);">En Yüksek</div>
+                        <div class="summary-val" id="varlikEnYuksek" style="color: var(--accent-color);">₺0</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" style="position:relative;">
+                    <div class="chart-title">💰 Toplam Varlık Değeri (₺)</div>
+                    <canvas id="varlikGrafik" style="width:100%; height:220px; touch-action:none;"></canvas>
+                    <div id="varlikTooltip" style="display:none; position:absolute; pointer-events:none; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.25); white-space:nowrap; z-index:10;"></div>
+                </div>
+                <div>
+                    <div class="section-header">
+                        <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Geçmişi</h3>
+                    </div>
+                    <div id="varlikGecmisListesi" class="list-container"></div>
+                </div>
             </div>
         </div>
 
@@ -784,6 +843,13 @@
         </div>
     </div>
 
+    <!-- PASTA DİLİMİ DETAY POPUP -->
+    <div id="pastaPopup">
+        <button id="pastaPopupKapat" onclick="document.getElementById('pastaPopup').style.display='none'">&#10005;</button>
+        <div id="pastaPopupIcerik"></div>
+    </div>
+    <div id="pastaPopupOverlay" onclick="document.getElementById('pastaPopup').style.display='none';this.style.display='none';" style="display:none; position:fixed; inset:0; z-index:1199; background:rgba(0,0,0,0.45);"></div>
+
     <!-- BUTCE MODALi KALDIRILDI (Grafik sekmesi ile değiştirildi) -->
 
     <script>
@@ -818,6 +884,9 @@
                 fiyatGrafikCiz();
                 fiyatGecmisListesiniEkranaBas();
                 fiyatGrafikEtkilesimiKur();
+                varlikGrafikCiz();
+                varlikGecmisListesiniEkranaBas();
+                varlikGrafikEtkilesimiKur();
             } else if (sayfaIsmi === 'hedef') {
                 document.getElementById('pageHedef').classList.add('active-page');
                 document.getElementById('navHedef').classList.add('btn-active');
@@ -1797,8 +1866,7 @@
         // Grafik türü değiştirme
         function grafikTuruSec(tur, btn) {
             seciliGrafikTuru = tur;
-            const grup = btn ? btn.closest('div') : null;
-            if (grup) grup.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            document.getElementById('grafikTurRow').querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
             if (btn) btn.classList.add('aktif');
             const baslikEl = document.getElementById('fiyatGrafikBaslik');
             if (baslikEl) baslikEl.innerText = `📊 ${GRAFIK_TUR_BILGI[tur].isim} - Alış/Satış`;
@@ -1808,8 +1876,7 @@
         // Grafik periyodu değiştirme (Günlük / Haftalık)
         function grafikPeriyotSec(periyot, btn) {
             seciliGrafikPeriyot = periyot;
-            const grup = btn ? btn.closest('div') : null;
-            if (grup) grup.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            document.getElementById('grafikPeriyotRow').querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
             if (btn) btn.classList.add('aktif');
             fiyatGrafikCiz();
         }
@@ -1978,34 +2045,26 @@
             ctx.fillText('Satış', leftPad + 62, 10);
         }
 
-        // Seçili periyot için alış ve satış için ayrı ayrı en düşük/en yüksek değerleri kartlara yaz
+        // Seçili periyot için en düşük/en yüksek değerleri kartlara yaz
         function fiyatMinMaxGuncelle(veri, tur) {
-            const alisEnDusukEl = document.getElementById('fiyatAlisEnDusuk');
-            const alisEnYuksekEl = document.getElementById('fiyatAlisEnYuksek');
-            const satisEnDusukEl = document.getElementById('fiyatSatisEnDusuk');
-            const satisEnYuksekEl = document.getElementById('fiyatSatisEnYuksek');
-            if (!alisEnDusukEl || !alisEnYuksekEl || !satisEnDusukEl || !satisEnYuksekEl) return;
+            const enDusukEl = document.getElementById('fiyatEnDusuk');
+            const enYuksekEl = document.getElementById('fiyatEnYuksek');
+            if (!enDusukEl || !enYuksekEl) return;
 
             if (!veri || veri.length === 0) {
-                alisEnDusukEl.innerText = '₺0';
-                alisEnYuksekEl.innerText = '₺0';
-                satisEnDusukEl.innerText = '₺0';
-                satisEnYuksekEl.innerText = '₺0';
+                enDusukEl.innerText = '₺0';
+                enYuksekEl.innerText = '₺0';
                 return;
             }
 
             const alisVeri = veri.map(v => v[tur.alis] || 0).filter(v => v > 0);
             const satisVeri = veri.map(v => v[tur.satis] || 0).filter(v => v > 0);
 
-            const alisEnDusuk = alisVeri.length ? Math.min(...alisVeri) : 0;
-            const alisEnYuksek = alisVeri.length ? Math.max(...alisVeri) : 0;
-            const satisEnDusuk = satisVeri.length ? Math.min(...satisVeri) : 0;
-            const satisEnYuksek = satisVeri.length ? Math.max(...satisVeri) : 0;
+            const enDusukAlis = alisVeri.length ? Math.min(...alisVeri) : 0;
+            const enYuksekSatis = satisVeri.length ? Math.max(...satisVeri) : 0;
 
-            alisEnDusukEl.innerText = '₺' + Math.round(alisEnDusuk).toLocaleString('tr-TR');
-            alisEnYuksekEl.innerText = '₺' + Math.round(alisEnYuksek).toLocaleString('tr-TR');
-            satisEnDusukEl.innerText = '₺' + Math.round(satisEnDusuk).toLocaleString('tr-TR');
-            satisEnYuksekEl.innerText = '₺' + Math.round(satisEnYuksek).toLocaleString('tr-TR');
+            enDusukEl.innerText = '₺' + Math.round(enDusukAlis).toLocaleString('tr-TR');
+            enYuksekEl.innerText = '₺' + Math.round(enYuksekSatis).toLocaleString('tr-TR');
         }
 
         // Etkileşimli grafik: en yakın noktayı bul ve tooltip göster
@@ -2339,12 +2398,12 @@
 
         function filtreAyarla(filtre, btn) {
             aktifFiltre = filtre;
-            document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            document.getElementById('filtreRow').querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
             btn.classList.add('aktif');
             listeyiEkranaBas();
         }
 
-        // ===== V2.1: PASTA GRAFİĞİ =====
+        // ===== V2.1: PASTA GRAFİĞİ (HiDPI + tıklama popup) =====
         const PIE_RENKLER = {
             gram24: '#F5A623',
             gram22: '#E8920F',
@@ -2352,6 +2411,9 @@
             yarim:  '#3498db',
             ata:    '#9b59b6'
         };
+
+        let _pastaParcalar = [];
+        let _pastaToplam = 0;
 
         function pastaGrafikiCiz(ozet) {
             const canvas = document.getElementById('pieCanvas');
@@ -2366,17 +2428,33 @@
                 const net = ozet[t].net;
                 if (net <= 0) return;
                 const deger = net * turGuncelAlisFiyati(t);
-                if (deger > 0) { parcalar.push({ t, deger }); toplam += deger; }
+                if (deger > 0) { parcalar.push({ t, deger, net, maliyet: ozet[t].maliyet }); toplam += deger; }
             });
 
             if (parcalar.length === 0) { wrapper.style.display = 'none'; return; }
             wrapper.style.display = 'block';
 
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, 120, 120);
-            let aci = -Math.PI / 2;
-            const cx = 60, cy = 60, r = 54;
+            _pastaParcalar = parcalar;
+            _pastaToplam = toplam;
 
+            // HiDPI canvas
+            const cssSize = 140;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = cssSize * dpr;
+            canvas.height = cssSize * dpr;
+            canvas.style.width = cssSize + 'px';
+            canvas.style.height = cssSize + 'px';
+
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, cssSize, cssSize);
+
+            let aci = -Math.PI / 2;
+            const cx = cssSize / 2, cy = cssSize / 2, r = cssSize / 2 - 6;
+            const ic = r * 0.50; // delik yarıçapı
+
+            // Dilim açılarını sakla (tıklama tespiti için)
+            const dilimAcilari = [];
             parcalar.forEach(p => {
                 const dilim = (p.deger / toplam) * Math.PI * 2;
                 ctx.beginPath();
@@ -2385,20 +2463,112 @@
                 ctx.closePath();
                 ctx.fillStyle = PIE_RENKLER[p.t] || '#aaa';
                 ctx.fill();
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim() || '#141414';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                dilimAcilari.push({ t: p.t, baslangic: aci, bitis: aci + dilim });
                 aci += dilim;
             });
+            canvas._dilimAcilari = dilimAcilari;
+            canvas._cx = cx; canvas._cy = cy; canvas._r = r; canvas._ic = ic;
 
             // Ortada delik (donut)
             ctx.beginPath();
-            ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+            ctx.arc(cx, cy, ic, 0, Math.PI * 2);
             const bg = getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim();
             ctx.fillStyle = bg || '#141414';
             ctx.fill();
 
-            legend.innerHTML = parcalar.map(p => {
+            // Ortada toplam değer
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#fff';
+            ctx.font = `bold ${Math.round(cssSize * 0.08)}px Segoe UI`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const kisaFormat = (v) => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : Math.round(v).toString();
+            ctx.fillText('₺' + kisaFormat(toplam), cx, cy);
+
+            legend.innerHTML = parcalar.map((p, i) => {
                 const yuzde = ((p.deger / toplam) * 100).toFixed(1);
-                return `<div class="pie-legend-item"><div class="pie-dot" style="background:${PIE_RENKLER[p.t]}"></div><span style="color:var(--text-muted)">${TUR_BILGI[p.t].isim}</span><span style="margin-left:auto;font-weight:bold;">%${yuzde}</span></div>`;
+                return `<div class="pie-legend-item" onclick="pastaDilimPopupAc('${p.t}')">
+                    <div class="pie-dot" style="background:${PIE_RENKLER[p.t]}"></div>
+                    <span style="color:var(--text-muted);font-size:11px;">${TUR_BILGI[p.t].isim}</span>
+                    <span style="margin-left:auto;font-weight:bold;font-size:12px;">%${yuzde}</span>
+                </div>`;
             }).join('');
+
+            // Tıklama olayını bir kez kur
+            if (!canvas.dataset.tiklamaKuruldu) {
+                canvas.dataset.tiklamaKuruldu = '1';
+                canvas.addEventListener('click', function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = (canvas._cx * 2) / rect.width;
+                    const scaleY = (canvas._cy * 2) / rect.height;
+                    const mx = (e.clientX - rect.left) * scaleX - canvas._cx;
+                    const my = (e.clientY - rect.top) * scaleY - canvas._cy;
+                    const dist = Math.sqrt(mx*mx + my*my);
+                    if (dist < canvas._ic || dist > canvas._r) return;
+                    let angle = Math.atan2(my, mx);
+                    if (angle < -Math.PI / 2) angle += Math.PI * 2;
+                    const startAngle = -Math.PI / 2;
+                    let normalizedAngle = angle - startAngle;
+                    if (normalizedAngle < 0) normalizedAngle += Math.PI * 2;
+                    const dilimler = canvas._dilimAcilari;
+                    for (let d of dilimler) {
+                        let s = d.baslangic - startAngle;
+                        let b = d.bitis - startAngle;
+                        if (s < 0) s += Math.PI*2;
+                        if (b < 0) b += Math.PI*2;
+                        if (b < s) b += Math.PI*2;
+                        let na = normalizedAngle;
+                        if (na < s) na += Math.PI*2;
+                        if (na >= s && na < b) {
+                            pastaDilimPopupAc(d.t);
+                            break;
+                        }
+                    }
+                });
+            }
+        }
+
+        function pastaDilimPopupAc(t) {
+            const p = _pastaParcalar.find(x => x.t === t);
+            if (!p) return;
+            const yuzde = ((_pastaToplam > 0) ? (p.deger / _pastaToplam) * 100 : 0).toFixed(1);
+            const karZarar = p.deger - p.maliyet;
+            const karYuzde = p.maliyet > 0 ? ((karZarar / p.maliyet) * 100).toFixed(1) : '0.0';
+            const karRenk = karZarar >= 0 ? 'var(--green)' : 'var(--red)';
+            const miktarStr = (Math.round(p.net * 10000) / 10000).toLocaleString('tr-TR');
+
+            document.getElementById('pastaPopupIcerik').innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                    <div style="width:14px;height:14px;border-radius:50%;background:${PIE_RENKLER[t]};flex-shrink:0;"></div>
+                    <span style="font-size:15px;font-weight:bold;">${TUR_BILGI[t].isim}</span>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                        <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">MİKTAR</div>
+                        <div style="font-size:14px;font-weight:bold;">${miktarStr} ${TUR_BILGI[t].birim}</div>
+                    </div>
+                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                        <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">PORTFÖY PAYI</div>
+                        <div style="font-size:14px;font-weight:bold;color:${PIE_RENKLER[t]};">%${yuzde}</div>
+                    </div>
+                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                        <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">GÜNCEL DEĞER</div>
+                        <div style="font-size:14px;font-weight:bold;">₺${Math.round(p.deger).toLocaleString('tr-TR')}</div>
+                    </div>
+                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                        <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">MALİYET</div>
+                        <div style="font-size:14px;font-weight:bold;">₺${Math.round(p.maliyet).toLocaleString('tr-TR')}</div>
+                    </div>
+                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;grid-column:span 2;">
+                        <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">KÂR / ZARAR</div>
+                        <div style="font-size:15px;font-weight:bold;color:${karRenk};">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde})</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('pastaPopup').style.display = 'block';
+            document.getElementById('pastaPopupOverlay').style.display = 'block';
         }
 
 
@@ -2500,6 +2670,300 @@
             });
         }
 
+
+        // ===== VARLIK DEĞERİ GEÇMİŞİ SİSTEMİ =====
+        let varlikGecmisi = [];
+        let seciliVarlikPeriyot = 'gunluk';
+        let varlikGrafikCizimVerisi = null;
+        let varlikGrafikSeciliIndex = null;
+
+        // Grafik sekme geçişi
+        function grafikSekmeSecGrafik(sekme, btn) {
+            document.getElementById('panelFiyat').style.display = sekme === 'fiyat' ? 'block' : 'none';
+            document.getElementById('panelVarlik').style.display = sekme === 'varlik' ? 'block' : 'none';
+            document.getElementById('grafikSekmeRow').querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            if (btn) btn.classList.add('aktif');
+            if (sekme === 'varlik') {
+                varlikGrafikCiz();
+                varlikGecmisListesiniEkranaBas();
+                varlikGrafikEtkilesimiKur();
+            }
+        }
+
+        // Varlık değeri geçmişini yükle
+        async function varlikGecmisiniYukle() {
+            try {
+                if (window.firestoreYukle) {
+                    const data = await window.firestoreYukle("varlikGecmisi");
+                    if (data && data.length > 0) {
+                        varlikGecmisi = data.sort((a, b) => new Date(a.zaman) - new Date(b.zaman));
+                        localStorage.setItem("kasam_varlik_gecmisi", JSON.stringify(varlikGecmisi));
+                        return;
+                    }
+                }
+            } catch (e) { console.warn("Varlık geçmişi Firestore'dan yüklenemedi:", e); }
+            const yerel = localStorage.getItem("kasam_varlik_gecmisi");
+            if (yerel) { try { varlikGecmisi = JSON.parse(yerel); } catch (e) { varlikGecmisi = []; } }
+        }
+
+        // Anlık varlık değerini hesapla
+        function anlikVarlikHesapla() {
+            const ozet = netPozisyonlariHesapla();
+            let toplam = 0;
+            Object.keys(TUR_BILGI).forEach(t => {
+                const net = ozet[t].net;
+                if (net > 0) toplam += net * turGuncelAlisFiyati(t);
+            });
+            return toplam;
+        }
+
+        // Varlık değerini geçmişe kaydet
+        async function varlikGecmisineKaydet(manuel) {
+            const deger = anlikVarlikHesapla();
+            if (deger <= 0 && !manuel) return; // boş portföyü kaydetme
+            const kayit = {
+                zaman: new Date().toISOString(),
+                deger: deger,
+                manuel: !!manuel
+            };
+            varlikGecmisi.push(kayit);
+            localStorage.setItem("kasam_varlik_gecmisi", JSON.stringify(varlikGecmisi));
+            localStorage.setItem("kasam_son_varlik_kayit", new Date().toISOString());
+            try {
+                if (window.firestoreKaydet) await window.firestoreKaydet("varlikGecmisi", varlikGecmisi);
+            } catch (e) { console.warn("Varlık geçmişi Firestore'a kaydedilemedi:", e); }
+            if (document.getElementById('panelVarlik') && document.getElementById('panelVarlik').style.display !== 'none') {
+                varlikGrafikCiz();
+                varlikGecmisListesiniEkranaBas();
+            }
+            if (manuel) {
+                const btn = document.querySelector('#panelVarlik .btn-active');
+                if (btn) { const eski = btn.innerText; btn.innerText = "✅ Kaydedildi"; setTimeout(() => { btn.innerText = eski; }, 1200); }
+            }
+        }
+
+        function varlikPeriyotSec(periyot, btn) {
+            seciliVarlikPeriyot = periyot;
+            const grup = btn ? btn.closest('div') : null;
+            if (grup) grup.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+            if (btn) btn.classList.add('aktif');
+            varlikGrafikCiz();
+        }
+
+        function varlikVerisiniGetir() {
+            const simdi = Date.now();
+            let baslangic = seciliVarlikPeriyot === 'haftalik' ? simdi - 7*24*60*60*1000 : simdi - 24*60*60*1000;
+            let veri = varlikGecmisi.filter(k => new Date(k.zaman).getTime() >= baslangic);
+            if (veri.length === 0) veri = varlikGecmisi.slice(-100);
+            return veri;
+        }
+
+        function varlikGrafikCiz() {
+            const canvas = document.getElementById('varlikGrafik');
+            if (!canvas) return;
+
+            const veri = varlikVerisiniGetir();
+            const genislik = canvas.offsetWidth || 320;
+            const yukseklik = 220;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = genislik * dpr;
+            canvas.height = yukseklik * dpr;
+            canvas.style.width = genislik + 'px';
+            canvas.style.height = yukseklik + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, genislik, yukseklik);
+
+            const cw = genislik, ch = yukseklik;
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+            const border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+            const accentColor = '#F5A623';
+
+            // min/max kartları
+            const enDusukEl = document.getElementById('varlikEnDusuk');
+            const enYuksekEl = document.getElementById('varlikEnYuksek');
+
+            if (veri.length === 0) {
+                ctx.fillStyle = textColor || '#8c8c8c';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Henüz kayıt yok. "Şimdi Kaydet" ile başlayın.', cw/2, ch/2);
+                varlikGrafikCizimVerisi = null;
+                if (enDusukEl) enDusukEl.innerText = '₺0';
+                if (enYuksekEl) enYuksekEl.innerText = '₺0';
+                return;
+            }
+
+            const degerler = veri.map(v => v.deger || 0);
+            let min = Math.min(...degerler), max = Math.max(...degerler);
+            if (min === max) { min -= 1; max += 1; }
+            const pad = (max - min) * 0.1;
+            min -= pad; max += pad;
+
+            if (enDusukEl) enDusukEl.innerText = '₺' + Math.round(Math.min(...degerler)).toLocaleString('tr-TR');
+            if (enYuksekEl) enYuksekEl.innerText = '₺' + Math.round(Math.max(...degerler)).toLocaleString('tr-TR');
+
+            const leftPad = 62, rightPad = 10, topPad = 18, bottomPad = 25;
+            const plotW = cw - leftPad - rightPad;
+            const plotH = ch - topPad - bottomPad;
+
+            // Izgara + Y eksen
+            ctx.font = '10px Segoe UI';
+            ctx.fillStyle = textColor || '#8c8c8c';
+            ctx.strokeStyle = border || '#222';
+            ctx.lineWidth = 0.5;
+            const adim = 4;
+            for (let i = 0; i <= adim; i++) {
+                const y = topPad + (plotH / adim) * i;
+                const d = max - ((max - min) / adim) * i;
+                ctx.beginPath(); ctx.moveTo(leftPad, y); ctx.lineTo(cw - rightPad, y); ctx.stroke();
+                ctx.textAlign = 'right';
+                ctx.fillText('₺' + Math.round(d).toLocaleString('tr-TR'), leftPad - 4, y + 3);
+            }
+
+            const xAdim = veri.length > 1 ? plotW / (veri.length - 1) : 0;
+
+            // Alan dolgusu (gradient)
+            const grad = ctx.createLinearGradient(0, topPad, 0, topPad + plotH);
+            grad.addColorStop(0, 'rgba(245,166,35,0.28)');
+            grad.addColorStop(1, 'rgba(245,166,35,0.02)');
+            ctx.beginPath();
+            degerler.forEach((d, i) => {
+                const x = leftPad + xAdim * i;
+                const y = topPad + plotH - ((d - min) / (max - min)) * plotH;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(leftPad + xAdim * (veri.length-1), topPad + plotH);
+            ctx.lineTo(leftPad, topPad + plotH);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Çizgi
+            ctx.beginPath();
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 2.5;
+            degerler.forEach((d, i) => {
+                const x = leftPad + xAdim * i;
+                const y = topPad + plotH - ((d - min) / (max - min)) * plotH;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Koordinatlar kaydet
+            const noktalar = veri.map((kayit, i) => {
+                const x = leftPad + xAdim * i;
+                const y = topPad + plotH - ((degerler[i] - min) / (max - min)) * plotH;
+                return { x, y, deger: degerler[i], zaman: kayit.zaman };
+            });
+            varlikGrafikCizimVerisi = { noktalar, canvasGenislik: cw, canvasYukseklik: ch };
+
+            // Seçili nokta
+            if (varlikGrafikSeciliIndex !== null && noktalar[varlikGrafikSeciliIndex]) {
+                const n = noktalar[varlikGrafikSeciliIndex];
+                ctx.strokeStyle = border || '#444';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(n.x, topPad); ctx.lineTo(n.x, topPad + plotH); ctx.stroke();
+                ctx.beginPath();
+                ctx.fillStyle = accentColor;
+                ctx.arc(n.x, n.y, 5, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // X eksen tarih
+            ctx.fillStyle = textColor || '#8c8c8c';
+            ctx.font = '10px Segoe UI';
+            const fmtT = (d) => { const dt = new Date(d); return dt.getDate().toString().padStart(2,'0')+'.'+( dt.getMonth()+1).toString().padStart(2,'0')+' '+dt.getHours().toString().padStart(2,'0')+':'+dt.getMinutes().toString().padStart(2,'0'); };
+            ctx.textAlign = 'left';
+            ctx.fillText(fmtT(veri[0].zaman), leftPad, ch - 6);
+            ctx.textAlign = 'right';
+            ctx.fillText(fmtT(veri[veri.length-1].zaman), cw - rightPad, ch - 6);
+        }
+
+        function varlikGrafikTooltipGoster(clientX, clientY) {
+            const canvas = document.getElementById('varlikGrafik');
+            const tooltip = document.getElementById('varlikTooltip');
+            if (!canvas || !tooltip || !varlikGrafikCizimVerisi) return;
+            const rect = canvas.getBoundingClientRect();
+            const olcekX = varlikGrafikCizimVerisi.canvasGenislik / rect.width;
+            const x = (clientX - rect.left) * olcekX;
+            const noktalar = varlikGrafikCizimVerisi.noktalar;
+            if (!noktalar.length) return;
+            let enYakin = 0, enFark = Infinity;
+            noktalar.forEach((n, i) => { const f = Math.abs(n.x - x); if (f < enFark) { enFark = f; enYakin = i; } });
+            varlikGrafikSeciliIndex = enYakin;
+            const nokta = noktalar[enYakin];
+            const tarih = new Date(nokta.zaman);
+            const tarihStr = tarih.getDate().toString().padStart(2,'0')+'.'+(tarih.getMonth()+1).toString().padStart(2,'0')+' '+tarih.getHours().toString().padStart(2,'0')+':'+tarih.getMinutes().toString().padStart(2,'0');
+            tooltip.innerHTML = `<b>${tarihStr}</b><br><span style="color:#F5A623;font-weight:bold;">₺${Math.round(nokta.deger).toLocaleString('tr-TR')}</span>`;
+            tooltip.style.display = 'block';
+            const olcekOraniX = rect.width / varlikGrafikCizimVerisi.canvasGenislik;
+            const olcekOraniY = rect.height / varlikGrafikCizimVerisi.canvasYukseklik;
+            let tx = nokta.x * olcekOraniX + 10;
+            let ty = nokta.y * olcekOraniY - 30;
+            if (tx + 140 > rect.width) tx = nokta.x * olcekOraniX - 150;
+            if (ty < 0) ty = 5;
+            tooltip.style.left = tx + 'px';
+            tooltip.style.top = ty + 'px';
+            varlikGrafikCiz();
+        }
+
+        function varlikGrafikTooltipGizle() {
+            const tooltip = document.getElementById('varlikTooltip');
+            if (tooltip) tooltip.style.display = 'none';
+            varlikGrafikSeciliIndex = null;
+            varlikGrafikCiz();
+        }
+
+        function varlikGrafikEtkilesimiKur() {
+            const canvas = document.getElementById('varlikGrafik');
+            if (!canvas || canvas.dataset.varlikEtkilesim) return;
+            canvas.dataset.varlikEtkilesim = '1';
+            canvas.addEventListener('mousemove', (e) => varlikGrafikTooltipGoster(e.clientX, e.clientY));
+            canvas.addEventListener('mouseleave', varlikGrafikTooltipGizle);
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); const t = e.touches[0]; varlikGrafikTooltipGoster(t.clientX, t.clientY); }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; varlikGrafikTooltipGoster(t.clientX, t.clientY); }, { passive: false });
+            canvas.addEventListener('touchend', (e) => { e.preventDefault(); varlikGrafikTooltipGizle(); }, { passive: false });
+        }
+
+        function varlikGecmisListesiniEkranaBas() {
+            const container = document.getElementById('varlikGecmisListesi');
+            if (!container) return;
+            container.innerHTML = '';
+            const yediGunOnce = Date.now() - 7*24*60*60*1000;
+            const liste = varlikGecmisi.filter(k => new Date(k.zaman).getTime() >= yediGunOnce).slice().reverse();
+            if (liste.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:30px;">Henüz kayıt yok.</div>';
+                return;
+            }
+            liste.forEach(kayit => {
+                const tarih = new Date(kayit.zaman);
+                const tarihStr = tarih.getDate().toString().padStart(2,'0')+'.'+(tarih.getMonth()+1).toString().padStart(2,'0')+'.'+tarih.getFullYear()+' '+tarih.getHours().toString().padStart(2,'0')+':'+tarih.getMinutes().toString().padStart(2,'0');
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div class="item-left">
+                            <div class="item-icon">${kayit.manuel ? '✋' : '⏱️'}</div>
+                            <div>
+                                <div class="item-details-title">${tarihStr}</div>
+                                <div class="item-details-sub">${kayit.manuel ? 'Manuel kayıt' : 'Otomatik kayıt'}</div>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <div class="item-val" style="color:var(--accent-color);">₺${Math.round(kayit.deger).toLocaleString('tr-TR')}</div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // Saatlik varlık kaydı kontrolü (fiyat geçmişiyle birlikte çalışır)
+        function saatlikVarlikKayitKontrolEt() {
+            const sonZamanStr = localStorage.getItem("kasam_son_varlik_kayit");
+            const simdi = new Date();
+            if (!sonZamanStr) { varlikGecmisineKaydet(false); return; }
+            const farkMs = simdi - new Date(sonZamanStr);
+            if (farkMs >= 60 * 60 * 1000) varlikGecmisineKaydet(false);
+        }
+
         // BAŞLANGIÇ
         temaYukle();
         fiyatlariEkranaYaz();
@@ -2511,14 +2975,17 @@
         }
 
         canliFiyatlariYukle().then(async () => {
-            // Fiyat geçmişini yükle ve uygulama açılışında anlık fiyatı kaydet
+            // Fiyat geçmişini ve varlık geçmişini yükle, sonra saatlik kontrol et
             await fiyatGecmisiniYukle();
+            await varlikGecmisiniYukle();
             saatlikKayitKontrolEt();
+            saatlikVarlikKayitKontrolEt();
         });
         setInterval(canliFiyatlariYukle, 60000);
 
         // Saatte bir otomatik kayıt kontrolü (uygulama açıkken)
         setInterval(saatlikKayitKontrolEt, 60000);
+        setInterval(saatlikVarlikKayitKontrolEt, 60000);
     </script>
 </body>
 </html>
