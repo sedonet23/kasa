@@ -421,8 +421,8 @@
             <div class="prices-container">
                 <div class="prices-header">
                     <div style="display: flex; align-items: center;">
-                        <span>📊 Finans</span>
-                        <button class="btn-refresh" onclick="canliFiyatlariYukle()">🔄 Güncelle</button>
+                        <span>📊 Finans Paneli</span>
+                        <button class="btn-refresh" onclick="canliFiyatlariYukle()">​🔁 Güncelle</button>
                         <button class="btn-refresh" onclick="fiyatAyarlariniAc()" style="color: var(--accent-color);">⚙️ Fiyatları Ayarla</button>
                     </div>
                     <span id="updateTime" style="color: var(--accent-color);">Yükleniyor...</span>
@@ -506,7 +506,7 @@
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Özetim</h3>
                 </div>
-                <!-- V2.1: Portföy Dağılımı Pasta Grafiği -->
+                <!-- Portföy Dağılımı Pasta Grafiği -->
                 <div class="chart-wrapper" id="pastaGrafikWrapper" style="display:none;">
                     <div class="chart-title">🥧 Portföy Dağılımı</div>
                     <div class="chart-row">
@@ -527,13 +527,13 @@
                         <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
                     </div>
                 </div>
-                <!-- V2.5: Gelişmiş Filtreler -->
+                <!-- Gelişmiş Filtreler -->
                 <div class="filtre-row" id="filtreRow">
                     <button class="filtre-btn aktif" onclick="filtreAyarla('hepsi', this)">Tümü</button>
                     <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
                     <button class="filtre-btn" onclick="filtreAyarla('satis', this)">📤 Satışlar</button>
                     <button class="filtre-btn" onclick="filtreAyarla('gram24', this)">24A Gram</button>
-                    <button class="filtre-btn" onclick="filtreAyarla('gram22', this)">22A Bilezik</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('gram22', this)">22A Gram</button>
                     <button class="filtre-btn" onclick="filtreAyarla('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="filtreAyarla('yarim', this)">Yarım</button>
                     <button class="filtre-btn" onclick="filtreAyarla('ata', this)">Tam</button>
@@ -549,9 +549,9 @@
                     <span>📈 Fiyat Geçmişi</span>
                     <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
                 </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 4px;">
+                <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom: 4px;">
                     <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
+                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Gram</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
