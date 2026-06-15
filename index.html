@@ -328,9 +328,9 @@
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
         /* V2: Filtre Butonları */
-        .filtre-row { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+        .filtre-row { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
         .filtre-row::-webkit-scrollbar { display: none; }
-        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+        .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 10px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
 
         .toggle-switch { position: relative; width: 44px; height: 24px; }
@@ -340,7 +340,7 @@
         .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
 
-        /* V2.2: Fiyat Alarmı */
+        /* Fiyat Alarmı */
         .alarm-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
