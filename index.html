@@ -166,13 +166,6 @@
             border-color: var(--accent-color);
         }
 
-        button.btn-active,
-        button.btn.btn-active,
-        .nav-buttons button.btn-active,
-        .filtre-btn.aktif {
-            color: #000 !important;
-        }
-
         .container { max-width: 1200px; margin: 0 auto; }
         .page-section { display: none; }
         .page-section.active-page { display: block; }
@@ -415,6 +408,12 @@
             justify-content: space-between;
             gap: 10px;
         }
+
+        /* Detay popup iç kutular */
+        .detay-kart { background: var(--bg-color); border-radius: 8px; padding: 10px; text-align: center; }
+        .detay-kart-sm { background: var(--bg-color); border-radius: 8px; padding: 9px; text-align: center; }
+        .detay-kart-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+        .detay-kart-deger { font-size: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -582,7 +581,7 @@
                     </div>
                     <div class="filtre-row" id="grafikTurRow">
                         <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                        <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Gram</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
@@ -763,7 +762,7 @@
             <option value="ata">Tam Altın</option>
         </select>
 
-        <label for-tur="mAmount" style="font-size: 12px; color: var(--text-muted);">Miktar (Adet/Gram):</label>
+        <label for="mAmount" style="font-size: 12px; color: var(--text-muted);">Miktar (Adet/Gram):</label>
         <input type="number" id="mAmount" step="0.0001" placeholder="Örn:1" oninput="miktarDegisti()">
 
         <label style="font-size: 12px; color: var(--text-muted);">
@@ -833,7 +832,6 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
             <div>
                 <div id="detayBaslik" style="font-size:15px; font-weight:bold; color:var(--accent-color);"></div>
-                <div id="detayNot" style="font-size:11px; color:var(--text-muted); margin-top:2px;"></div>
             </div>
             <button class="btn-action" onclick="document.getElementById('detayModal').style.display='none'" style="font-size:18px; color:var(--text-muted);">&#10005;</button>
         </div>
@@ -850,11 +848,9 @@
     </div>
     <div id="pastaPopupOverlay" onclick="document.getElementById('pastaPopup').style.display='none';this.style.display='none';" style="display:none; position:fixed; inset:0; z-index:1199; background:rgba(0,0,0,0.45);"></div>
 
-    <!-- BUTCE MODALi KALDIRILDI (Grafik sekmesi ile değiştirildi) -->
 
     <script>
         let yatirimlarListesi = [];
-        let butceListesi = [];
 
         let canliFiyatlar = {
             gram24s: 3120, gram24a: 3105, gram22s: 2860, gram22a: 2840,
@@ -865,10 +861,7 @@
         // SAYFA GEÇİŞ
         function sayfaDegistir(sayfaIsmi) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
-            document.getElementById('navYatirim').classList.remove('btn-active');
-            document.getElementById('navButce').classList.remove('btn-active');
-            document.getElementById('navHedef').classList.remove('btn-active');
-            document.getElementById('navAlarm').classList.remove('btn-active');
+            document.querySelectorAll('.nav-buttons .btn').forEach(b => b.classList.remove('btn-active'));
 
             if (sayfaIsmi === 'yatirim') {
                 document.getElementById('pageYatirim').classList.add('active-page');
@@ -942,19 +935,6 @@
                     }
                 }
 
-                const butceData = await window.firestoreYukle("butce");
-                if (butceData && butceData.length > 0) {
-                    butceListesi = butceData;
-                } else {
-                    const yerelButce = localStorage.getItem("kasam_butce");
-                    if (yerelButce) {
-                        try {
-                            butceListesi = JSON.parse(yerelButce);
-                            if (butceListesi.length > 0) await window.firestoreKaydet("butce", butceListesi);
-                        } catch (e) { butceListesi = []; }
-                    }
-                }
-
                 // V2.7: ALARMLAR FIRESTORE'DAN YÜKLE
                 const alarmData = await window.firestoreYukle("alarmlar");
                 if (alarmData && alarmData.length > 0) {
@@ -988,8 +968,6 @@
                 console.warn("Firestore erişilemedi:", e);
                 const yerelVeri = localStorage.getItem("kasam_portfoy");
                 if (yerelVeri) { try { yatirimlarListesi = JSON.parse(yerelVeri); } catch (e) {} }
-                const yerelButce = localStorage.getItem("kasam_butce");
-                if (yerelButce) { try { butceListesi = JSON.parse(yerelButce); } catch (e) {} }
                 alarmVerisiniYukle();
                 hedefVerisiniYukle();
             }
@@ -1002,7 +980,6 @@
             const yerel = localStorage.getItem('kasam_hedefler');
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
         }
-        hedefVerisiniYukle();
 
         // FİYAT EKRANA YAZ
         function fiyatlariEkranaYaz() {
@@ -1165,7 +1142,7 @@
             const infoEl = document.getElementById("livePriceInfo");
             if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alış" : "Satış"} Fiyatı)`;
             // Miktar label dinamik
-            const amountLabel = document.querySelector('label[for-tur="mAmount"]');
+            const amountLabel = document.querySelector('#addModal label[for="mAmount"]') || document.querySelector('#addModal label');
             const birimAdi = (tur === "gram24" || tur === "gram22") ? "Gram" : "Adet";
             if (amountLabel) amountLabel.childNodes[0].textContent = `Miktar (${birimAdi}): `;
             // Yeni kayit modunda (editIndex == -1) tur degisince guncel fiyati her zaman yaz
@@ -1255,13 +1232,9 @@
             return ozet;
         }
 
+        const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };
         function turGuncelAlisFiyati(t) {
-            if (t === "gram24") return canliFiyatlar.gram24a;
-            if (t === "gram22") return canliFiyatlar.gram22a;
-            if (t === "ceyrek") return canliFiyatlar.ceyreka;
-            if (t === "yarim")  return canliFiyatlar.yarima;
-            if (t === "ata")    return canliFiyatlar.ataa;
-            return 0;
+            return TUR_ALIS_FIYAT_KEY[t] ? canliFiyatlar[TUR_ALIS_FIYAT_KEY[t]] || 0 : 0;
         }
 
         // PORTFOY EKRANA BAS
@@ -1469,36 +1442,36 @@
                 const karRenk = karZarar >= 0 ? "var(--green)" : "var(--red)";
                 detayIcerik = `
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">${miktarBirimi(item.type).toUpperCase()}</div>
-                            <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">${miktarBirimi(item.type).toUpperCase()}</div>
+                            <div class="detay-kart-deger">${item.amount.toString().replace('.', ',')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA TARİHİ</div>
-                            <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">ALINMA TARİHİ</div>
+                            <div class="detay-kart-deger">${item.date || '-'}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">ALINMA BİRİM FİYATI</div>
-                            <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">ALINMA BİRİM FİYATI</div>
+                            <div class="detay-kart-deger">₺${birimFiyat.toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GÜNCEL BİRİM FİYATI</div>
-                            <div style="font-size:15px; font-weight:bold;">₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">GÜNCEL BİRİM FİYATI</div>
+                            <div class="detay-kart-deger">₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">TOPLAM MALİYET</div>
-                            <div style="font-size:15px; font-weight:bold;">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">TOPLAM MALİYET</div>
+                            <div class="detay-kart-deger">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">GÜNCEL DEĞER</div>
-                            <div style="font-size:15px; font-weight:bold;">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">GÜNCEL DEĞER</div>
+                            <div class="detay-kart-deger">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center; grid-column: span 2;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">KÂR / ZARAR</div>
+                        <div class="detay-kart" style="grid-column: span 2;">
+                            <div class="detay-kart-label">KÂR / ZARAR</div>
                             <div style="font-size:18px; font-weight:bold; color:${karRenk};">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde})</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; grid-column: span 2;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">NOT / AÇIKLAMA</div>
+                        <div class="detay-kart" style="grid-column: span 2; text-align:left;">
+                            <div class="detay-kart-label">NOT / AÇIKLAMA</div>
                             <div style="font-size:14px; font-weight:500;">${item.note || '-'}</div>
                         </div>
                     </div>
@@ -1506,39 +1479,32 @@
             } else {
                 detayIcerik = `
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">${miktarBirimi(item.type).toUpperCase()}</div>
-                            <div style="font-size:15px; font-weight:bold;">${item.amount.toString().replace('.', ',')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">${miktarBirimi(item.type).toUpperCase()}</div>
+                            <div class="detay-kart-deger">${item.amount.toString().replace('.', ',')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIŞ TARİHİ</div>
-                            <div style="font-size:15px; font-weight:bold;">${item.date || '-'}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">SATIŞ TARİHİ</div>
+                            <div class="detay-kart-deger">${item.date || '-'}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">SATIŞ BİRİM FİYATI</div>
-                            <div style="font-size:15px; font-weight:bold;">₺${birimFiyat.toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label">SATIŞ BİRİM FİYATI</div>
+                            <div class="detay-kart-deger">₺${birimFiyat.toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; text-align:center;">
-                            <div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">TOPLAM GELİR</div>
-                            <div style="font-size:15px; font-weight:bold; color:var(--accent-color);">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
+                        <div class="detay-kart">
+                            <div class="detay-kart-label" style="color:var(--accent-color);">TOPLAM GELİR</div>
+                            <div class="detay-kart-deger" style="color:var(--accent-color);">₺${Math.round(item.cost).toLocaleString('tr-TR')}</div>
                         </div>
-                        <div style="background:var(--bg-color); border-radius:8px; padding:10px; grid-column: span 2;">
-                            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">NOT / AÇIKLAMA</div>
+                        <div class="detay-kart" style="grid-column: span 2; text-align:left;">
+                            <div class="detay-kart-label">NOT / AÇIKLAMA</div>
                             <div style="font-size:14px; font-weight:500;">${item.note || '-'}</div>
                         </div>
                     </div>
                 `;
             }
 
-            const isimTR = {
-                "gram24": "24 Ayar Gram Altın",
-                "gram22": "22 Ayar Bilezik",
-                "ceyrek": "Çeyrek Altın",
-                "yarim":  "Yarım Altın",
-                "ata":    "Tam Altın"
-            }[item.type] || isim;
+            const isimTR = TUR_BILGI[item.type]?.isim || isim;
             document.getElementById("detayBaslik").innerText = (islem === "alis" ? "Alış" : "Satış") + " — " + isimTR;
-            //document.getElementById("detayNot").innerText = item.note.toUpperCase();
             document.getElementById("detayIcerik").innerHTML = detayIcerik;
             document.getElementById("detayModal").style.display = "block";
         }
@@ -2225,7 +2191,6 @@
         function alarmVerisiniYukle() {
             try { alarmListesi = JSON.parse(localStorage.getItem('kasam_alarmlar') || '[]'); } catch(e) { alarmListesi = []; }
         }
-        alarmVerisiniYukle();
 
         function alarmModalAc() {
             document.getElementById('alFiyat').value = '';
@@ -2545,23 +2510,23 @@
                     <span style="font-size:15px;font-weight:bold;">${TUR_BILGI[t].isim}</span>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                    <div class="detay-kart-sm">
                         <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">MİKTAR</div>
                         <div style="font-size:14px;font-weight:bold;">${miktarStr} ${TUR_BILGI[t].birim}</div>
                     </div>
-                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                    <div class="detay-kart-sm">
                         <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">PORTFÖY PAYI</div>
                         <div style="font-size:14px;font-weight:bold;color:${PIE_RENKLER[t]};">%${yuzde}</div>
                     </div>
-                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                    <div class="detay-kart-sm">
                         <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">GÜNCEL DEĞER</div>
                         <div style="font-size:14px;font-weight:bold;">₺${Math.round(p.deger).toLocaleString('tr-TR')}</div>
                     </div>
-                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;">
+                    <div class="detay-kart-sm">
                         <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">MALİYET</div>
                         <div style="font-size:14px;font-weight:bold;">₺${Math.round(p.maliyet).toLocaleString('tr-TR')}</div>
                     </div>
-                    <div style="background:var(--bg-color);border-radius:8px;padding:9px;text-align:center;grid-column:span 2;">
+                    <div class="detay-kart-sm" style="grid-column:span 2;">
                         <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">KÂR / ZARAR</div>
                         <div style="font-size:15px;font-weight:bold;color:${karRenk};">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde})</div>
                     </div>
