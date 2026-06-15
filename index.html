@@ -313,7 +313,7 @@
         .progress-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(to right, var(--accent-color), #ff9500); transition: width 0.6s ease; }
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
-        /* Filtre Butonları */
+        /* V2: Filtre Butonları */
         .filtre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
@@ -325,7 +325,7 @@
         .toggle-switch input:checked + .toggle-slider { background: var(--accent-color); border-color: var(--accent-color); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); background: #000; }
 
-        /* Fiyat Alarmı */
+        /* V2.2: Fiyat Alarmı */
         .alarm-item {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -506,7 +506,7 @@
                 <div class="section-header">
                     <h3 style="margin: 0; font-weight: 500; font-size: 16px;">Varlık Özetim</h3>
                 </div>
-                <!-- Portföy Dağılımı Pasta Grafiği -->
+                <!-- V2.1: Portföy Dağılımı Pasta Grafiği -->
                 <div class="chart-wrapper" id="pastaGrafikWrapper" style="display:none;">
                     <div class="chart-title">🥧 Portföy Dağılımı</div>
                     <div class="chart-row">
@@ -527,7 +527,7 @@
                         <button class="btn btn-active" onclick="modalAc()" style="padding: 5px 12px; font-size: 13px;">+ Ekle</button>
                     </div>
                 </div>
-                <!-- Gelişmiş Filtreler -->
+                <!-- V2.5: Gelişmiş Filtreler -->
                 <div class="filtre-row" id="filtreRow">
                     <button class="filtre-btn aktif" onclick="filtreAyarla('hepsi', this)">Tümü</button>
                     <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
@@ -549,9 +549,9 @@
                     <span>📈 Fiyat Geçmişi</span>
                     <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
                 </div>
-                <div style="display:flex; gap:3px; flex-wrap:wrap; margin-bottom: 4px;">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 4px;">
                     <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
-                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Gram</button>
+                    <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
                     <button class="filtre-btn" onclick="grafikTuruSec('ata', this)">Tam</button>
@@ -563,12 +563,20 @@
             </div>
             <div class="grid-summary" id="fiyatMinMaxKartlari" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
                 <div class="summary-card">
-                    <div class="summary-title" style="color: var(--green);">En Düşük (Alış)</div>
-                    <div class="summary-val" id="fiyatEnDusuk" style="color: var(--green);">₺0</div>
+                    <div class="summary-title" style="color: var(--green);">En Düşük Alış</div>
+                    <div class="summary-val" id="fiyatAlisEnDusuk" style="color: var(--green);">₺0</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-title" style="color: var(--red);">En Yüksek (Satış)</div>
-                    <div class="summary-val" id="fiyatEnYuksek" style="color: var(--red);">₺0</div>
+                    <div class="summary-title" style="color: var(--green);">En Yüksek Alış</div>
+                    <div class="summary-val" id="fiyatAlisEnYuksek" style="color: var(--green);">₺0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title" style="color: var(--red);">En Düşük Satış</div>
+                    <div class="summary-val" id="fiyatSatisEnDusuk" style="color: var(--red);">₺0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title" style="color: var(--red);">En Yüksek Satış</div>
+                    <div class="summary-val" id="fiyatSatisEnYuksek" style="color: var(--red);">₺0</div>
                 </div>
             </div>
             <div class="chart-wrapper" id="fiyatGrafikWrapper" style="position:relative;">
@@ -588,7 +596,7 @@
             </div>
         </div>
 
-        <!-- HEDEF SAYFASI -->
+        <!-- V2.3: HEDEF SAYFASI -->
         <div id="pageHedef" class="page-section">
             <div class="section-header">
                 <h3 style="margin: 0; font-weight: 500; font-size: 16px;">🎯 Hedeflerim</h3>
@@ -597,7 +605,7 @@
             <div id="hedefList" class="list-container"></div>
         </div>
 
-        <!-- ALARM SAYFASI -->
+        <!-- V2.2: ALARM SAYFASI -->
         <div id="pageAlarm" class="page-section">
             <div id="bildirimIzinBar">
                 <span>📢 Tarayıcı bildirimleri için izin verin</span>
@@ -615,7 +623,7 @@
 
     </div>
 
-    <!-- ALARM EKLEME MODALİ -->
+    <!-- V2.2: ALARM EKLEME MODALİ -->
     <div id="alarmModal" class="modal">
         <h3 style="margin-top: 0; font-size: 16px;">📢 Fiyat Alarmı Kur</h3>
 
@@ -651,7 +659,7 @@
         </div>
     </div>
 
-    <!-- HEDEF EKLEME MODALİ -->
+    <!-- V2.3: HEDEF EKLEME MODALİ -->
     <div id="hedefModal" class="modal">
         <h3 id="hedefModalTitle" style="margin-top: 0; font-size: 16px;">Yeni Hedef Ekle</h3>
         <input type="hidden" id="hedefEditIndex" value="-1">
@@ -893,7 +901,7 @@
                 }
                 alarmListesiniEkranaBas();
 
-                // HEDEFLER FIRESTORE'DAN YÜKLE
+                // V2.7: HEDEFLER FIRESTORE'DAN YÜKLE
                 const hedefData = await window.firestoreYukle("hedefler");
                 if (hedefData && hedefData.length > 0) {
                     hedefListesi = hedefData;
@@ -920,7 +928,7 @@
             listeyiEkranaBas();
         }
 
-        // HEDEF VERİSİ YÜKLE (localStorage - yedek)
+        // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
         function hedefVerisiniYukle() {
             const yerel = localStorage.getItem('kasam_hedefler');
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
@@ -1193,7 +1201,7 @@
             if (!container) return;
             container.innerHTML = "";
 
-            // Filtre uygula
+            // V2.5: Filtre uygula
             const filtreli = yatirimlarListesi.filter(item => {
                 if (aktifFiltre === 'hepsi') return true;
                 if (aktifFiltre === 'alis' || aktifFiltre === 'satis') return (item.islem || 'alis') === aktifFiltre;
@@ -1364,7 +1372,7 @@
                 container.innerHTML += toplamHtml;
             }
 
-            // Pasta grafiği çiz
+            // V2.1: Pasta grafiği çiz
             pastaGrafikiCiz(ozet);
         }
 
@@ -1970,26 +1978,34 @@
             ctx.fillText('Satış', leftPad + 62, 10);
         }
 
-        // Seçili periyot için en düşük/en yüksek değerleri kartlara yaz
+        // Seçili periyot için alış ve satış için ayrı ayrı en düşük/en yüksek değerleri kartlara yaz
         function fiyatMinMaxGuncelle(veri, tur) {
-            const enDusukEl = document.getElementById('fiyatEnDusuk');
-            const enYuksekEl = document.getElementById('fiyatEnYuksek');
-            if (!enDusukEl || !enYuksekEl) return;
+            const alisEnDusukEl = document.getElementById('fiyatAlisEnDusuk');
+            const alisEnYuksekEl = document.getElementById('fiyatAlisEnYuksek');
+            const satisEnDusukEl = document.getElementById('fiyatSatisEnDusuk');
+            const satisEnYuksekEl = document.getElementById('fiyatSatisEnYuksek');
+            if (!alisEnDusukEl || !alisEnYuksekEl || !satisEnDusukEl || !satisEnYuksekEl) return;
 
             if (!veri || veri.length === 0) {
-                enDusukEl.innerText = '₺0';
-                enYuksekEl.innerText = '₺0';
+                alisEnDusukEl.innerText = '₺0';
+                alisEnYuksekEl.innerText = '₺0';
+                satisEnDusukEl.innerText = '₺0';
+                satisEnYuksekEl.innerText = '₺0';
                 return;
             }
 
             const alisVeri = veri.map(v => v[tur.alis] || 0).filter(v => v > 0);
             const satisVeri = veri.map(v => v[tur.satis] || 0).filter(v => v > 0);
 
-            const enDusukAlis = alisVeri.length ? Math.min(...alisVeri) : 0;
-            const enYuksekSatis = satisVeri.length ? Math.max(...satisVeri) : 0;
+            const alisEnDusuk = alisVeri.length ? Math.min(...alisVeri) : 0;
+            const alisEnYuksek = alisVeri.length ? Math.max(...alisVeri) : 0;
+            const satisEnDusuk = satisVeri.length ? Math.min(...satisVeri) : 0;
+            const satisEnYuksek = satisVeri.length ? Math.max(...satisVeri) : 0;
 
-            enDusukEl.innerText = '₺' + Math.round(enDusukAlis).toLocaleString('tr-TR');
-            enYuksekEl.innerText = '₺' + Math.round(enYuksekSatis).toLocaleString('tr-TR');
+            alisEnDusukEl.innerText = '₺' + Math.round(alisEnDusuk).toLocaleString('tr-TR');
+            alisEnYuksekEl.innerText = '₺' + Math.round(alisEnYuksek).toLocaleString('tr-TR');
+            satisEnDusukEl.innerText = '₺' + Math.round(satisEnDusuk).toLocaleString('tr-TR');
+            satisEnYuksekEl.innerText = '₺' + Math.round(satisEnYuksek).toLocaleString('tr-TR');
         }
 
         // Etkileşimli grafik: en yakın noktayı bul ve tooltip göster
@@ -2499,10 +2515,10 @@
             await fiyatGecmisiniYukle();
             saatlikKayitKontrolEt();
         });
-        setInterval(canliFiyatlariYukle, 10000);
+        setInterval(canliFiyatlariYukle, 60000);
 
         // Saatte bir otomatik kayıt kontrolü (uygulama açıkken)
-        setInterval(saatlikKayitKontrolEt, 10000);
+        setInterval(saatlikKayitKontrolEt, 60000);
     </script>
 </body>
 </html>
