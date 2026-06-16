@@ -447,7 +447,7 @@
     cursor: pointer;
 }
 .fiyat-satiri > div {
-    padding: 10px 5px;
+    padding: 5px 5px;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -466,7 +466,7 @@
             <span class="logo-sub">SEDAT KARAGÖZ</span>
         </div>
         <div style="display:flex; gap:6px; margin-left:auto; align-items:center;">
-            <button class="btn" onclick="tamYedekIndir()" style="font-size: 12px; padding: 6px 10px;" title="Tüm verileri yedekle">💾 Yedek</button>
+            <button class="btn" onclick="tamYedekIndir()" style="font-size: 12px; padding: 6px 10px;" title="Tüm verileri yedekle">💾 Yedekle</button>
             <button class="btn" onclick="document.getElementById('tamYedekDosya').click()" style="font-size: 12px; padding: 6px 10px;" title="Yedekten geri yükle">📂 Geri Yükle</button>
             <input type="file" id="tamYedekDosya" accept="application/json,.json" style="display:none" onchange="tamYedekYukle(event)">
             <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px;">☀️ Açık</button>
@@ -1159,7 +1159,7 @@
 
                 // Anlık renk flash
                 if (eskiFiyat > 0 && yeniFiyat !== eskiFiyat) {
-                    el.style.transition = 'color 0.3s';
+                    el.style.transition = 'color 0.s';
                     el.style.color = yeniFiyat > eskiFiyat ? '#22c55e' : '#ef4444';
                     setTimeout(() => { el.style.color = ''; }, 1500);
                 }
