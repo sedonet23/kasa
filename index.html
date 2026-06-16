@@ -190,16 +190,16 @@
         }
 
         .price-list { display: flex; flex-direction: column; gap: 8px; }
-        .price-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
+        .price-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: background 0.15s; }
         .price-row:hover { background: var(--panel-bg); }
-        .price-row-icon { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .price-row-name { font-size: 13px; font-weight: bold; color: var(--text-color); flex: 1; min-width: 100px; }
-        .price-row-cols { display: flex; gap: 24px; align-items: center; flex: 1; }
-        .price-col-item { display: flex; flex-direction: column; align-items: center; }
-        .price-col-label { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
-        .price-col-sell { font-size: 14px; font-weight: bold; color: var(--accent-color); }
-        .price-col-buy { font-size: 14px; font-weight: bold; color: var(--green); }
-        .price-change { font-size: 11px; font-weight: bold; min-width: 50px; text-align: center; }
+        .price-row-icon { width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .price-row-name { font-size: 13px; font-weight: bold; color: var(--text-color); flex: 1; min-width: 90px; }
+        .price-row-cols { display: flex; gap: 12px; align-items: center; flex: 1; }
+        .price-col-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+        .price-col-label { font-size: 9px; color: var(--text-muted); }
+        .price-col-sell { font-size: 13px; font-weight: bold; color: var(--accent-color); }
+        .price-col-buy { font-size: 13px; font-weight: bold; color: var(--green); }
+        .price-change { font-size: 10px; font-weight: bold; min-width: 50px; text-align: right; margin-left: auto; white-space: nowrap; }
         .price-change.yukseldi { color: #22c55e; }
         .price-change.dustu { color: #ef4444; }
         .price-change.sabit { color: var(--text-muted); }
