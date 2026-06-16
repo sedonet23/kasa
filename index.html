@@ -19,6 +19,8 @@
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCOKlF_wG8VMqTYrh8uxJz9npbZy6qgt2c",
@@ -188,21 +190,19 @@
         }
 
         .price-list { display: flex; flex-direction: column; gap: 8px; }
-        .price-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+        .price-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
+        .price-row:hover { background: var(--panel-bg); }
         .price-row-icon { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .price-row-name { font-size: 13px; font-weight: bold; color: var(--text-color); flex: 1; }
-        .price-row-cols { display: flex; gap: 16px; }
-        .price-col-item { text-align: right; }
+        .price-row-name { font-size: 13px; font-weight: bold; color: var(--text-color); flex: 1; min-width: 100px; }
+        .price-row-cols { display: flex; gap: 24px; align-items: center; flex: 1; }
+        .price-col-item { display: flex; flex-direction: column; align-items: center; }
         .price-col-label { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
         .price-col-sell { font-size: 14px; font-weight: bold; color: var(--accent-color); }
         .price-col-buy { font-size: 14px; font-weight: bold; color: var(--green); }
-        .price-change { font-size: 11px; font-weight: bold; text-align: right; min-width: 58px; }
+        .price-change { font-size: 11px; font-weight: bold; min-width: 50px; text-align: center; }
         .price-change.yukseldi { color: #22c55e; }
         .price-change.dustu { color: #ef4444; }
         .price-change.sabit { color: var(--text-muted); }
-        /* Fiyat satırı tıklanabilir */
-        .price-row { cursor: pointer; transition: background 0.15s; }
-        .price-row:hover { background: var(--panel-bg); }
 
         /* Altın Detay Sayfası */
         #pageAltinDetay { display: none; }
@@ -210,7 +210,7 @@
         .detay-filtre { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
         .detay-filtre button { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text-muted); cursor: pointer; }
         .detay-filtre button.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
-        .detay-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .detay-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
         .detay-stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
         .detay-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
         .detay-stat-value { font-size: 16px; font-weight: bold; }
@@ -503,7 +503,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24s">₺0</div></div>
-                            <div id="ch-gram24" class="price-change sabit">—</div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-gram24" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -515,7 +515,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram22a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram22s">₺0</div></div>
-                            <div id="ch-gram22" class="price-change sabit">—</div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-gram22" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -527,7 +527,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ceyreka">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-ceyreks">₺0</div></div>
-                            <div id="ch-ceyrek" class="price-change sabit">—</div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-ceyrek" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -539,7 +539,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-yarima">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-yarims">₺0</div></div>
-                            <div id="ch-yarim" class="price-change sabit">—</div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-yarim" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -551,7 +551,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ataa">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-atas">₺0</div></div>
-                            <div id="ch-ata" class="price-change sabit">—</div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-ata" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -3082,7 +3082,10 @@
                 'Satış: ₺' + guncelSatis.toLocaleString('tr-TR') + '  |  Alış: ₺' + guncelAlis.toLocaleString('tr-TR');
 
             // Değişim yüzdesi (seçili filtreye göre)
-            const eskiFiyat = gecmisteKiyasFiyatBul(sKey, dakika);
+            let eskiFiyat = null;
+            if (fiyatGecmisiYuklendi && fiyatGecmisi && fiyatGecmisi.length > 0) {
+                eskiFiyat = gecmisteKiyasFiyatBul(sKey, dakika);
+            }
             const degisimEl = document.getElementById('detay-degisim');
             if (eskiFiyat && guncelSatis) {
                 const yuzde = ((guncelSatis - eskiFiyat) / eskiFiyat) * 100;
@@ -3096,7 +3099,7 @@
 
             // Filtre aralığındaki kayıtları al
             const sinir = new Date(Date.now() - dakika * 60 * 1000);
-            const kayitlar = fiyatGecmisi.filter(k => new Date(k.zaman) >= sinir && k[sKey]);
+            const kayitlar = (fiyatGecmisiYuklendi && fiyatGecmisi) ? fiyatGecmisi.filter(k => new Date(k.zaman) >= sinir && k[sKey]) : [];
             kayitlar.sort((a, b) => new Date(a.zaman) - new Date(b.zaman));
 
             // Min/max satış ve alış
@@ -3138,13 +3141,42 @@
             // Mevcut grafiği yok et
             if (detayGrafikInstans) { detayGrafikInstans.destroy(); detayGrafikInstans = null; }
 
-            if (kayitlar.length < 2) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'var(--text-muted)';
-                ctx.font = '13px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('Bu aralıkta yeterli veri yok', canvas.width / 2, 90);
+            if (!kayitlar || kayitlar.length < 1) {
+                // Veri yoksa güncel fiyatı göster
+                const aKey = Object.keys(TUR_DETAY[aktifDetayTur]).find(k => TUR_DETAY[aktifDetayTur][k] === sKey);
+                const guncelFiyat = canliFiyatlar[sKey] || 0;
+                const labels = ['Şimdiki'];
+                const data = [guncelFiyat];
+                
+                const isDark = document.body.classList.contains('dark-mode') ||
+                               localStorage.getItem('kasam_tema') === 'dark';
+                const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+                const textColor = isDark ? '#aaa' : '#666';
+
+                detayGrafikInstans = new Chart(canvas.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: isim + ' Satış',
+                            data,
+                            borderColor: '#F5A623',
+                            backgroundColor: 'rgba(245,166,35,0.12)',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: gridColor } },
+                            y: { ticks: { color: textColor, callback: v => '₺' + v.toLocaleString('tr-TR') }, grid: { color: gridColor } }
+                        }
+                    }
+                });
                 return;
             }
 
@@ -3390,6 +3422,8 @@
         canliFiyatlariYukle().then(async () => {
             // Fiyat ve varlik gecmisini paralel yukle
             await Promise.all([fiyatGecmisiniYukle(), varlikGecmisiniYukle()]);
+            // Değişim yüzdelerini güncelle
+            degisimYuzdeleriniGuncelle();
             saatlikKayitKontrolEt();
             saatlikVarlikKayitKontrolEt();
         });
@@ -3401,17 +3435,19 @@
         function varlikGecmisiniSil(zaman) {
     if (!confirm("Bu geçmiş kaydını silmek istediğinize emin misiniz?")) return;
     
+    const toplamUzunluk = varlikGecmisi.length - 1;
+    const silinecekIndex = varlikGecmisi.findIndex(k => k.zaman === zaman);
+    if (silinecekIndex === -1) return;
+    
     // Diziden çıkar
-    varlikGecmisi = varlikGecmisi.filter(k => k.zaman !== zaman);
+    varlikGecmisi.splice(silinecekIndex, 1);
     
     // Yerel hafızayı güncelle
-    localStorage.setItem("varlikGecmisi", JSON.stringify(varlikGecmisi));
+    localStorage.setItem("kasam_varlik_gecmisi", JSON.stringify(varlikGecmisi));
     
-    // Eğer Firestore bağlantınız varsa güncellemeyi oraya da gönderin
-    if (typeof db !== "undefined" && window.user) {
-        db.collection("users").doc(window.user.uid).update({
-            varlikGecmisi: varlikGecmisi
-        }).catch(err => console.error("Silme hatası:", err));
+    // Firestore'a da gönder
+    if (window.firestoreTekilSil) {
+        window.firestoreTekilSil("varlikGecmisi", silinecekIndex, toplamUzunluk).catch(err => console.error("Firestore silme hatası:", err));
     }
     
     // Listeyi yeniden render et
