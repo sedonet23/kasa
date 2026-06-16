@@ -3172,7 +3172,23 @@
                         responsive: true,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { ticks: { color: textColor, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: gridColor } },
+                            x: {
+                                ticks: {
+                                    color: textColor,
+                                    maxTicksLimit: 6,
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    callback: function(value) {
+                                        // Tam etiketi al (orn: "16 Haz 03:55")
+                                        const tamEtiket = this.getLabelForValue(value);
+                                        const parcalar = String(tamEtiket).split(' ');
+                                        if (parcalar.length < 3) return tamEtiket;
+                                        // Gunluk filtrede sadece saat, digerlerinde sadece tarih goster
+                                        return aktifDetayFiltre === 'gunluk' ? parcalar[2] : (parcalar[0] + ' ' + parcalar[1]);
+                                    }
+                                },
+                                grid: { color: gridColor }
+                            },
                             y: { ticks: { color: textColor, callback: v => '₺' + v.toLocaleString('tr-TR') }, grid: { color: gridColor } }
                         }
                     }
@@ -3210,7 +3226,23 @@
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { ticks: { color: textColor, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: gridColor } },
+                        x: {
+                            ticks: {
+                                color: textColor,
+                                maxTicksLimit: 6,
+                                maxRotation: 0,
+                                autoSkip: true,
+                                callback: function(value) {
+                                    // Tam etiketi al (orn: "16 Haz 03:55")
+                                    const tamEtiket = this.getLabelForValue(value);
+                                    const parcalar = String(tamEtiket).split(' ');
+                                    if (parcalar.length < 3) return tamEtiket;
+                                    // Gunluk filtrede sadece saat, digerlerinde sadece tarih goster
+                                    return aktifDetayFiltre === 'gunluk' ? parcalar[2] : (parcalar[0] + ' ' + parcalar[1]);
+                                }
+                            },
+                            grid: { color: gridColor }
+                        },
                         y: { ticks: { color: textColor, callback: v => '₺' + v.toLocaleString('tr-TR') }, grid: { color: gridColor } }
                     }
                 }
