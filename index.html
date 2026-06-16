@@ -1283,6 +1283,10 @@
 
             listeyiEkranaBas();
             alarmlariKontrolEt();
+
+            // Fiyat her güncellendiğinde değişiklik kontrolü yap (sürekli çalışır)
+            fiyatDegisimKontrolEt();
+            varlikDegisimKontrolEt();
         }
 
         // MODAL YARDIMCILARI
@@ -1885,18 +1889,18 @@
             fiyatGecmisListesiniEkranaBas();
         }
 
-        // Saatlik otomatik kayıt kontrolü (uygulama açıkken)
-        function saatlikKayitKontrolEt() {
+        // Fiyat değişikliği kontrolü: son kayıtla canlı fiyatı karşılaştırır,
+        // herhangi bir alanda değişiklik varsa yeni kayıt atar. Değişiklik yoksa kayıt yapmaz.
+        // canliFiyatlariYukle() her çalıştığında (60 sn'de bir) tetiklenir, yani sürekli kontrol edilir.
+        const FIYAT_ANAHTARLARI = ['gram24s','gram24a','gram22s','gram22a','ceyreks','ceyreka','yarims','yarima','atas','ataa'];
+        function fiyatDegisimKontrolEt() {
             if (!fiyatGecmisiYuklendi) return; // gecmis yuklenmeden yazma
-            const sonZamanStr = localStorage.getItem("kasam_son_grafik_kayit");
-            const simdi = new Date();
-            if (!sonZamanStr) {
-                fiyatGecmisineKaydet(false);
-                return;
-            }
-            const sonZaman = new Date(sonZamanStr);
-            const farkMs = simdi - sonZaman;
-            if (farkMs >= 60 * 60 * 1000) {
+            if (!canliFiyatlar || !canliFiyatlar.gram24s) return; // henuz gecerli fiyat yoksa bekle
+
+            const sonKayit = fiyatGecmisi.length > 0 ? fiyatGecmisi[fiyatGecmisi.length - 1] : null;
+            const degisikliVar = !sonKayit || FIYAT_ANAHTARLARI.some(k => (sonKayit[k] || 0) !== (canliFiyatlar[k] || 0));
+
+            if (degisikliVar) {
                 fiyatGecmisineKaydet(false);
             }
         }
@@ -2999,14 +3003,19 @@
     });
 }
 
-        // Saatlik varlık kaydı kontrolü (fiyat geçmişiyle birlikte çalışır)
-        function saatlikVarlikKayitKontrolEt() {
+        // Varlık değeri değişikliği kontrolü: son kayıttaki değerle anlık değeri karşılaştırır,
+        // değişiklik varsa yeni kayıt atar. canliFiyatlariYukle() ile birlikte sürekli çalışır.
+        function varlikDegisimKontrolEt() {
             if (!varlikGecmisiYuklendi) return; // gecmis yuklenmeden yazma
-            const sonZamanStr = localStorage.getItem("kasam_son_varlik_kayit");
-            const simdi = new Date();
-            if (!sonZamanStr) { varlikGecmisineKaydet(false); return; }
-            const farkMs = simdi - new Date(sonZamanStr);
-            if (farkMs >= 60 * 60 * 1000) varlikGecmisineKaydet(false);
+            const guncelDeger = anlikVarlikHesapla();
+            if (guncelDeger <= 0) return; // bos portfoyu kaydetme
+
+            const sonKayit = varlikGecmisi.length > 0 ? varlikGecmisi[varlikGecmisi.length - 1] : null;
+            const degisikliVar = !sonKayit || sonKayit.deger !== guncelDeger;
+
+            if (degisikliVar) {
+                varlikGecmisineKaydet(false);
+            }
         }
 
 
@@ -3456,14 +3465,11 @@
             await Promise.all([fiyatGecmisiniYukle(), varlikGecmisiniYukle()]);
             // Değişim yüzdelerini güncelle
             degisimYuzdeleriniGuncelle();
-            saatlikKayitKontrolEt();
-            saatlikVarlikKayitKontrolEt();
+            // Gecmis yuklendikten sonra ilk degisim kontrolu (uygulama acilisinda)
+            fiyatDegisimKontrolEt();
+            varlikDegisimKontrolEt();
         });
-        setInterval(canliFiyatlariYukle, 60000);
-
-        // Saatte bir otomatik kayıt kontrolü (uygulama açıkken)
-        setInterval(saatlikKayitKontrolEt, 60000);
-        setInterval(saatlikVarlikKayitKontrolEt, 60000);
+        setInterval(canliFiyatlariYukle, 15000);
         function varlikGecmisiniSil(zaman) {
     if (!confirm("Bu geçmiş kaydını silmek istediğinize emin misiniz?")) return;
     
