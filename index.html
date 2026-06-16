@@ -434,6 +434,25 @@
         .detay-kart-sm { background: var(--bg-color); border-radius: 8px; padding: 9px; text-align: center; }
         .detay-kart-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
         .detay-kart-deger { font-size: 15px; font-weight: bold; }
+
+        #fiyatListesi {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr 1fr; /* İsim - Fiyat - Yüzde */
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+.fiyat-satiri {
+    display: contents; /* Grid yapısını korur */
+    cursor: pointer;
+}
+.fiyat-satiri > div {
+    padding: 10px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.fiyat-satiri > div:nth-child(2) { text-align: right; } /* Fiyat sağa */
+.fiyat-satiri > div:nth-child(3) { text-align: right; font-weight: bold; } /* Yüzde sağa */
     </style>
 </head>
 <body>
@@ -2948,33 +2967,37 @@
         }
 
         function varlikGecmisListesiniEkranaBas() {
-            const container = document.getElementById('varlikGecmisListesi');
-            if (!container) return;
-            container.innerHTML = '';
-            const yediGunOnce = Date.now() - 7*24*60*60*1000;
-            const liste = varlikGecmisi.filter(k => new Date(k.zaman).getTime() >= yediGunOnce).slice().reverse();
-            if (liste.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:30px;">Henüz kayıt yok.</div>';
-                return;
-            }
-            liste.forEach(kayit => {
-                const tarih = new Date(kayit.zaman);
-                const tarihStr = tarih.getDate().toString().padStart(2,'0')+'.'+(tarih.getMonth()+1).toString().padStart(2,'0')+'.'+tarih.getFullYear()+' '+tarih.getHours().toString().padStart(2,'0')+':'+tarih.getMinutes().toString().padStart(2,'0');
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div class="item-left">
-                            <div class="item-icon">${kayit.manuel ? '✋' : '⏱️'}</div>
-                            <div>
-                                <div class="item-details-title">${tarihStr}</div>
-                                <div class="item-details-sub">${kayit.manuel ? 'Manuel kayıt' : 'Otomatik kayıt'}</div>
-                            </div>
-                        </div>
-                        <div class="item-right">
-                            <div class="item-val" style="color:var(--accent-color);">₺${Math.round(kayit.deger).toLocaleString('tr-TR')}</div>
-                        </div>
-                    </div>`;
-            });
-        }
+    const container = document.getElementById('varlikGecmisListesi');
+    if (!container) return;
+    container.innerHTML = '';
+    const yediGunOnce = Date.now() - 7*24*60*60*1000;
+    const liste = varlikGecmisi.filter(k => new Date(k.zaman).getTime() >= yediGunOnce).slice().reverse();
+    
+    if (liste.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:30px;">Henüz kayıt yok.</div>';
+        return;
+    }
+
+    liste.forEach(kayit => {
+        const tarih = new Date(kayit.zaman);
+        const tarihStr = tarih.getDate().toString().padStart(2,'0')+'.'+(tarih.getMonth()+1).toString().padStart(2,'0')+'.'+tarih.getFullYear()+' '+tarih.getHours().toString().padStart(2,'0')+':'+tarih.getMinutes().toString().padStart(2,'0');
+        
+        container.innerHTML += `
+            <div class="list-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="item-left">
+                    <div class="item-icon">${kayit.manuel ? '✋' : '⏱️'}</div>
+                    <div>
+                        <div class="item-details-title">${tarihStr}</div>
+                        <div class="item-details-sub">${kayit.manuel ? 'Manuel kayıt' : 'Otomatik kayıt'}</div>
+                    </div>
+                </div>
+                <div class="item-right" style="display: flex; align-items: center; gap: 10px;">
+                    <div class="item-val" style="color:var(--accent-color);">₺${Math.round(kayit.deger).toLocaleString('tr-TR')}</div>
+                    <button onclick="varlikGecmisiniSil('${kayit.zaman}')" style="background:transparent; border:none; cursor:pointer; font-size:16px;">🗑️</button>
+                </div>
+            </div>`;
+    });
+}
 
         // Saatlik varlık kaydı kontrolü (fiyat geçmişiyle birlikte çalışır)
         function saatlikVarlikKayitKontrolEt() {
@@ -3375,6 +3398,25 @@
         // Saatte bir otomatik kayıt kontrolü (uygulama açıkken)
         setInterval(saatlikKayitKontrolEt, 60000);
         setInterval(saatlikVarlikKayitKontrolEt, 60000);
+        function varlikGecmisiniSil(zaman) {
+    if (!confirm("Bu geçmiş kaydını silmek istediğinize emin misiniz?")) return;
+    
+    // Diziden çıkar
+    varlikGecmisi = varlikGecmisi.filter(k => k.zaman !== zaman);
+    
+    // Yerel hafızayı güncelle
+    localStorage.setItem("varlikGecmisi", JSON.stringify(varlikGecmisi));
+    
+    // Eğer Firestore bağlantınız varsa güncellemeyi oraya da gönderin
+    if (typeof db !== "undefined" && window.user) {
+        db.collection("users").doc(window.user.uid).update({
+            varlikGecmisi: varlikGecmisi
+        }).catch(err => console.error("Silme hatası:", err));
+    }
+    
+    // Listeyi yeniden render et
+    varlikGecmisListesiniEkranaBas();
+}
     </script>
 </body>
 </html>
