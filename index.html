@@ -1891,7 +1891,7 @@
 
         // Fiyat değişikliği kontrolü: son kayıtla canlı fiyatı karşılaştırır,
         // herhangi bir alanda değişiklik varsa yeni kayıt atar. Değişiklik yoksa kayıt yapmaz.
-        // canliFiyatlariYukle() her çalıştığında (60 sn'de bir) tetiklenir, yani sürekli kontrol edilir.
+        // canliFiyatlariYukle() her çalıştığında (20 sn'de bir) tetiklenir, yani sürekli kontrol edilir.
         const FIYAT_ANAHTARLARI = ['gram24s','gram24a','gram22s','gram22a','ceyreks','ceyreka','yarims','yarima','atas','ataa'];
         function fiyatDegisimKontrolEt() {
             if (!fiyatGecmisiYuklendi) return; // gecmis yuklenmeden yazma
@@ -3469,7 +3469,7 @@
             fiyatDegisimKontrolEt();
             varlikDegisimKontrolEt();
         });
-        setInterval(canliFiyatlariYukle, 15000);
+        setInterval(canliFiyatlariYukle, 20000);
         function varlikGecmisiniSil(zaman) {
     if (!confirm("Bu geçmiş kaydını silmek istediğinize emin misiniz?")) return;
     
