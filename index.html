@@ -196,6 +196,26 @@
         .price-col-label { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
         .price-col-sell { font-size: 14px; font-weight: bold; color: var(--accent-color); }
         .price-col-buy { font-size: 14px; font-weight: bold; color: var(--green); }
+        .price-change { font-size: 11px; font-weight: bold; text-align: right; min-width: 58px; }
+        .price-change.yukseldi { color: #22c55e; }
+        .price-change.dustu { color: #ef4444; }
+        .price-change.sabit { color: var(--text-muted); }
+        /* Fiyat satırı tıklanabilir */
+        .price-row { cursor: pointer; transition: background 0.15s; }
+        .price-row:hover { background: var(--panel-bg); }
+
+        /* Altın Detay Sayfası */
+        #pageAltinDetay { display: none; }
+        #pageAltinDetay.active-page { display: block; }
+        .detay-filtre { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+        .detay-filtre button { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text-muted); cursor: pointer; }
+        .detay-filtre button.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
+        .detay-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .detay-stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+        .detay-stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+        .detay-stat-value { font-size: 16px; font-weight: bold; }
+        .detay-grafik-wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+        .detay-yatirim-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
         .grid-summary {
             display: grid;
@@ -328,7 +348,7 @@
         .hedef-alt { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
         /* V2: Filtre Butonları */
-        .filtre-row { display: flex; gap: 3px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+        .filtre-row { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
         .filtre-row::-webkit-scrollbar { display: none; }
         .filtre-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
         .filtre-btn.aktif { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
@@ -453,9 +473,10 @@
                     </div>
                     <span id="updateTime" style="color: var(--accent-color);">Yükleniyor...</span>
                 </div>
+
                 <div class="price-list">
 
-                    <div class="price-row">
+                    <div class="price-row" onclick="altinDetayAc('gram24')">
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>
                         </div>
@@ -463,10 +484,11 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24s">₺0</div></div>
+                            <div id="ch-gram24" class="price-change sabit">—</div>
                         </div>
                     </div>
 
-                    <div class="price-row">
+                    <div class="price-row" onclick="altinDetayAc('gram22')">
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#F5A623" stroke-width="6"/><circle cx="20" cy="20" r="17" fill="none" stroke="#E8920F" stroke-width="2" stroke-dasharray="4 4"/><circle cx="20" cy="3" r="3" fill="#F5A623"/></svg>
                         </div>
@@ -474,10 +496,11 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram22a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram22s">₺0</div></div>
+                            <div id="ch-gram22" class="price-change sabit">—</div>
                         </div>
                     </div>
 
-                    <div class="price-row">
+                    <div class="price-row" onclick="altinDetayAc('ceyrek')">
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">Ç</text></svg>
                         </div>
@@ -485,10 +508,11 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ceyreka">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-ceyreks">₺0</div></div>
+                            <div id="ch-ceyrek" class="price-change sabit">—</div>
                         </div>
                     </div>
 
-                    <div class="price-row">
+                    <div class="price-row" onclick="altinDetayAc('yarim')">
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">Y</text></svg>
                         </div>
@@ -496,10 +520,11 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-yarima">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-yarims">₺0</div></div>
+                            <div id="ch-yarim" class="price-change sabit">—</div>
                         </div>
                     </div>
 
-                    <div class="price-row">
+                    <div class="price-row" onclick="altinDetayAc('ata')">
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#C8960A"/><circle cx="20" cy="20" r="15" fill="#F5A623"/><circle cx="20" cy="20" r="11" fill="#E8920F"/><circle cx="20" cy="20" r="7" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">TAM</text></svg>
                         </div>
@@ -507,6 +532,7 @@
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-ataa">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-atas">₺0</div></div>
+                            <div id="ch-ata" class="price-change sabit">—</div>
                         </div>
                     </div>
 
@@ -744,6 +770,55 @@
         </div>
     </div>
 
+    <!-- ALTIN DETAY SAYFASI -->
+    <div id="pageAltinDetay" class="page-section">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+            <button onclick="altinDetayKapat()" style="background:none; border:none; color:var(--accent-color); font-size:22px; cursor:pointer; padding:0;">←</button>
+            <div>
+                <div id="detay-baslik" style="font-size:18px; font-weight:bold;"></div>
+                <div id="detay-fiyat-satis" style="font-size:13px; color:var(--text-muted);"></div>
+            </div>
+            <div id="detay-degisim" style="margin-left:auto; font-size:16px; font-weight:bold;"></div>
+        </div>
+
+        <div class="detay-filtre">
+            <button onclick="detayFiltreSec('gunluk')" id="ddf-gunluk" class="aktif">Günlük</button>
+            <button onclick="detayFiltreSec('haftalik')" id="ddf-haftalik">Haftalık</button>
+            <button onclick="detayFiltreSec('aylik')" id="ddf-aylik">Aylık</button>
+            <button onclick="detayFiltreSec('uc_aylik')" id="ddf-uc_aylik">3 Aylık</button>
+            <button onclick="detayFiltreSec('altiaylik')" id="ddf-altiaylik">6 Aylık</button>
+            <button onclick="detayFiltreSec('yillik')" id="ddf-yillik">Yıllık</button>
+        </div>
+
+        <div class="detay-grafik-wrap">
+            <canvas id="detayGrafikCanvas" height="180"></canvas>
+        </div>
+
+        <div class="detay-stat-grid">
+            <div class="detay-stat-card">
+                <div class="detay-stat-label">📈 En Yüksek Satış</div>
+                <div class="detay-stat-value" id="detay-max-satis">—</div>
+            </div>
+            <div class="detay-stat-card">
+                <div class="detay-stat-label">📉 En Düşük Satış</div>
+                <div class="detay-stat-value" id="detay-min-satis">—</div>
+            </div>
+            <div class="detay-stat-card">
+                <div class="detay-stat-label">🟢 En Yüksek Alış</div>
+                <div class="detay-stat-value" id="detay-max-alis">—</div>
+            </div>
+            <div class="detay-stat-card">
+                <div class="detay-stat-label">🔴 En Düşük Alış</div>
+                <div class="detay-stat-value" id="detay-min-alis">—</div>
+            </div>
+        </div>
+
+        <div id="detay-yatirim-bolum">
+            <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:var(--text-muted);">💼 Bu Altındaki Yatırımlarım</div>
+            <div id="detay-yatirim-listesi"></div>
+        </div>
+    </div>
+
     <div id="addModal" class="modal">
         <h3 id="modalTitle" style="margin-top: 0; font-size: 16px;">Yeni İşlem Ekle</h3>
         <input type="hidden" id="editIndex" value="-1">
@@ -975,17 +1050,106 @@
         }
 
         // FİYAT EKRANA YAZ
+        // DEĞİŞİM YÜZDESİ
+        let aktifDegisimFiltre = 'gunluk';
+
+        // degisimFiltreSec kaldirildi — ana liste her zaman gunluk degisim gosterir
+
+        function gecmisteKiyasFiyatBul(turKey, dakikaGeri) {
+            // fiyatGecmisi array: [{zaman, gram24s, gram22s, ceyreks, yarims, atas}, ...]
+            if (!fiyatGecmisi || fiyatGecmisi.length === 0) return null;
+            const hedef = new Date(Date.now() - dakikaGeri * 60 * 1000);
+            // En yakın kaydı bul (hedefe en yakın, geçmişte olan)
+            let en_yakin = null;
+            let en_fark = Infinity;
+            for (const kayit of fiyatGecmisi) {
+                const t = new Date(kayit.zaman);
+                const fark = Math.abs(t - hedef);
+                if (fark < en_fark) {
+                    en_fark = fark;
+                    en_yakin = kayit;
+                }
+            }
+            return en_yakin ? (en_yakin[turKey] || null) : null;
+        }
+
+        const DEGISIM_DAKIKA = {
+            gunluk:    24 * 60,
+            haftalik:  7  * 24 * 60,
+            aylik:     30 * 24 * 60,
+            altiaylik: 180 * 24 * 60,
+            yillik:    365 * 24 * 60
+        };
+
+        const DEGISIM_TUR_MAP = {
+            'ch-gram24': 'gram24s',
+            'ch-gram22': 'gram22s',
+            'ch-ceyrek': 'ceyreks',
+            'ch-yarim':  'yarims',
+            'ch-ata':    'atas'
+        };
+
+        function degisimYuzdeleriniGuncelle() {
+            const dakika = DEGISIM_DAKIKA[aktifDegisimFiltre] || DEGISIM_DAKIKA.gunluk;
+
+            for (const [chId, turKey] of Object.entries(DEGISIM_TUR_MAP)) {
+                const el = document.getElementById(chId);
+                if (!el) continue;
+
+                const guncelFiyat = canliFiyatlar[turKey];
+                const eskiFiyat = gecmisteKiyasFiyatBul(turKey, dakika);
+
+                if (!eskiFiyat || !guncelFiyat || eskiFiyat === 0) {
+                    el.textContent = '—';
+                    el.className = 'price-change sabit';
+                    continue;
+                }
+
+                const yuzde = ((guncelFiyat - eskiFiyat) / eskiFiyat) * 100;
+                const isaret = yuzde > 0 ? '▲' : yuzde < 0 ? '▼' : '';
+                el.textContent = isaret + ' %' + Math.abs(yuzde).toFixed(2);
+
+                if (yuzde > 0) {
+                    el.className = 'price-change yukseldi';
+                } else if (yuzde < 0) {
+                    el.className = 'price-change dustu';
+                } else {
+                    el.className = 'price-change sabit';
+                }
+            }
+        }
+
+        // Önceki fiyat: anlık renk değişimi için
+        let oncekiFiyatlar = {};
+
         function fiyatlariEkranaYaz() {
-            document.getElementById("p-gram24s").innerText = "₺" + canliFiyatlar.gram24s.toLocaleString('tr-TR');
-            document.getElementById("p-gram24a").innerText = "₺" + canliFiyatlar.gram24a.toLocaleString('tr-TR');
-            document.getElementById("p-gram22s").innerText = "₺" + canliFiyatlar.gram22s.toLocaleString('tr-TR');
-            document.getElementById("p-gram22a").innerText = "₺" + canliFiyatlar.gram22a.toLocaleString('tr-TR');
-            document.getElementById("p-ceyreks").innerText = "₺" + canliFiyatlar.ceyreks.toLocaleString('tr-TR');
-            document.getElementById("p-ceyreka").innerText = "₺" + canliFiyatlar.ceyreka.toLocaleString('tr-TR');
-            document.getElementById("p-yarims").innerText = "₺" + canliFiyatlar.yarims.toLocaleString('tr-TR');
-            document.getElementById("p-yarima").innerText = "₺" + canliFiyatlar.yarima.toLocaleString('tr-TR');
-            document.getElementById("p-atas").innerText = "₺" + canliFiyatlar.atas.toLocaleString('tr-TR');
-            document.getElementById("p-ataa").innerText = "₺" + canliFiyatlar.ataa.toLocaleString('tr-TR');
+            const tums = [
+                ['p-gram24s', 'gram24s'], ['p-gram24a', 'gram24a'],
+                ['p-gram22s', 'gram22s'], ['p-gram22a', 'gram22a'],
+                ['p-ceyreks', 'ceyreks'], ['p-ceyreka', 'ceyreka'],
+                ['p-yarims',  'yarims'],  ['p-yarima',  'yarima'],
+                ['p-atas',    'atas'],    ['p-ataa',    'ataa']
+            ];
+
+            tums.forEach(([elId, key]) => {
+                const el = document.getElementById(elId);
+                if (!el) return;
+                const yeniFiyat = canliFiyatlar[key] || 0;
+                const eskiFiyat = oncekiFiyatlar[key] || 0;
+                el.innerText = "₺" + yeniFiyat.toLocaleString('tr-TR');
+
+                // Anlık renk flash
+                if (eskiFiyat > 0 && yeniFiyat !== eskiFiyat) {
+                    el.style.transition = 'color 0.3s';
+                    el.style.color = yeniFiyat > eskiFiyat ? '#22c55e' : '#ef4444';
+                    setTimeout(() => { el.style.color = ''; }, 1500);
+                }
+            });
+
+            // Mevcut fiyatları sakla
+            oncekiFiyatlar = { ...canliFiyatlar };
+
+            degisimYuzdeleriniGuncelle();
             turDegisti();
         }
 
@@ -2822,6 +2986,256 @@
             if (farkMs >= 60 * 60 * 1000) varlikGecmisineKaydet(false);
         }
 
+
+
+        // ===== ALTIN DETAY SAYFASI =====
+        const TUR_DETAY = {
+            gram24: { isim: '24 Ayar Gram Altın', sKey: 'gram24s', aKey: 'gram24a' },
+            gram22: { isim: '22 Ayar Bilezik',    sKey: 'gram22s', aKey: 'gram22a' },
+            ceyrek: { isim: 'Çeyrek Altın',        sKey: 'ceyreks', aKey: 'ceyreka' },
+            yarim:  { isim: 'Yarım Altın',          sKey: 'yarims',  aKey: 'yarima'  },
+            ata:    { isim: 'Tam Altın',            sKey: 'atas',    aKey: 'ataa'    }
+        };
+
+        const DETAY_DAKIKA = {
+            gunluk: 24*60, haftalik: 7*24*60, aylik: 30*24*60,
+            uc_aylik: 90*24*60, altiaylik: 180*24*60, yillik: 365*24*60
+        };
+
+        let aktifDetayTur = null;
+        let aktifDetayFiltre = 'gunluk';
+        let detayGrafikInstans = null;
+        let oncekiSayfa = 'yatirim';
+
+        function altinDetayAc(tur) {
+            aktifDetayTur = tur;
+            aktifDetayFiltre = 'gunluk';
+
+            const aktifPage = document.querySelector('.page-section.active-page');
+            oncekiSayfa = aktifPage ? aktifPage.id.replace('page','').toLowerCase() : 'yatirim';
+
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
+            document.getElementById('pageAltinDetay').classList.add('active-page');
+            document.querySelectorAll('.nav-buttons .btn').forEach(b => b.classList.remove('btn-active'));
+
+            // Yatirımlari filtreden bagimsiz bir kez yukle
+            detayYatirimlariGoster(tur);
+
+            detayFiltreSec('gunluk');
+        }
+
+        function altinDetayKapat() {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
+            const hedef = document.getElementById('page' + oncekiSayfa.charAt(0).toUpperCase() + oncekiSayfa.slice(1)) ||
+                          document.getElementById('pageYatirim');
+            hedef.classList.add('active-page');
+
+            // Nav butonunu tekrar aktif et
+            const navMap = { yatirim: 'navYatirim', butce: 'navButce', hedef: 'navHedef', alarm: 'navAlarm' };
+            const navId = navMap[oncekiSayfa];
+            if (navId) document.getElementById(navId)?.classList.add('btn-active');
+        }
+
+        function detayFiltreSec(filtre) {
+            aktifDetayFiltre = filtre;
+            document.querySelectorAll('.detay-filtre button').forEach(b => b.classList.remove('aktif'));
+            document.getElementById('ddf-' + filtre)?.classList.add('aktif');
+            detaySayfasiniGuncelle();
+        }
+
+        function detaySayfasiniGuncelle() {
+            const tur = aktifDetayTur;
+            if (!tur) return;
+            const bilgi = TUR_DETAY[tur];
+            const sKey = bilgi.sKey;
+            const aKey = bilgi.aKey;
+            const dakika = DETAY_DAKIKA[aktifDetayFiltre] || DETAY_DAKIKA.gunluk;
+
+            // Başlık ve güncel fiyat
+            document.getElementById('detay-baslik').textContent = bilgi.isim;
+            const guncelSatis = canliFiyatlar[sKey] || 0;
+            const guncelAlis = canliFiyatlar[aKey] || 0;
+            document.getElementById('detay-fiyat-satis').textContent =
+                'Satış: ₺' + guncelSatis.toLocaleString('tr-TR') + '  |  Alış: ₺' + guncelAlis.toLocaleString('tr-TR');
+
+            // Değişim yüzdesi (seçili filtreye göre)
+            const eskiFiyat = gecmisteKiyasFiyatBul(sKey, dakika);
+            const degisimEl = document.getElementById('detay-degisim');
+            if (eskiFiyat && guncelSatis) {
+                const yuzde = ((guncelSatis - eskiFiyat) / eskiFiyat) * 100;
+                const isaret = yuzde > 0 ? '▲' : yuzde < 0 ? '▼' : '';
+                degisimEl.textContent = isaret + ' %' + Math.abs(yuzde).toFixed(2);
+                degisimEl.style.color = yuzde > 0 ? '#22c55e' : yuzde < 0 ? '#ef4444' : 'var(--text-muted)';
+            } else {
+                degisimEl.textContent = '—';
+                degisimEl.style.color = 'var(--text-muted)';
+            }
+
+            // Filtre aralığındaki kayıtları al
+            const sinir = new Date(Date.now() - dakika * 60 * 1000);
+            const kayitlar = fiyatGecmisi.filter(k => new Date(k.zaman) >= sinir && k[sKey]);
+            kayitlar.sort((a, b) => new Date(a.zaman) - new Date(b.zaman));
+
+            // Min/max satış ve alış
+            if (kayitlar.length > 0) {
+                const satisFiyatlari = kayitlar.map(k => k[sKey]).filter(Boolean);
+                const alisFiyatlari  = kayitlar.map(k => k[aKey]).filter(Boolean);
+                const maxS = Math.max(...satisFiyatlari);
+                const minS = Math.min(...satisFiyatlari);
+                const maxA = alisFiyatlari.length ? Math.max(...alisFiyatlari) : null;
+                const minA = alisFiyatlari.length ? Math.min(...alisFiyatlari) : null;
+                document.getElementById('detay-max-satis').textContent = '₺' + maxS.toLocaleString('tr-TR');
+                document.getElementById('detay-min-satis').textContent = '₺' + minS.toLocaleString('tr-TR');
+                document.getElementById('detay-max-alis').textContent  = maxA ? '₺' + maxA.toLocaleString('tr-TR') : '—';
+                document.getElementById('detay-min-alis').textContent  = minA ? '₺' + minA.toLocaleString('tr-TR') : '—';
+            } else {
+                ['detay-max-satis','detay-min-satis','detay-max-alis','detay-min-alis'].forEach(id => {
+                    document.getElementById(id).textContent = '—';
+                });
+                // Güncel fiyatı göster yoksa
+                if (guncelSatis) {
+                    document.getElementById('detay-max-satis').textContent = '₺' + guncelSatis.toLocaleString('tr-TR');
+                    document.getElementById('detay-min-satis').textContent = '₺' + guncelSatis.toLocaleString('tr-TR');
+                }
+                if (guncelAlis) {
+                    document.getElementById('detay-max-alis').textContent = '₺' + guncelAlis.toLocaleString('tr-TR');
+                    document.getElementById('detay-min-alis').textContent = '₺' + guncelAlis.toLocaleString('tr-TR');
+                }
+            }
+
+            // Grafik
+            detayGrafikCiz(kayitlar, sKey, bilgi.isim);
+
+        }
+
+        function detayGrafikCiz(kayitlar, sKey, isim) {
+            const canvas = document.getElementById('detayGrafikCanvas');
+            if (!canvas) return;
+
+            // Mevcut grafiği yok et
+            if (detayGrafikInstans) { detayGrafikInstans.destroy(); detayGrafikInstans = null; }
+
+            if (kayitlar.length < 2) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'var(--text-muted)';
+                ctx.font = '13px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Bu aralıkta yeterli veri yok', canvas.width / 2, 90);
+                return;
+            }
+
+            const labels = kayitlar.map(k => {
+                const d = new Date(k.zaman);
+                return d.toLocaleDateString('tr-TR', { month:'short', day:'numeric' }) + ' ' +
+                       d.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
+            });
+            const data = kayitlar.map(k => k[sKey]);
+            const isDark = document.body.classList.contains('dark-mode') ||
+                           localStorage.getItem('kasam_tema') === 'dark';
+            const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+            const textColor = isDark ? '#aaa' : '#666';
+
+            detayGrafikInstans = new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: isim + ' Satış',
+                        data,
+                        borderColor: '#F5A623',
+                        backgroundColor: 'rgba(245,166,35,0.12)',
+                        borderWidth: 2,
+                        pointRadius: kayitlar.length > 40 ? 0 : 3,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: textColor, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor, callback: v => '₺' + v.toLocaleString('tr-TR') }, grid: { color: gridColor } }
+                    }
+                }
+            });
+        }
+
+        function detayYatirimlariGoster(tur) {
+            const liste = document.getElementById('detay-yatirim-listesi');
+            const bolum = document.getElementById('detay-yatirim-bolum');
+            if (!liste || !bolum) return;
+
+            const alislar = yatirimlarListesi.filter(y => y.type === tur && y.islem !== 'satis');
+            const satislar = yatirimlarListesi.filter(y => y.type === tur && y.islem === 'satis');
+
+            if (alislar.length === 0 && satislar.length === 0) {
+                bolum.style.display = 'none';
+                liste.innerHTML = '';
+                return;
+            }
+            bolum.style.display = 'block';
+
+            const sKey = TUR_DETAY[tur].sKey;
+            const aKey = TUR_DETAY[tur].aKey;
+            const guncelAlisFiyat = canliFiyatlar[aKey] || canliFiyatlar[sKey] || 0;
+            const kalemBirimi = (tur === 'gram24' || tur === 'gram22') ? 'gr' : 'adet';
+
+            const kartHtml = (y, isAlim) => {
+                const birimFiyat = y.cost && y.amount ? Math.round(y.cost / y.amount) : 0;
+                if (isAlim) {
+                    const anlikDeger = guncelAlisFiyat * y.amount;
+                    const kar = anlikDeger - y.cost;
+                    const karYuzde = y.cost ? ((kar / y.cost) * 100).toFixed(1) : '0';
+                    const karRenk = kar >= 0 ? '#22c55e' : '#ef4444';
+                    return `<div class="detay-yatirim-card">
+                        <div>
+                            <div style="font-size:13px; font-weight:bold;">${y.amount} ${kalemBirimi}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">${y.date || ''} · ₺${birimFiyat.toLocaleString('tr-TR')}/birim</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:13px; font-weight:bold;">₺${Math.round(anlikDeger).toLocaleString('tr-TR')}</div>
+                            <div style="font-size:12px; color:${karRenk}; font-weight:bold;">${kar >= 0 ? '+' : ''}₺${Math.round(kar).toLocaleString('tr-TR')} (%${karYuzde})</div>
+                        </div>
+                    </div>`;
+                } else {
+                    return `<div class="detay-yatirim-card">
+                        <div>
+                            <div style="font-size:13px; font-weight:bold;">${y.amount} ${kalemBirimi}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">${y.date || ''} · ₺${birimFiyat.toLocaleString('tr-TR')}/birim</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:13px; font-weight:bold; color:var(--accent-color);">₺${Math.round(y.cost).toLocaleString('tr-TR')}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">Satış geliri</div>
+                        </div>
+                    </div>`;
+                }
+            };
+
+            let html = '';
+            if (alislar.length > 0) {
+                const toplamDeger = alislar.reduce((s, y) => s + guncelAlisFiyat * y.amount, 0);
+                const toplamMaliyet = alislar.reduce((s, y) => s + y.cost, 0);
+                const toplamKar = toplamDeger - toplamMaliyet;
+                const toplamKarRenk = toplamKar >= 0 ? '#22c55e' : '#ef4444';
+                html += `<div style="font-size:13px; font-weight:bold; margin-bottom:8px; color:var(--text-muted);">💼 Elindeki Yatırımlar (${alislar.length} kayıt)</div>`;
+                html += alislar.map(y => kartHtml(y, true)).join('');
+                html += `<div style="background:var(--panel-bg); border-radius:10px; padding:10px 14px; margin-bottom:14px; display:flex; justify-content:space-between;">
+                    <div style="font-size:12px; color:var(--text-muted);">Toplam Varlık</div>
+                    <div style="text-align:right;">
+                        <div style="font-size:14px; font-weight:bold;">₺${Math.round(toplamDeger).toLocaleString('tr-TR')}</div>
+                        <div style="font-size:12px; color:${toplamKarRenk}; font-weight:bold;">${toplamKar >= 0 ? '+' : ''}₺${Math.round(toplamKar).toLocaleString('tr-TR')}</div>
+                    </div>
+                </div>`;
+            }
+            if (satislar.length > 0) {
+                html += `<div style="font-size:13px; font-weight:bold; margin-bottom:8px; color:var(--text-muted);">📤 Satış Geçmişi (${satislar.length} kayıt)</div>`;
+                html += satislar.map(y => kartHtml(y, false)).join('');
+            }
+
+            liste.innerHTML = html;
+        }
 
         // ===== TAM VERİ YEDEKLEMESİ =====
         function tamYedekIndir() {
