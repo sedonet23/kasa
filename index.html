@@ -149,6 +149,93 @@
 
         .nav-buttons { display: flex; gap: 6px; align-items: center; }
 
+        .hamburger-btn {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border);
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease;
+            z-index: 99998;
+        }
+        .side-menu-overlay.acik { opacity: 1; visibility: visible; }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 260px;
+            max-width: 80vw;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            box-shadow: 3px 0 16px rgba(0,0,0,0.3);
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+        .side-menu.acik { transform: translateX(0); }
+
+        .side-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px 16px 18px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+        .side-menu-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .side-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 13px 18px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .side-menu-item:hover { background: var(--panel-bg); }
+        .side-menu-item.btn-active { background: var(--accent-color); color: #000 !important; }
+
+        .side-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
+
         .btn {
             background: transparent;
             color: var(--text-color);
@@ -460,22 +547,32 @@
     <!-- Alarm Banner -->
     <div id="alarmBanner"></div>
 
+    <!-- Yan Menü (Drawer) -->
+    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="menuKapat()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <span class="logo-main" style="font-size: 19px;">Kasam</span>
+            <button class="side-menu-close" onclick="menuKapat()">✕</button>
+        </div>
+        <button class="side-menu-item page-nav-btn" id="navHedef" onclick="sayfaDegistir('hedef'); menuKapat();">🎯 Hedef</button>
+        <button class="side-menu-item page-nav-btn" id="navAlarm" onclick="sayfaDegistir('alarm'); menuKapat();">📢 Alarm</button>
+        <div class="side-menu-divider"></div>
+        <button class="side-menu-item" onclick="tamYedekIndir(); menuKapat();" title="Tüm verileri yedekle">💾 Yedekle</button>
+        <button class="side-menu-item" onclick="document.getElementById('tamYedekDosya').click();" title="Yedekten geri yükle">📂 Geri Yükle</button>
+        <input type="file" id="tamYedekDosya" accept="application/json,.json" style="display:none" onchange="tamYedekYukle(event); menuKapat();">
+        <div class="side-menu-divider"></div>
+        <button class="side-menu-item" id="themeBtn" onclick="temaDegistir()">☀️ Açık</button>
+    </div>
+
     <div class="header">
         <div class="logo-area">
+            <button class="hamburger-btn" onclick="menuAc()" title="Menü">☰</button>
             <span class="logo-main">Kasam</span>
             <span class="logo-sub">SEDAT KARAGÖZ</span>
         </div>
-        <div style="display:flex; gap:6px; margin-left:auto; align-items:center;">
-            <button class="btn" onclick="tamYedekIndir()" style="font-size: 12px; padding: 6px 10px;" title="Tüm verileri yedekle">💾 Yedekle</button>
-            <button class="btn" onclick="document.getElementById('tamYedekDosya').click()" style="font-size: 12px; padding: 6px 10px;" title="Yedekten geri yükle">📂 Geri Yükle</button>
-            <input type="file" id="tamYedekDosya" accept="application/json,.json" style="display:none" onchange="tamYedekYukle(event)">
-            <button class="btn" id="themeBtn" onclick="temaDegistir()" style="font-size: 13px; padding: 6px 10px;">☀️ Açık</button>
-        </div>
         <div class="nav-buttons" style="width: 100%;">
-            <button class="btn btn-active" id="navYatirim" onclick="sayfaDegistir('yatirim')">💎 Yatırım</button>
-            <button class="btn" id="navButce" onclick="sayfaDegistir('butce')">📈 Grafik</button>
-            <button class="btn" id="navHedef" onclick="sayfaDegistir('hedef')">🎯 Hedef</button>
-            <button class="btn" id="navAlarm" onclick="sayfaDegistir('alarm')">📢 Alarm</button>
+            <button class="btn btn-active page-nav-btn" id="navYatirim" onclick="sayfaDegistir('yatirim')">💎 Yatırım</button>
+            <button class="btn page-nav-btn" id="navButce" onclick="sayfaDegistir('butce')">📈 Grafik</button>
         </div>
     </div>
 
@@ -952,10 +1049,20 @@
             atas: 21100, ataa: 20850
         };
 
+        // YAN MENÜ
+        function menuAc() {
+            document.getElementById('sideMenu').classList.add('acik');
+            document.getElementById('sideMenuOverlay').classList.add('acik');
+        }
+        function menuKapat() {
+            document.getElementById('sideMenu').classList.remove('acik');
+            document.getElementById('sideMenuOverlay').classList.remove('acik');
+        }
+
         // SAYFA GEÇİŞ
         function sayfaDegistir(sayfaIsmi) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
-            document.querySelectorAll('.nav-buttons .btn').forEach(b => b.classList.remove('btn-active'));
+            document.querySelectorAll('.page-nav-btn').forEach(b => b.classList.remove('btn-active'));
 
             if (sayfaIsmi === 'yatirim') {
                 document.getElementById('pageYatirim').classList.add('active-page');
@@ -3048,7 +3155,7 @@
 
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
             document.getElementById('pageAltinDetay').classList.add('active-page');
-            document.querySelectorAll('.nav-buttons .btn').forEach(b => b.classList.remove('btn-active'));
+            document.querySelectorAll('.page-nav-btn').forEach(b => b.classList.remove('btn-active'));
 
             // Yatirımlari filtreden bagimsiz bir kez yukle
             detayYatirimlariGoster(tur);
