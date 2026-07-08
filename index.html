@@ -731,6 +731,8 @@
                     <div class="filtre-row" id="grafikPeriyotRow">
                         <button class="filtre-btn aktif" onclick="grafikPeriyotSec('gunluk', this)">Günlük</button>
                         <button class="filtre-btn" onclick="grafikPeriyotSec('haftalik', this)">Haftalık</button>
+                        <button class="filtre-btn" onclick="grafikPeriyotSec('aylik', this)">Aylık</button>
+                        <button class="filtre-btn" onclick="grafikPeriyotSec('yillik', this)">Yıllık</button>
                     </div>
                 </div>
                 <div class="grid-summary" id="fiyatMinMaxKartlari" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
@@ -770,6 +772,8 @@
                     <div class="filtre-row" id="varlikPeriyotRow">
                         <button class="filtre-btn aktif" onclick="varlikPeriyotSec('gunluk', this)">Günlük</button>
                         <button class="filtre-btn" onclick="varlikPeriyotSec('haftalik', this)">Haftalık</button>
+                        <button class="filtre-btn" onclick="varlikPeriyotSec('aylik', this)">Aylık</button>
+                        <button class="filtre-btn" onclick="varlikPeriyotSec('yillik', this)">Yıllık</button>
                     </div>
                 </div>
                 <div class="grid-summary" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
@@ -1916,7 +1920,7 @@
         // ===== FİYAT GEÇMİŞİ / GRAFİK SAYFASI =====
         let fiyatGecmisi = [];
         let seciliGrafikTuru = 'gram24';
-        let seciliGrafikPeriyot = 'gunluk'; // 'gunluk' veya 'haftalik'
+        let seciliGrafikPeriyot = 'gunluk'; // 'gunluk' | 'haftalik' | 'aylik' | 'yillik'
 
         const GRAFIK_TUR_BILGI = {
             gram24: { isim: '24A Gram Altın', alis: 'gram24a', satis: 'gram24s' },
@@ -2034,7 +2038,11 @@
         function grafikVerisiniGetir() {
             const simdi = Date.now();
             let baslangic;
-            if (seciliGrafikPeriyot === 'haftalik') {
+            if (seciliGrafikPeriyot === 'yillik') {
+                baslangic = simdi - 365 * 24 * 60 * 60 * 1000;
+            } else if (seciliGrafikPeriyot === 'aylik') {
+                baslangic = simdi - 30 * 24 * 60 * 60 * 1000;
+            } else if (seciliGrafikPeriyot === 'haftalik') {
                 baslangic = simdi - 7 * 24 * 60 * 60 * 1000;
             } else {
                 baslangic = simdi - 24 * 60 * 60 * 1000;
@@ -2903,7 +2911,16 @@
 
         function varlikVerisiniGetir() {
             const simdi = Date.now();
-            let baslangic = seciliVarlikPeriyot === 'haftalik' ? simdi - 7*24*60*60*1000 : simdi - 24*60*60*1000;
+            let baslangic;
+            if (seciliVarlikPeriyot === 'yillik') {
+                baslangic = simdi - 365 * 24 * 60 * 60 * 1000;
+            } else if (seciliVarlikPeriyot === 'aylik') {
+                baslangic = simdi - 30 * 24 * 60 * 60 * 1000;
+            } else if (seciliVarlikPeriyot === 'haftalik') {
+                baslangic = simdi - 7 * 24 * 60 * 60 * 1000;
+            } else {
+                baslangic = simdi - 24 * 60 * 60 * 1000;
+            }
             let veri = varlikGecmisi.filter(k => new Date(k.zaman).getTime() >= baslangic);
             if (veri.length === 0) veri = varlikGecmisi.slice(-100);
             return veri;
