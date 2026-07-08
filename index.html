@@ -737,12 +737,26 @@
                 </div>
                 <div class="grid-summary" id="fiyatMinMaxKartlari" style="margin-bottom: 12px; grid-template-columns: repeat(2, 1fr);">
                     <div class="summary-card">
-                        <div class="summary-title" style="color: var(--green);">En Düşük (Alış)</div>
-                        <div class="summary-val" id="fiyatEnDusuk" style="color: var(--green);">₺0</div>
+                        <div class="summary-title">Alış</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:12px; color:var(--text-muted);">En Düşük</span>
+                            <span class="summary-val" id="fiyatAlisEnDusuk" style="color: var(--green); font-size:15px;">₺0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; color:var(--text-muted);">En Yüksek</span>
+                            <span class="summary-val" id="fiyatAlisEnYuksek" style="color: var(--red); font-size:15px;">₺0</span>
+                        </div>
                     </div>
                     <div class="summary-card">
-                        <div class="summary-title" style="color: var(--red);">En Yüksek (Satış)</div>
-                        <div class="summary-val" id="fiyatEnYuksek" style="color: var(--red);">₺0</div>
+                        <div class="summary-title">Satış</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:12px; color:var(--text-muted);">En Düşük</span>
+                            <span class="summary-val" id="fiyatSatisEnDusuk" style="color: var(--green); font-size:15px;">₺0</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; color:var(--text-muted);">En Yüksek</span>
+                            <span class="summary-val" id="fiyatSatisEnYuksek" style="color: var(--red); font-size:15px;">₺0</span>
+                        </div>
                     </div>
                 </div>
                 <div class="chart-wrapper" id="fiyatGrafikWrapper" style="position:relative;">
@@ -2202,15 +2216,19 @@
             ctx.fillText('Satış', leftPad + 62, 10);
         }
 
-        // Seçili periyot için en düşük/en yüksek değerleri kartlara yaz
+        // Seçili periyot için alış/satış en düşük/en yüksek değerlerini kartlara yaz
         function fiyatMinMaxGuncelle(veri, tur) {
-            const enDusukEl = document.getElementById('fiyatEnDusuk');
-            const enYuksekEl = document.getElementById('fiyatEnYuksek');
-            if (!enDusukEl || !enYuksekEl) return;
+            const alisEnDusukEl = document.getElementById('fiyatAlisEnDusuk');
+            const alisEnYuksekEl = document.getElementById('fiyatAlisEnYuksek');
+            const satisEnDusukEl = document.getElementById('fiyatSatisEnDusuk');
+            const satisEnYuksekEl = document.getElementById('fiyatSatisEnYuksek');
+            if (!alisEnDusukEl || !alisEnYuksekEl || !satisEnDusukEl || !satisEnYuksekEl) return;
 
             if (!veri || veri.length === 0) {
-                enDusukEl.innerText = '₺0';
-                enYuksekEl.innerText = '₺0';
+                alisEnDusukEl.innerText = '₺0';
+                alisEnYuksekEl.innerText = '₺0';
+                satisEnDusukEl.innerText = '₺0';
+                satisEnYuksekEl.innerText = '₺0';
                 return;
             }
 
@@ -2218,10 +2236,14 @@
             const satisVeri = veri.map(v => v[tur.satis] || 0).filter(v => v > 0);
 
             const enDusukAlis = alisVeri.length ? Math.min(...alisVeri) : 0;
+            const enYuksekAlis = alisVeri.length ? Math.max(...alisVeri) : 0;
+            const enDusukSatis = satisVeri.length ? Math.min(...satisVeri) : 0;
             const enYuksekSatis = satisVeri.length ? Math.max(...satisVeri) : 0;
 
-            enDusukEl.innerText = '₺' + Math.round(enDusukAlis).toLocaleString('tr-TR');
-            enYuksekEl.innerText = '₺' + Math.round(enYuksekSatis).toLocaleString('tr-TR');
+            alisEnDusukEl.innerText = '₺' + Math.round(enDusukAlis).toLocaleString('tr-TR');
+            alisEnYuksekEl.innerText = '₺' + Math.round(enYuksekAlis).toLocaleString('tr-TR');
+            satisEnDusukEl.innerText = '₺' + Math.round(enDusukSatis).toLocaleString('tr-TR');
+            satisEnYuksekEl.innerText = '₺' + Math.round(enYuksekSatis).toLocaleString('tr-TR');
         }
 
         // Etkileşimli grafik: en yakın noktayı bul ve tooltip göster
