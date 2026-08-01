@@ -1433,6 +1433,17 @@
         // Ağ bağlantısı henüz hazır olmayabileceğinden (özellikle uygulama yeni açıldığında,
         // mobil veri/5G henüz devreye girmemişken), fetch başarısız olursa kısa bir bekleyip
         // birkaç kez daha dener. Sonunda hâlâ başarısızsa hatayı olduğu gibi fırlatır.
+        // Sorun sadece bizim worker'larımıza mı özel, yoksa WebView genel olarak dış
+        // bağlantı kuramıyor mu? Bunu ayırt etmek için ilgisiz, bilinen bir siteyi dener.
+        async function genelBaglantiTestiYap() {
+            try {
+                const r = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+                return r.ok ? "OK" : `HTTP ${r.status}`;
+            } catch (e) {
+                return (e && e.name ? e.name + ": " : "") + (e && e.message ? e.message : String(e));
+            }
+        }
+
         async function fetchYenidenDene(url, denemeSayisi, bekleMs) {
             let sonHata;
             for (let i = 0; i < (denemeSayisi || 3); i++) {
@@ -1483,6 +1494,7 @@
             } catch (error) {
                 console.error("Fiyat güncelleme hatası:", error);
                 sonAltinHatasi = (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error));
+                sonAltinHatasi += ` [genel test: ${await genelBaglantiTestiYap()}]`;
                 const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
                 if (yerelFiyatlar) {
                     try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
