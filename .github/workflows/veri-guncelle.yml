@@ -1,0 +1,37 @@
+name: Kasam Veri Güncelle
+
+on:
+  schedule:
+    # Her 10 dakikada bir çalışır (GitHub'ın ücretsiz planında birkaç dakika gecikme olabilir)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  veri-cek:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu çek
+        uses: actions/checkout@v4
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Veriyi çek ve veri.json'a yaz
+        run: node scripts/veri-cek.js
+
+      - name: Değişiklik varsa commit + push
+        run: |
+          git config user.name "Kasam Veri Botu"
+          git config user.email "actions@github.com"
+          git add veri.json
+          if git diff --cached --quiet; then
+            echo "Değişiklik yok, commit atlanıyor."
+          else
+            git commit -m "Veri güncelle: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
