@@ -1126,10 +1126,10 @@
     <script>
         let yatirimlarListesi = [];
 
-        // Cloudflare Worker'lar yerine artık GitHub Actions'ın periyodik ürettiği statik
-        // JSON dosyasından okunuyor (Cloudflare ile hiçbir ilgisi yok, ağ engeli sorunu ortadan kalkar).
-        // NOT: "sedonet23/kasa" repo varsayımı — repo adı farklıysa burayı güncellemek yeterli.
-        const VERI_JSON_URL = "https://raw.githubusercontent.com/sedonet23/kasa/main/veri.json";
+        // Birincil kaynak: Cloudflare Worker'lar (kasam-altin-api, kasam-piyasa).
+        // Onlara hiç ulaşılamazsa (ör. ağ tarafında workers.dev engeli), GitHub
+        // Actions'ın her ~10 dakikada bir güncellediği bu statik yedek JSON denenir.
+        const VERI_JSON_URL = "https://raw.githubusercontent.com/sedonet23/kasa/main/veri/kasam-veri.json";
 
         let canliFiyatlar = {
             gram24s: 3120, gram24a: 3105, gram22s: 2860, gram22a: 2840,
@@ -1471,39 +1471,61 @@
             if (refreshBtn) refreshBtn.innerText = "⏳...";
 
             let basarili = false;
+            let kaynak = '';
 
-            try {
-                const response = await fetchYenidenDene(VERI_JSON_URL + "?t=" + Date.now());
-                const data = await response.json();
+            const sayi = (deger) => {
+                if (!deger) return 0;
+                return parseFloat(String(deger).replace(",", "."));
+            };
 
-                const sayi = (deger) => {
-                    if (!deger) return 0;
-                    return parseFloat(String(deger).replace(",", "."));
-                };
-
-                canliFiyatlar = {
+            const altiniIsle = (data) => {
+                const f = {
                     gram24s: sayi(data.gram24s), gram24a: sayi(data.gram24a),
                     gram22s: sayi(data.gram22s), gram22a: sayi(data.gram22a),
                     ceyreks: sayi(data.ceyreks), ceyreka: sayi(data.ceyreka),
                     yarims: sayi(data.yarims),   yarima: sayi(data.yarima),
                     atas: sayi(data.atas),        ataa: sayi(data.ataa)
                 };
+                if (!(f.gram24s > 0)) throw new Error("Geçersiz fiyat verisi");
+                return f;
+            };
 
-                if (canliFiyatlar.gram24s > 0) {
-                    localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
-                    localStorage.setItem("kasam_son_fiyat_zamani", new Date().toISOString());
-                    basarili = true;
-                } else {
-                    throw new Error("Geçersiz fiyat verisi");
-                }
+            // 1. KADEME: Cloudflare Worker (birincil, en güncel kaynak)
+            try {
+                const response = await fetchYenidenDene("https://kasam-altin-api.sedonet23.workers.dev/");
+                const data = await response.json();
+                canliFiyatlar = altiniIsle(data);
+                basarili = true;
+                kaynak = 'worker';
             } catch (error) {
-                console.error("Fiyat güncelleme hatası:", error);
+                console.error("Fiyat güncelleme hatası (worker):", error);
                 sonAltinHatasi = (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error));
-                sonAltinHatasi += ` [genel test: ${await genelBaglantiTestiYap()}]`;
-                const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
-                if (yerelFiyatlar) {
-                    try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
+
+                // 2. KADEME: Worker'a hiç ulaşılamazsa, GitHub Actions'ın periyodik
+                // ürettiği statik yedek JSON'u dene (Cloudflare'le hiçbir ilgisi yok).
+                try {
+                    const yedekResponse = await fetch(VERI_JSON_URL + "?t=" + Date.now());
+                    if (!yedekResponse.ok) throw new Error(`Yedek JSON hatası: ${yedekResponse.status}`);
+                    const yedekData = await yedekResponse.json();
+                    canliFiyatlar = altiniIsle(yedekData);
+                    basarili = true;
+                    kaynak = 'yedek';
+                } catch (yedekHata) {
+                    console.error("Fiyat güncelleme hatası (yedek JSON):", yedekHata);
+                    sonAltinHatasi += ` [yedek: ${yedekHata && yedekHata.message ? yedekHata.message : String(yedekHata)}]`;
+                    sonAltinHatasi += ` [genel test: ${await genelBaglantiTestiYap()}]`;
+
+                    // 3. KADEME: İkisi de başarısızsa, cihazdaki son bilinen değere düş.
+                    const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
+                    if (yerelFiyatlar) {
+                        try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
+                    }
                 }
+            }
+
+            if (basarili) {
+                localStorage.setItem("kasam_son_fiyatlar", JSON.stringify(canliFiyatlar));
+                localStorage.setItem("kasam_son_fiyat_zamani", new Date().toISOString());
             }
 
             fiyatlariEkranaYaz();
@@ -1514,7 +1536,7 @@
             const updateEl = document.getElementById("updateTime");
             if (updateEl) {
                 if (basarili) {
-                    updateEl.innerText = `Canlı fiyat • ${zaman}`;
+                    updateEl.innerText = kaynak === 'yedek' ? `Yedek kaynak • ${zaman}` : `Canlı fiyat • ${zaman}`;
                     updateEl.style.color = "var(--green)";
                 } else {
                     const sonZamanStr = localStorage.getItem("kasam_son_fiyat_zamani");
@@ -1633,34 +1655,55 @@
             if (refreshBtn) refreshBtn.innerText = "⏳...";
 
             let basarili = false;
+            let kaynak = '';
 
-            try {
-                // Döviz + piyasa artık altından TAMAMEN AYRI, bağımsız bir worker'dan geliyor —
-                // burada bir sorun olsa bile altın worker'ı asla etkilenmez.
-                const response = await fetchYenidenDene(VERI_JSON_URL + "?t=" + Date.now());
-                const data = await response.json();
-
+            const veriyiIsle = (data) => {
+                let herhangiBirSey = false;
                 if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
                     dovizListesi = data.dovizler;
                     localStorage.setItem('kasam_doviz_listesi', JSON.stringify(dovizListesi));
                     localStorage.setItem('kasam_son_doviz_zamani', new Date().toISOString());
-                    basarili = true;
+                    herhangiBirSey = true;
                 }
-
                 ['bist100', 'petrol', 'ons'].forEach(anahtar => {
                     if (typeof data[anahtar] === 'number') {
                         piyasaListesi[anahtar] = data[anahtar];
                         localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
                     }
                 });
+                if (!herhangiBirSey) throw new Error("Geçersiz döviz verisi");
+            };
 
-                if (!basarili) throw new Error("Geçersiz döviz verisi");
+            // 1. KADEME: Cloudflare Worker (birincil, en güncel kaynak) — altından
+            // TAMAMEN AYRI, bağımsız bir worker'dan geliyor.
+            try {
+                const response = await fetchYenidenDene("https://kasam-piyasa.sedonet23.workers.dev/");
+                const data = await response.json();
+                veriyiIsle(data);
+                basarili = true;
+                kaynak = 'worker';
             } catch (error) {
-                console.error("Döviz/piyasa güncelleme hatası:", error);
+                console.error("Döviz/piyasa güncelleme hatası (worker):", error);
                 sonDovizHatasi = (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error));
-                const yerel = localStorage.getItem("kasam_doviz_listesi");
-                if (yerel) {
-                    try { dovizListesi = JSON.parse(yerel); } catch (e) {}
+
+                // 2. KADEME: Worker'a hiç ulaşılamazsa, GitHub Actions'ın periyodik
+                // ürettiği statik yedek JSON'u dene.
+                try {
+                    const yedekResponse = await fetch(VERI_JSON_URL + "?t=" + Date.now());
+                    if (!yedekResponse.ok) throw new Error(`Yedek JSON hatası: ${yedekResponse.status}`);
+                    const yedekData = await yedekResponse.json();
+                    veriyiIsle(yedekData);
+                    basarili = true;
+                    kaynak = 'yedek';
+                } catch (yedekHata) {
+                    console.error("Döviz/piyasa güncelleme hatası (yedek JSON):", yedekHata);
+                    sonDovizHatasi += ` [yedek: ${yedekHata && yedekHata.message ? yedekHata.message : String(yedekHata)}]`;
+
+                    // 3. KADEME: İkisi de başarısızsa, cihazdaki son bilinen değere düş.
+                    const yerel = localStorage.getItem("kasam_doviz_listesi");
+                    if (yerel) {
+                        try { dovizListesi = JSON.parse(yerel); } catch (e) {}
+                    }
                 }
             }
 
@@ -1672,7 +1715,7 @@
             const updateEl = document.getElementById("dovizUpdateTime");
             if (updateEl) {
                 if (basarili) {
-                    updateEl.innerText = `Canlı kur • ${zaman}`;
+                    updateEl.innerText = kaynak === 'yedek' ? `Yedek kaynak • ${zaman}` : `Canlı kur • ${zaman}`;
                     updateEl.style.color = "var(--green)";
                 } else {
                     const sonZamanStr = localStorage.getItem("kasam_son_doviz_zamani");
