@@ -43,7 +43,32 @@ async function duzMetinAl(url, zamanAsimiMs, maxUzunluk) {
 // ============================================================
 // ALTIN — Elazığ Kuyumcular Odası sayfasından
 // ============================================================
-async function altinGetir() {
+async function altinWorkerdanGetir() {
+    const denetleyici = new AbortController();
+    const zamanlayici = setTimeout(() => denetleyici.abort(), 15000);
+    try {
+        const r = await fetch('https://kasam-altin-api.sedonet23.workers.dev/', { signal: denetleyici.signal });
+        if (!r.ok) throw new Error(`Worker HTTP ${r.status}`);
+        const data = await r.json();
+        if (data.hata) throw new Error(`Worker hata döndürdü: ${data.hata}`);
+        if (!(sayi(data.gram24s) > 0)) throw new Error('Worker geçersiz veri döndürdü');
+        return {
+            gram24a: sayi(data.gram24a), gram24s: sayi(data.gram24s),
+            gram22a: sayi(data.gram22a), gram22s: sayi(data.gram22s),
+            ceyreka: sayi(data.ceyreka), ceyreks: sayi(data.ceyreks),
+            yarima: sayi(data.yarima),   yarims: sayi(data.yarims),
+            ataa: sayi(data.ataa),        atas: sayi(data.atas),
+            beslia: sayi(data.beslia),   beslis: sayi(data.beslis),
+            ayar14s: sayi(data.ayar14s),
+            gram24_1g_a: sayi(data.gram24_1g_a), gram24_1g_s: sayi(data.gram24_1g_s),
+            altinKaynak: 'fiyat.ekeo.org.tr (kasam-altin-api worker üzerinden)'
+        };
+    } finally {
+        clearTimeout(zamanlayici);
+    }
+}
+
+async function altinDogrudanEkeodanGetir() {
     const text = await duzMetinAl('https://fiyat.ekeo.org.tr/dashboard', 15000);
 
     function numbersIn(segment) {
@@ -90,8 +115,18 @@ async function altinGetir() {
         beslia, beslis,
         ayar14s,
         gram24_1g_a, gram24_1g_s,
+
         altinKaynak: 'fiyat.ekeo.org.tr'
     };
+}
+
+async function altinGetir() {
+    try {
+        return await altinWorkerdanGetir();
+    } catch (workerHata) {
+        console.warn('Altın worker üzerinden alınamadı, doğrudan ekeo deneniyor:', workerHata.message);
+        return await altinDogrudanEkeodanGetir();
+    }
 }
 
 // ============================================================
