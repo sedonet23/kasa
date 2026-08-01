@@ -1460,6 +1460,21 @@
                 } else {
                     throw new Error("Geçersiz fiyat verisi");
                 }
+
+                // Aynı worker artık BIST 100 / Petrol / Ons verisini de döndürüyor
+                ['bist100', 'petrol', 'ons'].forEach(anahtar => {
+                    if (typeof data[anahtar] === 'number') {
+                        piyasaListesi[anahtar] = data[anahtar];
+                        localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
+                    }
+                });
+
+                // Aynı worker artık tüm döviz kurlarını da döndürüyor
+                if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
+                    dovizListesi = data.dovizler;
+                    localStorage.setItem('kasam_doviz_listesi', JSON.stringify(dovizListesi));
+                    localStorage.setItem('kasam_son_doviz_zamani', new Date().toISOString());
+                }
             } catch (error) {
                 console.error("Fiyat güncelleme hatası:", error);
                 const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
@@ -1503,41 +1518,47 @@
         }
 
         // DÖVİZ
-        // Truncgil API'de denenecek anahtar adayları: hem güncel (kod) hem eski (Türkçe isim) biçim
-        const DOVIZ_TANIMLAR = [
-            { kodlar: ['USD', 'ABD DOLARI'],            ad: 'Dolar',               sembol: '$',   renk: '#2e7d32' },
-            { kodlar: ['EUR', 'EURO'],                  ad: 'Euro',                sembol: '€',   renk: '#1565c0' },
-            { kodlar: ['GBP', 'İNGİLİZ STERLİNİ'],      ad: 'Sterlin',             sembol: '£',   renk: '#6a1b9a' },
-            { kodlar: ['CHF', 'İSVİÇRE FRANGI'],        ad: 'İsviçre Frangı',      sembol: 'Fr',  renk: '#c62828' },
-            { kodlar: ['CAD', 'KANADA DOLARI'],         ad: 'Kanada Doları',       sembol: '$',   renk: '#00838f' },
-            { kodlar: ['AUD', 'AVUSTRALYA DOLARI'],     ad: 'Avustralya Doları',   sembol: '$',   renk: '#00695c' },
-            { kodlar: ['JPY', 'JAPON YENİ'],            ad: 'Japon Yeni',          sembol: '¥',   renk: '#ad1457' },
-            { kodlar: ['SEK', 'İSVEÇ KRONU'],           ad: 'İsveç Kronu',         sembol: 'kr',  renk: '#4527a0' },
-            { kodlar: ['NOK', 'NORVEÇ KRONU'],          ad: 'Norveç Kronu',        sembol: 'kr',  renk: '#283593' },
-            { kodlar: ['DKK', 'DANİMARKA KRONU'],       ad: 'Danimarka Kronu',     sembol: 'kr',  renk: '#0277bd' },
-            { kodlar: ['SAR', 'SUUDİ ARABİSTAN RİYALİ'],ad: 'S. Arabistan Riyali', sembol: '﷼',   renk: '#2e7d32' },
-            { kodlar: ['KWD', 'KUVEYT DİNARI'],         ad: 'Kuveyt Dinarı',       sembol: 'KD',  renk: '#558b2f' },
-            { kodlar: ['RUB', 'RUS RUBLESİ'],           ad: 'Rus Rublesi',         sembol: '₽',   renk: '#37474f' },
-            { kodlar: ['CNY', 'ÇİN YUANI'],             ad: 'Çin Yuanı',           sembol: '¥',   renk: '#b71c1c' },
-            { kodlar: ['BGN', 'BULGAR LEVASI'],         ad: 'Bulgar Levası',       sembol: 'лв',  renk: '#33691e' },
-            { kodlar: ['RON', 'RUMEN LEYİ'],            ad: 'Rumen Leyi',          sembol: 'lei', renk: '#4527a0' },
-            { kodlar: ['QAR', 'KATAR RİYALİ'],          ad: 'Katar Riyali',        sembol: '﷼',   renk: '#6a1b9a' },
-            { kodlar: ['AZN'],                          ad: 'Azerbaycan Manatı',   sembol: '₼',   renk: '#00695c' },
-            { kodlar: ['PKR', 'PAKİSTAN RUPİSİ'],       ad: 'Pakistan Rupisi',     sembol: '₨',   renk: '#558b2f' }
-        ];
-
-        let dovizListesi = [];   // [{ ad, sembol, renk, alis, satis }]
-        let piyasaListesi = { bist100: null, petrol: null, ons: null };
-
-        function dovizSayi(deger) {
-            if (deger === undefined || deger === null || deger === '') return null;
-            // truncgil API değerleri düz ondalık nokta ile gelir (ör. "64.0998").
-            // Burada nokta binlik ayraç DEĞİL, ondalık ayraçtır — silinmemeli.
-            // Olası bir ondalık virgülü (ör. "64,0998") güvenlik için noktaya çevriyoruz.
-            const s = String(deger).trim().replace(',', '.');
-            const n = parseFloat(s);
-            return isNaN(n) ? null : n;
+        // Bilinen kurlar için Türkçe ad / ikon / renk — worker'dan gelmeyen ya da
+        // listede olmayan bir kod için de kod adı ve genel bir ikonla gösterim yapılır.
+        const DOVIZ_GORUNUM = {
+            USD: { ad: 'Dolar',              sembol: '$',   renk: '#2e7d32' },
+            EUR: { ad: 'Euro',               sembol: '€',   renk: '#1565c0' },
+            GBP: { ad: 'Sterlin',            sembol: '£',   renk: '#6a1b9a' },
+            CHF: { ad: 'İsviçre Frangı',     sembol: 'Fr',  renk: '#c62828' },
+            CAD: { ad: 'Kanada Doları',      sembol: '$',   renk: '#00838f' },
+            AUD: { ad: 'Avustralya Doları',  sembol: '$',   renk: '#00695c' },
+            JPY: { ad: 'Japon Yeni',         sembol: '¥',   renk: '#ad1457' },
+            SEK: { ad: 'İsveç Kronu',        sembol: 'kr',  renk: '#4527a0' },
+            NOK: { ad: 'Norveç Kronu',       sembol: 'kr',  renk: '#283593' },
+            DKK: { ad: 'Danimarka Kronu',    sembol: 'kr',  renk: '#0277bd' },
+            SAR: { ad: 'S. Arabistan Riyali',sembol: '﷼',   renk: '#2e7d32' },
+            KWD: { ad: 'Kuveyt Dinarı',      sembol: 'KD',  renk: '#558b2f' },
+            RUB: { ad: 'Rus Rublesi',        sembol: '₽',   renk: '#37474f' },
+            CNY: { ad: 'Çin Yuanı',          sembol: '¥',   renk: '#b71c1c' },
+            BGN: { ad: 'Bulgar Levası',      sembol: 'лв',  renk: '#33691e' },
+            RON: { ad: 'Rumen Leyi',         sembol: 'lei', renk: '#4527a0' },
+            QAR: { ad: 'Katar Riyali',       sembol: '﷼',   renk: '#6a1b9a' },
+            AZN: { ad: 'Azerbaycan Manatı',  sembol: '₼',   renk: '#00695c' },
+            PKR: { ad: 'Pakistan Rupisi',    sembol: '₨',   renk: '#558b2f' },
+            AED: { ad: 'BAE Dirhemi',        sembol: 'د.إ', renk: '#00695c' },
+            ZAR: { ad: 'G. Afrika Randı',    sembol: 'R',   renk: '#4527a0' },
+            ILS: { ad: 'İsrail Şekeli',      sembol: '₪',   renk: '#1565c0' },
+            INR: { ad: 'Hindistan Rupisi',   sembol: '₹',   renk: '#c62828' },
+            MXN: { ad: 'Meksika Pesosu',     sembol: '$',   renk: '#33691e' },
+            HUF: { ad: 'Macar Forinti',      sembol: 'Ft',  renk: '#283593' },
+            NZD: { ad: 'Y. Zelanda Doları',  sembol: '$',   renk: '#00838f' },
+            BRL: { ad: 'Brezilya Reali',     sembol: 'R$',  renk: '#2e7d32' },
+            IDR: { ad: 'Endonezya Rupiahi',  sembol: 'Rp',  renk: '#6a1b9a' },
+            CZK: { ad: 'Çek Korunası',       sembol: 'Kč',  renk: '#0277bd' },
+            PLN: { ad: 'Polonya Zlotisi',    sembol: 'zł',  renk: '#c62828' },
+            HKD: { ad: 'Hong Kong Doları',   sembol: '$',   renk: '#ad1457' }
+        };
+        function dovizGorunumAl(kod) {
+            return DOVIZ_GORUNUM[kod] || { ad: kod, sembol: kod.slice(0,2), renk: '#546e7a' };
         }
+
+        let dovizListesi = [];   // worker'dan gelen ham liste: [{ kod, alis, satis }]
+        let piyasaListesi = { bist100: null, petrol: null, ons: null };
 
         function dovizFiyatlariniEkranaYaz() {
             const kapsayici = document.getElementById('dovizListesiKapsayici');
@@ -1545,18 +1566,20 @@
                 if (!dovizListesi || dovizListesi.length === 0) {
                     kapsayici.innerHTML = '<div style="padding: 14px 4px; color: var(--text-muted); font-size: 13px;">Döviz verisi yok, güncellemeyi deneyin.</div>';
                 } else {
-                    kapsayici.innerHTML = dovizListesi.map(d => `
+                    kapsayici.innerHTML = dovizListesi.map(d => {
+                        const g = dovizGorunumAl(d.kod);
+                        return `
                         <div class="price-row" style="cursor: default;">
                             <div class="price-row-icon">
-                                <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="${d.renk}"/><circle cx="20" cy="20" r="14" fill="${d.renk}cc"/><text x="20" y="25" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">${d.sembol}</text></svg>
+                                <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="${g.renk}"/><circle cx="20" cy="20" r="14" fill="${g.renk}cc"/><text x="20" y="25" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">${g.sembol}</text></svg>
                             </div>
-                            <div class="price-row-name">${d.ad}</div>
+                            <div class="price-row-name">${g.ad}</div>
                             <div class="price-row-cols">
-                                <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy">₺${d.alis === null ? '—' : d.alis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
-                                <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell">₺${d.satis === null ? '—' : d.satis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
+                                <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy">₺${d.alis === null || d.alis === undefined ? '—' : d.alis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
+                                <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell">₺${d.satis === null || d.satis === undefined ? '—' : d.satis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
                             </div>
-                        </div>
-                    `).join('');
+                        </div>`;
+                    }).join('');
                 }
             }
 
@@ -1581,75 +1604,12 @@
             }
         }
 
-        async function piyasaVerileriniYukle() {
-            const gorevler = [
-                { anahtar: 'bist100', sembol: 'XU100.IS' },
-                { anahtar: 'petrol',  sembol: 'BZ=F' },
-                { anahtar: 'ons',     sembol: 'GC=F' }
-            ];
-            await Promise.all(gorevler.map(async (g) => {
-                try {
-                    const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${g.sembol}`);
-                    if (!r.ok) throw new Error('Piyasa API hatası: ' + r.status);
-                    const j = await r.json();
-                    const fiyat = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta
-                        ? j.chart.result[0].meta.regularMarketPrice : null;
-                    if (typeof fiyat === 'number') {
-                        piyasaListesi[g.anahtar] = fiyat;
-                        localStorage.setItem('kasam_piyasa_' + g.anahtar, String(fiyat));
-                    } else {
-                        throw new Error('Geçersiz piyasa verisi: ' + g.anahtar);
-                    }
-                } catch (e) {
-                    console.warn('Piyasa verisi alınamadı (' + g.anahtar + '):', e);
-                    const yerel = localStorage.getItem('kasam_piyasa_' + g.anahtar);
-                    if (yerel !== null) piyasaListesi[g.anahtar] = parseFloat(yerel);
-                }
-            }));
-        }
-
         async function dovizFiyatlariniYukle() {
             const refreshBtn = document.getElementById('dovizRefreshBtn');
             if (refreshBtn) refreshBtn.innerText = "⏳...";
 
-            let basarili = false;
-
-            try {
-                const response = await fetch("https://finans.truncgil.com/v4/today.json");
-                if (!response.ok) throw new Error(`API hatası: ${response.status}`);
-                const data = await response.json();
-
-                const yeniListe = [];
-                DOVIZ_TANIMLAR.forEach(tanim => {
-                    let kayit = null;
-                    for (const k of tanim.kodlar) {
-                        if (data[k]) { kayit = data[k]; break; }
-                    }
-                    if (!kayit) return;
-                    const alis = dovizSayi(kayit.Alış ?? kayit.Buying);
-                    const satis = dovizSayi(kayit.Satış ?? kayit.Selling);
-                    if (alis === null && satis === null) return;
-                    yeniListe.push({ ad: tanim.ad, sembol: tanim.sembol, renk: tanim.renk, alis, satis });
-                });
-
-                if (yeniListe.length > 0) {
-                    dovizListesi = yeniListe;
-                    localStorage.setItem("kasam_doviz_listesi", JSON.stringify(dovizListesi));
-                    localStorage.setItem("kasam_son_doviz_zamani", new Date().toISOString());
-                    basarili = true;
-                } else {
-                    throw new Error("Geçersiz döviz verisi");
-                }
-            } catch (error) {
-                console.error("Döviz güncelleme hatası:", error);
-                const yerel = localStorage.getItem("kasam_doviz_listesi");
-                if (yerel) {
-                    try { dovizListesi = JSON.parse(yerel); } catch (e) {}
-                }
-            }
-
-            // BIST100 / Petrol / Ons — döviz kaynağından bağımsız, ayrı bir kaynaktan gelir
-            await piyasaVerileriniYukle();
+            // Hem döviz+piyasa hem altın verisi artık AYNI worker'dan geliyor.
+            await canliFiyatlariYukle();
 
             dovizFiyatlariniEkranaYaz();
             if (refreshBtn) refreshBtn.innerText = "🔄 Güncelle";
@@ -1658,7 +1618,7 @@
             const zaman = simdi.getHours().toString().padStart(2,'0') + ":" + simdi.getMinutes().toString().padStart(2,'0');
             const updateEl = document.getElementById("dovizUpdateTime");
             if (updateEl) {
-                if (basarili) {
+                if (dovizListesi && dovizListesi.length > 0) {
                     updateEl.innerText = `Canlı kur • ${zaman}`;
                     updateEl.style.color = "var(--green)";
                 } else {
