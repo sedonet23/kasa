@@ -1460,21 +1460,6 @@
                 } else {
                     throw new Error("Geçersiz fiyat verisi");
                 }
-
-                // Aynı worker artık BIST 100 / Petrol / Ons verisini de döndürüyor
-                ['bist100', 'petrol', 'ons'].forEach(anahtar => {
-                    if (typeof data[anahtar] === 'number') {
-                        piyasaListesi[anahtar] = data[anahtar];
-                        localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
-                    }
-                });
-
-                // Aynı worker artık tüm döviz kurlarını da döndürüyor
-                if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
-                    dovizListesi = data.dovizler;
-                    localStorage.setItem('kasam_doviz_listesi', JSON.stringify(dovizListesi));
-                    localStorage.setItem('kasam_son_doviz_zamani', new Date().toISOString());
-                }
             } catch (error) {
                 console.error("Fiyat güncelleme hatası:", error);
                 const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
@@ -1608,8 +1593,37 @@
             const refreshBtn = document.getElementById('dovizRefreshBtn');
             if (refreshBtn) refreshBtn.innerText = "⏳...";
 
-            // Hem döviz+piyasa hem altın verisi artık AYNI worker'dan geliyor.
-            await canliFiyatlariYukle();
+            let basarili = false;
+
+            try {
+                // Döviz + piyasa artık altından TAMAMEN AYRI, bağımsız bir worker'dan geliyor —
+                // burada bir sorun olsa bile altın worker'ı asla etkilenmez.
+                const response = await fetch("https://kasam-piyasa.sedonet23.workers.dev/");
+                if (!response.ok) throw new Error(`API hatası: ${response.status}`);
+                const data = await response.json();
+
+                if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
+                    dovizListesi = data.dovizler;
+                    localStorage.setItem('kasam_doviz_listesi', JSON.stringify(dovizListesi));
+                    localStorage.setItem('kasam_son_doviz_zamani', new Date().toISOString());
+                    basarili = true;
+                }
+
+                ['bist100', 'petrol', 'ons'].forEach(anahtar => {
+                    if (typeof data[anahtar] === 'number') {
+                        piyasaListesi[anahtar] = data[anahtar];
+                        localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
+                    }
+                });
+
+                if (!basarili) throw new Error("Geçersiz döviz verisi");
+            } catch (error) {
+                console.error("Döviz/piyasa güncelleme hatası:", error);
+                const yerel = localStorage.getItem("kasam_doviz_listesi");
+                if (yerel) {
+                    try { dovizListesi = JSON.parse(yerel); } catch (e) {}
+                }
+            }
 
             dovizFiyatlariniEkranaYaz();
             if (refreshBtn) refreshBtn.innerText = "🔄 Güncelle";
@@ -1618,7 +1632,7 @@
             const zaman = simdi.getHours().toString().padStart(2,'0') + ":" + simdi.getMinutes().toString().padStart(2,'0');
             const updateEl = document.getElementById("dovizUpdateTime");
             if (updateEl) {
-                if (dovizListesi && dovizListesi.length > 0) {
+                if (basarili) {
                     updateEl.innerText = `Canlı kur • ${zaman}`;
                     updateEl.style.color = "var(--green)";
                 } else {
