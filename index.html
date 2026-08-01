@@ -1531,7 +1531,10 @@
 
         function dovizSayi(deger) {
             if (deger === undefined || deger === null || deger === '') return null;
-            const s = String(deger).trim().replace(/\./g, '').replace(',', '.');
+            // truncgil API değerleri düz ondalık nokta ile gelir (ör. "64.0998").
+            // Burada nokta binlik ayraç DEĞİL, ondalık ayraçtır — silinmemeli.
+            // Olası bir ondalık virgülü (ör. "64,0998") güvenlik için noktaya çevriyoruz.
+            const s = String(deger).trim().replace(',', '.');
             const n = parseFloat(s);
             return isNaN(n) ? null : n;
         }
@@ -1549,8 +1552,8 @@
                             </div>
                             <div class="price-row-name">${d.ad}</div>
                             <div class="price-row-cols">
-                                <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy">₺${d.alis === null ? '—' : d.alis.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2})}</div></div>
-                                <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell">₺${d.satis === null ? '—' : d.satis.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2})}</div></div>
+                                <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy">₺${d.alis === null ? '—' : d.alis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
+                                <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell">₺${d.satis === null ? '—' : d.satis.toLocaleString('tr-TR', {minimumFractionDigits:3, maximumFractionDigits:3})}</div></div>
                             </div>
                         </div>
                     `).join('');
