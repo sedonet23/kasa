@@ -1131,6 +1131,7 @@
             ceyreks: 5120, ceyreka: 5040, yarims: 10240, yarima: 10080,
             atas: 21100, ataa: 20850
         };
+        let sonAltinHatasi = '';
 
         // YAN MENÜ
         function menuAc() {
@@ -1481,6 +1482,7 @@
                 }
             } catch (error) {
                 console.error("Fiyat güncelleme hatası:", error);
+                sonAltinHatasi = (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error));
                 const yerelFiyatlar = localStorage.getItem("kasam_son_fiyatlar");
                 if (yerelFiyatlar) {
                     try { canliFiyatlar = JSON.parse(yerelFiyatlar); } catch (e) {}
@@ -1508,7 +1510,7 @@
                         else if (farkDk < 1440) oncekiMetin = `${Math.round(farkDk / 60)} sa önce`;
                         else oncekiMetin = `${Math.round(farkDk / 1440)} gün önce`;
                     }
-                    updateEl.innerText = `⚠️ Bağlantı yok, son fiyat: ${oncekiMetin}`;
+                    updateEl.innerText = `⚠️ Bağlantı yok (${sonAltinHatasi || 'bilinmeyen hata'}), son fiyat: ${oncekiMetin}`;
                     updateEl.style.color = "var(--red)";
                 }
             }
@@ -1562,6 +1564,7 @@
         }
 
         let dovizListesi = [];   // worker'dan gelen ham liste: [{ kod, alis, satis }]
+        let sonDovizHatasi = '';
         let piyasaListesi = { bist100: null, petrol: null, ons: null };
 
         function dovizFiyatlariniEkranaYaz() {
@@ -1637,6 +1640,7 @@
                 if (!basarili) throw new Error("Geçersiz döviz verisi");
             } catch (error) {
                 console.error("Döviz/piyasa güncelleme hatası:", error);
+                sonDovizHatasi = (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error));
                 const yerel = localStorage.getItem("kasam_doviz_listesi");
                 if (yerel) {
                     try { dovizListesi = JSON.parse(yerel); } catch (e) {}
@@ -1664,7 +1668,7 @@
                         else if (farkDk < 1440) oncekiMetin = `${Math.round(farkDk / 60)} sa önce`;
                         else oncekiMetin = `${Math.round(farkDk / 1440)} gün önce`;
                     }
-                    updateEl.innerText = `⚠️ Bağlantı yok, son kur: ${oncekiMetin}`;
+                    updateEl.innerText = `⚠️ Bağlantı yok (${sonDovizHatasi || 'bilinmeyen hata'}), son kur: ${oncekiMetin}`;
                     updateEl.style.color = "var(--red)";
                 }
             }
