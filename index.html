@@ -1126,6 +1126,11 @@
     <script>
         let yatirimlarListesi = [];
 
+        // Cloudflare Worker'lar yerine artık GitHub Actions'ın periyodik ürettiği statik
+        // JSON dosyasından okunuyor (Cloudflare ile hiçbir ilgisi yok, ağ engeli sorunu ortadan kalkar).
+        // NOT: "sedonet23/kasa" repo varsayımı — repo adı farklıysa burayı güncellemek yeterli.
+        const VERI_JSON_URL = "https://raw.githubusercontent.com/sedonet23/kasa/main/veri.json";
+
         let canliFiyatlar = {
             gram24s: 3120, gram24a: 3105, gram22s: 2860, gram22a: 2840,
             ceyreks: 5120, ceyreka: 5040, yarims: 10240, yarima: 10080,
@@ -1468,7 +1473,7 @@
             let basarili = false;
 
             try {
-                const response = await fetchYenidenDene("https://kasam-altin-api.sedonet23.workers.dev/");
+                const response = await fetchYenidenDene(VERI_JSON_URL + "?t=" + Date.now());
                 const data = await response.json();
 
                 const sayi = (deger) => {
@@ -1632,7 +1637,7 @@
             try {
                 // Döviz + piyasa artık altından TAMAMEN AYRI, bağımsız bir worker'dan geliyor —
                 // burada bir sorun olsa bile altın worker'ı asla etkilenmez.
-                const response = await fetchYenidenDene("https://kasam-piyasa.sedonet23.workers.dev/");
+                const response = await fetchYenidenDene(VERI_JSON_URL + "?t=" + Date.now());
                 const data = await response.json();
 
                 if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
@@ -3887,7 +3892,7 @@
             fiyatDegisimKontrolEt();
             varlikDegisimKontrolEt();
         });
-        setInterval(canliFiyatlariYukle, 20000);
+        setInterval(canliFiyatlariYukle, 120000);
         function varlikGecmisiniSil(zaman) {
     if (!confirm("Bu geçmiş kaydını silmek istediğinize emin misiniz?")) return;
     
