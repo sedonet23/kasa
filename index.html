@@ -569,6 +569,126 @@
 }
 .fiyat-satiri > div:nth-child(2) { text-align: right; } /* Fiyat sağa */
 .fiyat-satiri > div:nth-child(3) { text-align: right; font-weight: bold; } /* Yüzde sağa */
+
+        /* ===== SAHİP SEÇİCİ ===== */
+        .sahip-secici-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            color: var(--accent-color);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sahip-listesi-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 11px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            background: var(--card-bg);
+        }
+        .sahip-listesi-item.aktif { border-color: var(--accent-color); background: rgba(255,204,0,0.08); }
+        .sahip-listesi-isim { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+        .sahip-listesi-aksiyon { background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 3px 6px; }
+        .sahip-listesi-aksiyon.sil { color: var(--red); }
+
+        /* ===== HESAPLAMA ARACI ===== */
+        .hesap-toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
+        .hesap-toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--panel-bg);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .hesap-toggle-btn.aktif-mavi { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.08); }
+        .hesap-toggle-btn.aktif-kirmizi { border-color: var(--red); color: var(--red); background: rgba(255,77,77,0.08); }
+        .hesap-satir { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+        .hesap-satir input[type="number"] {
+            width: 80px;
+            padding: 12px 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .hesap-satir select {
+            flex: 1;
+            padding: 12px 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .hesap-sil-btn {
+            background: rgba(255,77,77,0.12);
+            border: none;
+            color: var(--red);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .hesap-satir-alt { font-size: 11px; color: var(--accent-color); margin: -2px 0 10px 2px; min-height: 14px; }
+        .hesap-satir-ekle-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 6px 0 16px 0;
+        }
+        .hesap-islem-row { display: flex; gap: 8px; margin-bottom: 16px; }
+        .hesap-islem-btn {
+            flex: 1;
+            text-align: center;
+            padding: 13px 8px;
+            border-radius: 10px;
+            border: none;
+            background: var(--panel-bg);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .hesap-islem-btn.aktif { background: var(--red); color: #fff; }
+        .hesap-sonuc-box {
+            background: var(--red);
+            color: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+        .hesap-sonuc-label { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; margin-bottom: 6px; }
+        .hesap-sonuc-deger { font-size: 30px; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -588,6 +708,9 @@
         </div>
         <button class="side-menu-item page-nav-btn" id="navHedef" onclick="sayfaDegistir('hedef'); menuKapat();">🎯 Hedef</button>
         <button class="side-menu-item page-nav-btn" id="navAlarm" onclick="sayfaDegistir('alarm'); menuKapat();">📢 Alarm</button>
+        <button class="side-menu-item page-nav-btn" id="navHesap" onclick="sayfaDegistir('hesap'); menuKapat();">🧮 Hesaplama Aracı</button>
+        <div class="side-menu-divider"></div>
+        <button class="side-menu-item" onclick="sahipModalAc(); menuKapat();">👤 Varlık Sahibi: <span id="sahipMenuAdi" style="color:var(--accent-color); font-weight:700;">Benim Varlığım</span></button>
         <div class="side-menu-divider"></div>
         <button class="side-menu-item" onclick="tamYedekIndir(); menuKapat();" title="Tüm verileri yedekle">💾 Yedekle</button>
         <button class="side-menu-item" onclick="document.getElementById('tamYedekDosya').click();" title="Yedekten geri yükle">📂 Geri Yükle</button>
@@ -600,7 +723,7 @@
         <div class="logo-area">
             <button class="hamburger-btn" onclick="menuAc()" title="Menü">☰</button>
             <span class="logo-main">Kasam</span>
-            <span class="logo-sub">SEDAT KARAGÖZ</span>
+            <span class="logo-sub" id="sahipHeaderAdi" onclick="sahipModalAc()" style="cursor:pointer; text-decoration:underline dotted;" title="Varlık sahibini değiştir">Benim Varlığım ▾</span>
         </div>
         <div class="nav-buttons" style="width: 100%;">
             <button class="btn btn-active page-nav-btn" id="navYatirim" onclick="sayfaDegistir('yatirim')">💎 Yatırım</button>
@@ -904,6 +1027,54 @@
             </div>
         </div>
 
+        <!-- HESAPLAMA ARACI SAYFASI -->
+        <div id="pageHesap" class="page-section">
+            <div class="section-header">
+                <h3 style="margin: 0; font-weight: 500; font-size: 16px;">🧮 Hesaplama Aracı</h3>
+            </div>
+
+            <div class="hesap-toggle-row">
+                <button class="hesap-toggle-btn" id="hesapYonBtnVarlikTl" onclick="hesapYonSec('varlikTl')">Varlık → TL</button>
+                <button class="hesap-toggle-btn" id="hesapYonBtnTlVarlik" onclick="hesapYonSec('tlVarlik')">TL → Varlık</button>
+            </div>
+
+            <div id="hesapIpucu" style="font-size:12px; color:var(--text-muted); margin:-6px 0 12px 2px;"></div>
+
+            <div id="hesapSatirlar"></div>
+
+            <button class="hesap-satir-ekle-btn" onclick="hesapSatirEkle()">+ Yeni Satır Ekle</button>
+
+            <div class="hesap-islem-row">
+                <button class="hesap-islem-btn" id="hesapIslemBtnBozdurma" onclick="hesapIslemSec('bozdurma')">Bozdurma</button>
+                <button class="hesap-islem-btn" id="hesapIslemBtnSatinalma" onclick="hesapIslemSec('satinalma')">Satın Alma</button>
+            </div>
+
+            <div class="hesap-sonuc-box">
+                <div class="hesap-sonuc-label" id="hesapSonucLabel">GİRİŞ BEKLENİYOR...</div>
+                <div class="hesap-sonuc-deger" id="hesapSonucDeger">0,00 TL</div>
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 12px; padding: 0 2px;">
+                Hesaplama, güncel altın ve döviz alış/satış fiyatları üzerinden yapılır; sadece bilgilendirme amaçlıdır.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VARLIK SAHİBİ MODALİ -->
+    <div id="sahipModal" class="modal" style="max-width: 340px;">
+        <h3 style="margin-top: 0; font-size: 16px;">👤 Varlık Sahipleri</h3>
+        <div id="sahipListesiKapsayici" style="margin: 10px 0 14px 0; max-height: 300px; overflow-y: auto;"></div>
+
+        <label style="font-size: 12px; color: var(--text-muted);">Yeni Sahip Ekle:</label>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="sahipYeniIsim" placeholder="Örn: Annem" style="flex:1; margin:6px 0;">
+            <button class="btn btn-active" onclick="sahipEkle()" style="padding: 0 16px; font-size: 13px; flex-shrink:0;">Ekle</button>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <button class="btn" onclick="sahipModalKapat()" style="flex: 1; font-size: 13px;">Kapat</button>
+        </div>
     </div>
 
     <!-- V2.2: ALARM EKLEME MODALİ -->
@@ -1138,6 +1309,159 @@
         };
         let sonAltinHatasi = '';
 
+        // ===== V3: VARLIK SAHİBİ (ÇOKLU PORTFÖY) SİSTEMİ =====
+        // "default" sahibi mevcut kullanıcının orijinal verisini (kasam_portfoy,
+        // kasam_hedefler, Firestore "portfoy"/"hedefler" koleksiyonları) hiç
+        // değiştirmeden kullanmaya devam eder; yeni sahipler için anahtarlar/koleksiyonlar
+        // sahip id'si ile ayrıştırılır. Böylece mevcut kullanıcılar hiçbir veri kaybı yaşamaz.
+        let sahiplerListesi = [{ id: 'default', isim: 'Benim Varlığım' }];
+        let aktifSahipId = 'default';
+
+        function sahipAnahtari(taban) {
+            return aktifSahipId === 'default' ? taban : (taban + '__' + aktifSahipId);
+        }
+        function sahipKoleksiyonAdi(taban) {
+            return aktifSahipId === 'default' ? taban : (taban + '_' + aktifSahipId);
+        }
+        function aktifSahipBul() {
+            return sahiplerListesi.find(s => s.id === aktifSahipId) || sahiplerListesi[0];
+        }
+        function sahiplerYukle() {
+            try {
+                const p = JSON.parse(localStorage.getItem('kasam_sahipler'));
+                if (Array.isArray(p) && p.length > 0) sahiplerListesi = p;
+            } catch (e) {}
+            const kayitliAktif = localStorage.getItem('kasam_aktif_sahip');
+            if (kayitliAktif && sahiplerListesi.some(s => s.id === kayitliAktif)) aktifSahipId = kayitliAktif;
+            sahipBaslikGuncelle();
+        }
+        function sahiplerKaydet() {
+            localStorage.setItem('kasam_sahipler', JSON.stringify(sahiplerListesi));
+        }
+        function sahipBaslikGuncelle() {
+            const sahip = aktifSahipBul();
+            const isim = sahip ? sahip.isim : 'Benim Varlığım';
+            const headerEl = document.getElementById('sahipHeaderAdi');
+            if (headerEl) headerEl.innerText = isim + ' ▾';
+            const menuEl = document.getElementById('sahipMenuAdi');
+            if (menuEl) menuEl.innerText = isim;
+        }
+
+        function sahipModalAc() {
+            sahipListesiniEkranaBas();
+            document.getElementById('sahipModal').style.display = 'block';
+        }
+        function sahipModalKapat() {
+            document.getElementById('sahipModal').style.display = 'none';
+        }
+        function sahipListesiniEkranaBas() {
+            const cont = document.getElementById('sahipListesiKapsayici');
+            if (!cont) return;
+            cont.innerHTML = sahiplerListesi.map(s => `
+                <div class="sahip-listesi-item ${s.id === aktifSahipId ? 'aktif' : ''}" onclick="sahipSec('${s.id}')">
+                    <div class="sahip-listesi-isim">${s.id === aktifSahipId ? '✅' : '👤'} ${s.isim}</div>
+                    <div>
+                        <button class="sahip-listesi-aksiyon" onclick="event.stopPropagation(); sahipYenidenAdlandir('${s.id}')" title="Yeniden adlandır">&#9999;&#65039;</button>
+                        ${sahiplerListesi.length > 1 ? `<button class="sahip-listesi-aksiyon sil" onclick="event.stopPropagation(); sahipSil('${s.id}')" title="Sil">&#128465;&#65039;</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function sahipIdUret() {
+            return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
+
+        function sahipEkle() {
+            const input = document.getElementById('sahipYeniIsim');
+            const isim = (input.value || '').trim();
+            if (!isim) { alert('Lütfen bir isim girin.'); return; }
+            const yeniSahip = { id: sahipIdUret(), isim };
+            sahiplerListesi.push(yeniSahip);
+            sahiplerKaydet();
+            input.value = '';
+            sahipSec(yeniSahip.id);
+        }
+
+        function sahipYenidenAdlandir(id) {
+            const sahip = sahiplerListesi.find(s => s.id === id);
+            if (!sahip) return;
+            const yeniIsim = prompt('Yeni isim:', sahip.isim);
+            if (!yeniIsim || !yeniIsim.trim()) return;
+            sahip.isim = yeniIsim.trim();
+            sahiplerKaydet();
+            sahipBaslikGuncelle();
+            sahipListesiniEkranaBas();
+        }
+
+        async function sahipSil(id) {
+            if (sahiplerListesi.length <= 1) return;
+            const sahip = sahiplerListesi.find(s => s.id === id);
+            if (!sahip) return;
+            if (!confirm(`"${sahip.isim}" adlı sahibi ve tüm yatırım/hedef verilerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return;
+
+            localStorage.removeItem(id === 'default' ? 'kasam_portfoy' : ('kasam_portfoy__' + id));
+            localStorage.removeItem(id === 'default' ? 'kasam_hedefler' : ('kasam_hedefler__' + id));
+            try {
+                if (window.firestoreKaydet) {
+                    await window.firestoreKaydet(id === 'default' ? 'portfoy' : ('portfoy_' + id), []);
+                    await window.firestoreKaydet(id === 'default' ? 'hedefler' : ('hedefler_' + id), []);
+                }
+            } catch (e) { console.warn('Firestore sahip silme hatası:', e); }
+
+            sahiplerListesi = sahiplerListesi.filter(s => s.id !== id);
+            sahiplerKaydet();
+
+            if (aktifSahipId === id) {
+                await sahipSec(sahiplerListesi[0].id);
+            } else {
+                sahipListesiniEkranaBas();
+            }
+        }
+
+        async function sahipSec(id) {
+            if (!sahiplerListesi.some(s => s.id === id)) return;
+            aktifSahipId = id;
+            localStorage.setItem('kasam_aktif_sahip', aktifSahipId);
+            sahipBaslikGuncelle();
+            sahipModalKapat();
+            await sahipVerileriYukle();
+        }
+
+        // Aktif sahip değiştiğinde yatırım + hedef verisini yeniden yükler ve ekranı günceller
+        async function sahipVerileriYukle() {
+            try {
+                const p = JSON.parse(localStorage.getItem(sahipAnahtari('kasam_portfoy')));
+                yatirimlarListesi = Array.isArray(p) ? p : [];
+            } catch (e) { yatirimlarListesi = []; }
+            try {
+                const p = JSON.parse(localStorage.getItem(sahipAnahtari('kasam_hedefler')));
+                hedefListesi = Array.isArray(p) ? p : [];
+            } catch (e) { hedefListesi = []; }
+
+            listeyiEkranaBas();
+            hedefListesiniEkranaBas();
+
+            try {
+                const [portfoyData, hedefData] = await Promise.all([
+                    window.firestoreYukle(sahipKoleksiyonAdi('portfoy')),
+                    window.firestoreYukle(sahipKoleksiyonAdi('hedefler'))
+                ]);
+                let degisti = false;
+                if (portfoyData && portfoyData.length > 0) {
+                    yatirimlarListesi = portfoyData;
+                    localStorage.setItem(sahipAnahtari('kasam_portfoy'), JSON.stringify(yatirimlarListesi));
+                    degisti = true;
+                }
+                if (hedefData && hedefData.length > 0) {
+                    hedefListesi = hedefData;
+                    localStorage.setItem(sahipAnahtari('kasam_hedefler'), JSON.stringify(hedefListesi));
+                    degisti = true;
+                }
+                if (degisti) { listeyiEkranaBas(); hedefListesiniEkranaBas(); }
+            } catch (e) { console.warn('Firestore sahip verisi yükleme hatası:', e); }
+        }
+
         // YAN MENÜ
         function menuAc() {
             document.getElementById('sideMenu').classList.add('acik');
@@ -1190,6 +1514,10 @@
                 document.getElementById('navDoviz').classList.add('btn-active');
                 dovizFiyatlariniEkranaYaz();
                 dovizFiyatlariniYukle();
+            } else if (sayfaIsmi === 'hesap') {
+                document.getElementById('pageHesap').classList.add('active-page');
+                document.getElementById('navHesap').classList.add('btn-active');
+                hesapEkraniGuncelle();
             }
 
             if (gecmiseEkle) {
@@ -1218,12 +1546,13 @@
         // VERİ YÜKLEME
         async function hafizadanVeriYukle() {
             temaYukle();
+            sahiplerYukle();
 
             // 1. ADIM: localStorage'dan aninda goster (sifir bekleme)
             try { const p = JSON.parse(localStorage.getItem("kasam_son_fiyatlar")); if (p && p.gram24s > 0) canliFiyatlar = p; } catch(e) {}
-            try { const p = JSON.parse(localStorage.getItem("kasam_portfoy")); if (Array.isArray(p)) yatirimlarListesi = p; } catch(e) {}
+            try { const p = JSON.parse(localStorage.getItem(sahipAnahtari("kasam_portfoy"))); if (Array.isArray(p)) yatirimlarListesi = p; } catch(e) {}
             try { const p = JSON.parse(localStorage.getItem("kasam_alarmlar")); if (Array.isArray(p)) alarmListesi = p; } catch(e) {}
-            try { const p = JSON.parse(localStorage.getItem("kasam_hedefler")); if (Array.isArray(p)) hedefListesi = p; } catch(e) {}
+            try { const p = JSON.parse(localStorage.getItem(sahipAnahtari("kasam_hedefler"))); if (Array.isArray(p)) hedefListesi = p; } catch(e) {}
             try { const p = JSON.parse(localStorage.getItem("kasam_doviz_listesi")); if (Array.isArray(p) && p.length > 0) dovizListesi = p; } catch(e) {}
             try {
                 piyasaListesi.bist100 = parseFloat(localStorage.getItem("kasam_piyasa_bist100"));
@@ -1239,19 +1568,19 @@
             // 2. ADIM: Firestore'dan paralel cek, fark varsa guncelle
             try {
                 const [portfoyData, alarmData, hedefData] = await Promise.all([
-                    window.firestoreYukle("portfoy"),
+                    window.firestoreYukle(sahipKoleksiyonAdi("portfoy")),
                     window.firestoreYukle("alarmlar"),
-                    window.firestoreYukle("hedefler")
+                    window.firestoreYukle(sahipKoleksiyonAdi("hedefler"))
                 ]);
 
                 let degisti = false;
 
                 if (portfoyData && portfoyData.length > 0) {
                     yatirimlarListesi = portfoyData;
-                    localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
+                    localStorage.setItem(sahipAnahtari("kasam_portfoy"), JSON.stringify(yatirimlarListesi));
                     degisti = true;
                 } else if (yatirimlarListesi.length > 0) {
-                    window.firestoreKaydet("portfoy", yatirimlarListesi);
+                    window.firestoreKaydet(sahipKoleksiyonAdi("portfoy"), yatirimlarListesi);
                 }
 
                 if (alarmData && alarmData.length > 0) {
@@ -1264,10 +1593,10 @@
 
                 if (hedefData && hedefData.length > 0) {
                     hedefListesi = hedefData;
-                    localStorage.setItem("kasam_hedefler", JSON.stringify(hedefListesi));
+                    localStorage.setItem(sahipAnahtari("kasam_hedefler"), JSON.stringify(hedefListesi));
                     degisti = true;
                 } else if (hedefListesi.length > 0) {
-                    window.firestoreKaydet("hedefler", hedefListesi);
+                    window.firestoreKaydet(sahipKoleksiyonAdi("hedefler"), hedefListesi);
                 }
 
                 if (degisti) {
@@ -1283,7 +1612,7 @@
 
         // V2.3: HEDEF VERİSİ YÜKLE (localStorage - yedek)
         function hedefVerisiniYukle() {
-            const yerel = localStorage.getItem('kasam_hedefler');
+            const yerel = localStorage.getItem(sahipAnahtari('kasam_hedefler'));
             if (yerel) { try { hedefListesi = JSON.parse(yerel); } catch(e) { hedefListesi = []; } }
         }
 
@@ -2166,8 +2495,8 @@
                 kaydedilenIndex = yatirimlarListesi.length - 1;
             }
 
-            localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
-            await window.firestoreTekilKaydet("portfoy", kaydedilenIndex, veri);
+            localStorage.setItem(sahipAnahtari("kasam_portfoy"), JSON.stringify(yatirimlarListesi));
+            await window.firestoreTekilKaydet(sahipKoleksiyonAdi("portfoy"), kaydedilenIndex, veri);
             listeyiEkranaBas();
             modalKapat();
         }
@@ -2203,8 +2532,8 @@
             if (confirm("Bu işlemi silmek istediğinize emin misiniz?")) {
                 const toplamUzunluk = yatirimlarListesi.length - 1; // silmeden onceki son index
                 yatirimlarListesi.splice(index, 1);
-                localStorage.setItem("kasam_portfoy", JSON.stringify(yatirimlarListesi));
-                await window.firestoreTekilSil("portfoy", index, toplamUzunluk);
+                localStorage.setItem(sahipAnahtari("kasam_portfoy"), JSON.stringify(yatirimlarListesi));
+                await window.firestoreTekilSil(sahipKoleksiyonAdi("portfoy"), index, toplamUzunluk);
                 listeyiEkranaBas();
             }
         }
@@ -3096,8 +3425,8 @@
             const item = { baslik, tur, hedef };
             if (editIdx >= 0) { hedefListesi[editIdx] = item; } else { hedefListesi.push(item); }
 
-            localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
-            if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
+            localStorage.setItem(sahipAnahtari('kasam_hedefler'), JSON.stringify(hedefListesi));
+            if (window.firestoreKaydet) window.firestoreKaydet(sahipKoleksiyonAdi("hedefler"), hedefListesi);
             hedefModalKapat();
             hedefListesiniEkranaBas();
         }
@@ -3105,8 +3434,8 @@
         function hedefSil(i) {
             if (confirm('Bu hedefi silmek istediğinize emin misiniz?')) {
                 hedefListesi.splice(i, 1);
-                localStorage.setItem('kasam_hedefler', JSON.stringify(hedefListesi));
-                if (window.firestoreKaydet) window.firestoreKaydet("hedefler", hedefListesi);
+                localStorage.setItem(sahipAnahtari('kasam_hedefler'), JSON.stringify(hedefListesi));
+                if (window.firestoreKaydet) window.firestoreKaydet(sahipKoleksiyonAdi("hedefler"), hedefListesi);
                 hedefListesiniEkranaBas();
             }
         }
@@ -3809,9 +4138,21 @@
 
             if (!confirm(`💾 Yedek alınacak:\n\n📦 ${portfoyAdet} yatırım kaydı\n📈 ${fiyatAdet} fiyat geçmişi\n💰 ${varlikAdet} varlık geçmişi\n📢 ${alarmAdet} alarm\n🎯 ${hedefAdet} hedef\n\nDevam edilsin mi?`)) return;
 
+            // Tüm varlık sahiplerinin (portföy + hedef) verilerini topla
+            const sahipVerileri = {};
+            sahiplerListesi.forEach(s => {
+                const pAnahtar = s.id === 'default' ? 'kasam_portfoy' : ('kasam_portfoy__' + s.id);
+                const hAnahtar = s.id === 'default' ? 'kasam_hedefler' : ('kasam_hedefler__' + s.id);
+                sahipVerileri[s.id] = {
+                    isim: s.isim,
+                    portfoy: JSON.parse(localStorage.getItem(pAnahtar) || "[]"),
+                    hedefler: JSON.parse(localStorage.getItem(hAnahtar) || "[]")
+                };
+            });
+
             const yedek = {
                 tip: "kasam_tam_yedek",
-                versiyon: 2,
+                versiyon: 3,
                 tarih: new Date().toISOString(),
                 veri: {
                     kasam_portfoy:          JSON.parse(localStorage.getItem("kasam_portfoy") || "[]"),
@@ -3823,7 +4164,10 @@
                     kasam_son_fiyat_zamani: localStorage.getItem("kasam_son_fiyat_zamani") || "",
                     kasam_son_grafik_kayit: localStorage.getItem("kasam_son_grafik_kayit") || "",
                     kasam_son_varlik_kayit: localStorage.getItem("kasam_son_varlik_kayit") || "",
-                    kasam_tema:             localStorage.getItem("kasam_tema") || "dark"
+                    kasam_tema:             localStorage.getItem("kasam_tema") || "dark",
+                    kasam_sahipler:         sahiplerListesi,
+                    kasam_aktif_sahip:      aktifSahipId,
+                    kasam_sahip_verileri:   sahipVerileri
                 }
             };
 
@@ -3878,10 +4222,28 @@
                     if (v.kasam_son_varlik_kayit)  localStorage.setItem("kasam_son_varlik_kayit", v.kasam_son_varlik_kayit);
                     if (v.kasam_tema)              localStorage.setItem("kasam_tema", v.kasam_tema);
 
-                    // Bellek değişkenlerine yükle
-                    yatirimlarListesi  = v.kasam_portfoy || [];
+                    // V3: Varlık sahipleri (çoklu portföy) verisini geri yükle
+                    if (v.kasam_sahipler && Array.isArray(v.kasam_sahipler) && v.kasam_sahipler.length > 0) {
+                        sahiplerListesi = v.kasam_sahipler;
+                        sahiplerKaydet();
+                    }
+                    if (v.kasam_sahip_verileri) {
+                        Object.keys(v.kasam_sahip_verileri).forEach(sahipId => {
+                            const sv = v.kasam_sahip_verileri[sahipId];
+                            const pAnahtar = sahipId === 'default' ? 'kasam_portfoy' : ('kasam_portfoy__' + sahipId);
+                            const hAnahtar = sahipId === 'default' ? 'kasam_hedefler' : ('kasam_hedefler__' + sahipId);
+                            localStorage.setItem(pAnahtar, JSON.stringify(sv.portfoy || []));
+                            localStorage.setItem(hAnahtar, JSON.stringify(sv.hedefler || []));
+                        });
+                    }
+                    aktifSahipId = (v.kasam_aktif_sahip && sahiplerListesi.some(s => s.id === v.kasam_aktif_sahip)) ? v.kasam_aktif_sahip : (sahiplerListesi[0] ? sahiplerListesi[0].id : 'default');
+                    localStorage.setItem('kasam_aktif_sahip', aktifSahipId);
+                    sahipBaslikGuncelle();
+
+                    // Bellek değişkenlerine yükle (aktif sahibe göre)
+                    try { yatirimlarListesi = JSON.parse(localStorage.getItem(sahipAnahtari('kasam_portfoy')) || "[]"); } catch(e) { yatirimlarListesi = []; }
+                    try { hedefListesi = JSON.parse(localStorage.getItem(sahipAnahtari('kasam_hedefler')) || "[]"); } catch(e) { hedefListesi = []; }
                     alarmListesi       = v.kasam_alarmlar || [];
-                    hedefListesi       = v.kasam_hedefler || [];
                     fiyatGecmisi       = v.kasam_fiyat_gecmisi || [];
                     varlikGecmisi      = v.kasam_varlik_gecmisi || [];
 
@@ -3889,12 +4251,22 @@
                         canliFiyatlar = v.kasam_son_fiyatlar;
                     }
 
-                    // Firestore'a da yaz
+                    // Firestore'a da yaz (tüm sahipler dahil)
                     try {
                         if (window.firestoreKaydet) {
-                            await window.firestoreKaydet("portfoy", yatirimlarListesi);
+                            if (v.kasam_sahip_verileri) {
+                                for (const sahipId of Object.keys(v.kasam_sahip_verileri)) {
+                                    const sv = v.kasam_sahip_verileri[sahipId];
+                                    const pKol = sahipId === 'default' ? 'portfoy' : ('portfoy_' + sahipId);
+                                    const hKol = sahipId === 'default' ? 'hedefler' : ('hedefler_' + sahipId);
+                                    await window.firestoreKaydet(pKol, sv.portfoy || []);
+                                    await window.firestoreKaydet(hKol, sv.hedefler || []);
+                                }
+                            } else {
+                                await window.firestoreKaydet("portfoy", yatirimlarListesi);
+                                await window.firestoreKaydet("hedefler", hedefListesi);
+                            }
                             await window.firestoreKaydet("alarmlar", alarmListesi);
-                            await window.firestoreKaydet("hedefler", hedefListesi);
                             await window.firestoreKaydet("fiyatGecmisi", fiyatGecmisi);
                             await window.firestoreKaydet("varlikGecmisi", varlikGecmisi);
                         }
@@ -3914,6 +4286,147 @@
                 }
             };
             reader.readAsText(dosya);
+        }
+
+        // ===== V3: HESAPLAMA ARACI =====
+        let hesapSatirlari = [{ id: 1, varlik: 'gram24', miktar: '' }];
+        let hesapSayac = 1;
+        let hesapYon = 'varlikTl';     // 'varlikTl' | 'tlVarlik'
+        let hesapIslem = 'bozdurma';   // 'bozdurma' (Alış fiyatı) | 'satinalma' (Satış fiyatı)
+
+        function hesapVarlikSecenekleriAl() {
+            const altin = Object.keys(TUR_BILGI).map(k => ({ kod: k, ad: TUR_BILGI[k].isim }));
+            let dovizler;
+            if (dovizListesi && dovizListesi.length > 0) {
+                dovizler = dovizListesi.map(d => ({ kod: d.kod, ad: dovizGorunumAl(d.kod).ad }));
+            } else {
+                dovizler = Object.keys(DOVIZ_GORUNUM).map(k => ({ kod: k, ad: DOVIZ_GORUNUM[k].ad }));
+            }
+            return [...altin, ...dovizler];
+        }
+
+        function hesapVarlikFiyati(varlikKod, tip) {
+            if (TUR_BILGI[varlikKod]) {
+                const anahtar = varlikKod + (tip === 'alis' ? 'a' : 's');
+                return canliFiyatlar[anahtar] || 0;
+            }
+            const d = dovizListesi.find(x => x.kod === varlikKod);
+            if (!d) return 0;
+            return tip === 'alis' ? (d.alis || 0) : (d.satis || 0);
+        }
+
+        function hesapVarlikBirim(kod) {
+            return TUR_BILGI[kod] ? TUR_BILGI[kod].birim : 'Adet';
+        }
+
+        function hesapEkraniGuncelle() {
+            document.getElementById('hesapYonBtnVarlikTl').classList.toggle('aktif-mavi', hesapYon === 'varlikTl');
+            document.getElementById('hesapYonBtnTlVarlik').classList.toggle('aktif-mavi', hesapYon === 'tlVarlik');
+            document.getElementById('hesapIslemBtnBozdurma').classList.toggle('aktif', hesapIslem === 'bozdurma');
+            document.getElementById('hesapIslemBtnSatinalma').classList.toggle('aktif', hesapIslem === 'satinalma');
+
+            const ipucu = document.getElementById('hesapIpucu');
+            if (ipucu) {
+                ipucu.innerText = hesapYon === 'varlikTl'
+                    ? 'Her satıra elinizdeki/almak istediğiniz varlık miktarını girin, toplam TL karşılığını görün.'
+                    : 'Her satıra o varlık için ayırmak istediğiniz TL tutarını girin, karşılığında alacağınız miktarı görün.';
+            }
+
+            hesapSatirlariniEkranaBas();
+        }
+
+        function hesapYonSec(yon) {
+            hesapYon = yon;
+            hesapEkraniGuncelle();
+        }
+
+        function hesapIslemSec(islem) {
+            hesapIslem = islem;
+            hesapEkraniGuncelle();
+        }
+
+        function hesapSatirEkle() {
+            hesapSayac++;
+            hesapSatirlari.push({ id: hesapSayac, varlik: 'gram24', miktar: '' });
+            hesapSatirlariniEkranaBas();
+        }
+
+        function hesapSatirSil(id) {
+            hesapSatirlari = hesapSatirlari.filter(s => s.id !== id);
+            if (hesapSatirlari.length === 0) {
+                hesapSayac++;
+                hesapSatirlari.push({ id: hesapSayac, varlik: 'gram24', miktar: '' });
+            }
+            hesapSatirlariniEkranaBas();
+        }
+
+        function hesapMiktarDegisti(id, deger) {
+            const s = hesapSatirlari.find(x => x.id === id);
+            if (!s) return;
+            s.miktar = deger;
+            hesapSonucGuncelle();
+        }
+
+        function hesapVarlikDegisti(id, kod) {
+            const s = hesapSatirlari.find(x => x.id === id);
+            if (!s) return;
+            s.varlik = kod;
+            hesapSonucGuncelle();
+        }
+
+        function hesapSatirlariniEkranaBas() {
+            const cont = document.getElementById('hesapSatirlar');
+            if (!cont) return;
+            const secenekler = hesapVarlikSecenekleriAl();
+            cont.innerHTML = hesapSatirlari.map(s => `
+                <div class="hesap-satir">
+                    <input type="number" inputmode="decimal" placeholder="0" value="${s.miktar}"
+                        oninput="hesapMiktarDegisti(${s.id}, this.value)">
+                    <select onchange="hesapVarlikDegisti(${s.id}, this.value)">
+                        ${secenekler.map(o => `<option value="${o.kod}" ${o.kod === s.varlik ? 'selected' : ''}>${o.ad}</option>`).join('')}
+                    </select>
+                    <button class="hesap-sil-btn" onclick="hesapSatirSil(${s.id})" title="Satırı sil">✕</button>
+                </div>
+                <div class="hesap-satir-alt" id="hesapSatirAlt_${s.id}"></div>
+            `).join('');
+            hesapSonucGuncelle();
+        }
+
+        function hesapSonucGuncelle() {
+            const tip = hesapIslem === 'bozdurma' ? 'alis' : 'satis';
+            let toplamTl = 0;
+            let girisVar = false;
+
+            hesapSatirlari.forEach(s => {
+                const altDiv = document.getElementById('hesapSatirAlt_' + s.id);
+                const miktar = parseFloat((s.miktar || '').toString().replace(',', '.'));
+                if (!miktar || miktar <= 0) { if (altDiv) altDiv.innerHTML = ''; return; }
+                girisVar = true;
+                const fiyat = hesapVarlikFiyati(s.varlik, tip);
+
+                if (hesapYon === 'varlikTl') {
+                    const tl = miktar * fiyat;
+                    toplamTl += tl;
+                    if (altDiv) altDiv.innerHTML = fiyat > 0 ? `≈ ₺${tl.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}` : 'Fiyat bulunamadı';
+                } else {
+                    toplamTl += miktar;
+                    const varlikMiktari = fiyat > 0 ? (miktar / fiyat) : 0;
+                    if (altDiv) altDiv.innerHTML = fiyat > 0 ? `≈ ${varlikMiktari.toLocaleString('tr-TR', { maximumFractionDigits: 4 })} ${hesapVarlikBirim(s.varlik)}` : 'Fiyat bulunamadı';
+                }
+            });
+
+            const sonucDeger = document.getElementById('hesapSonucDeger');
+            const sonucLabel = document.getElementById('hesapSonucLabel');
+            if (sonucDeger) sonucDeger.innerText = toplamTl.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
+            if (sonucLabel) {
+                if (!girisVar) {
+                    sonucLabel.innerText = 'GİRİŞ BEKLENİYOR...';
+                } else if (hesapYon === 'varlikTl') {
+                    sonucLabel.innerText = hesapIslem === 'bozdurma' ? 'BOZDURURSANIZ ALACAĞINIZ TUTAR' : 'SATIN ALMAK İÇİN GEREKEN TUTAR';
+                } else {
+                    sonucLabel.innerText = 'TOPLAM AYRILAN TUTAR';
+                }
+            }
         }
 
         // BAŞLANGIÇ
