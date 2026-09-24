@@ -1,122 +1,122 @@
 {
-  "gram24a": 6680,
-  "gram24s": 6760,
-  "gram22a": 6065,
-  "gram22s": 6690,
-  "ceyreka": 10690,
-  "ceyreks": 11190,
-  "yarima": 21380,
-  "yarims": 22380,
-  "ataa": 43850,
-  "atas": 45350,
-  "beslia": 219250,
-  "beslis": 226750,
-  "ayar14s": 5740,
-  "gram24_1g_a": 6680,
-  "gram24_1g_s": 6980,
+  "gram24a": 6640,
+  "gram24s": 6710,
+  "gram22a": 6040,
+  "gram22s": 6640,
+  "ceyreka": 10590,
+  "ceyreks": 11090,
+  "yarima": 21180,
+  "yarims": 22180,
+  "ataa": 43500,
+  "atas": 45000,
+  "beslia": 217500,
+  "beslis": 225000,
+  "ayar14s": 5690,
+  "gram24_1g_a": 6630,
+  "gram24_1g_s": 6930,
   "altinKaynak": "fiyat.ekeo.org.tr (kasam-altin-api worker üzerinden)",
   "dovizler": [
     {
       "kod": "USD",
-      "alis": 48.8462,
-      "satis": 48.862,
-      "degisimYuzde": 0.05
+      "alis": 48.8467,
+      "satis": 48.864,
+      "degisimYuzde": 0.06
     },
     {
       "kod": "EUR",
-      "alis": 55.6907,
-      "satis": 55.7416,
-      "degisimYuzde": 0.16
+      "alis": 55.7059,
+      "satis": 55.717,
+      "degisimYuzde": 0.15
     },
     {
       "kod": "GBP",
-      "alis": 64.7885,
-      "satis": 64.8251,
+      "alis": 64.8003,
+      "satis": 64.82,
       "degisimYuzde": 0.24
     },
     {
       "kod": "CHF",
-      "alis": 59.2456,
-      "satis": 59.2762,
-      "degisimYuzde": 0.15
+      "alis": 59.0079,
+      "satis": 59.0502,
+      "degisimYuzde": -0.24
     },
     {
       "kod": "CAD",
-      "alis": 34.6254,
-      "satis": 34.6441,
-      "degisimYuzde": 0.04
+      "alis": 34.6185,
+      "satis": 34.6381,
+      "degisimYuzde": 0.02
     },
     {
       "kod": "RUB",
-      "alis": 0.5744,
-      "satis": 0.5749,
-      "degisimYuzde": -0.49
+      "alis": 0.5738,
+      "satis": 0.5746,
+      "degisimYuzde": -0.58
     },
     {
       "kod": "AED",
-      "alis": 13.2976,
-      "satis": 13.3085,
+      "alis": 13.2981,
+      "satis": 13.308,
       "degisimYuzde": 0.07
     },
     {
       "kod": "AUD",
-      "alis": 34.3304,
-      "satis": 34.3545,
-      "degisimYuzde": -0.09
+      "alis": 34.3196,
+      "satis": 34.3466,
+      "degisimYuzde": -0.12
     },
     {
       "kod": "DKK",
-      "alis": 7.4335,
-      "satis": 7.4395,
-      "degisimYuzde": 0.02
+      "alis": 7.4328,
+      "satis": 7.4373,
+      "degisimYuzde": 0
     },
     {
       "kod": "SEK",
-      "alis": 4.9214,
-      "satis": 4.9259,
-      "degisimYuzde": 0.03
+      "alis": 4.9258,
+      "satis": 4.929,
+      "degisimYuzde": 0.11
     },
     {
       "kod": "NOK",
-      "alis": 5.1389,
-      "satis": 5.1481,
-      "degisimYuzde": -0.06
+      "alis": 5.1633,
+      "satis": 5.1673,
+      "degisimYuzde": 0.36
     },
     {
       "kod": "JPY",
-      "alis": 0.3094,
-      "satis": 0.3103,
-      "degisimYuzde": 0.45
-    },
-    {
-      "kod": "KWD",
-      "alis": 157.7057,
-      "satis": 158.2658,
+      "alis": 0.3083,
+      "satis": 0.309,
       "degisimYuzde": 0.06
     },
     {
+      "kod": "KWD",
+      "alis": 157.8258,
+      "satis": 158.39,
+      "degisimYuzde": 0.14
+    },
+    {
       "kod": "ZAR",
-      "alis": 2.9824,
-      "satis": 2.9841,
-      "degisimYuzde": -0.04
+      "alis": 2.9731,
+      "satis": 2.9748,
+      "degisimYuzde": -0.35
     },
     {
       "kod": "BHD",
-      "alis": 129.5655,
-      "satis": 129.6074,
-      "degisimYuzde": 0.05
+      "alis": 129.584,
+      "satis": 129.6299,
+      "degisimYuzde": 0.07
     },
     {
       "kod": "LYD",
-      "alis": 7.6621,
-      "satis": 7.6646,
+      "alis": 7.6622,
+      "satis": 7.6649,
       "degisimYuzde": -0.26
     },
     {
       "kod": "SAR",
-      "alis": 13.0056,
-      "satis": 13.0147,
-      "degisimYuzde": 0.05
+      "alis": 13.0084,
+      "satis": 13.0134,
+      "degisimYuzde": 0.06
     },
     {
       "kod": "IQD",
@@ -126,86 +126,86 @@
     },
     {
       "kod": "ILS",
-      "alis": 16.0409,
-      "satis": 16.0461,
-      "degisimYuzde": -0.2
+      "alis": 16.0132,
+      "satis": 16.0189,
+      "degisimYuzde": -0.37
     },
     {
       "kod": "MXN",
-      "alis": 2.7845,
-      "satis": 2.7854,
-      "degisimYuzde": -0.04
+      "alis": 2.7819,
+      "satis": 2.7828,
+      "degisimYuzde": -0.13
     },
     {
       "kod": "HUF",
-      "alis": 0.1521,
-      "satis": 0.1521,
-      "degisimYuzde": -0.01
+      "alis": 0.1518,
+      "satis": 0.1518,
+      "degisimYuzde": -0.23
     },
     {
       "kod": "NZD",
-      "alis": 27.722,
-      "satis": 27.731,
-      "degisimYuzde": 0.09
+      "alis": 27.6972,
+      "satis": 27.707,
+      "degisimYuzde": 0
     },
     {
       "kod": "BRL",
-      "alis": 9.4507,
+      "alis": 9.4505,
       "satis": 9.4538,
-      "degisimYuzde": 0.1
+      "degisimYuzde": 0.09
     },
     {
       "kod": "IDR",
       "alis": 0.0027,
       "satis": 0.0027,
-      "degisimYuzde": -0.27
+      "degisimYuzde": -0.48
     },
     {
       "kod": "CZK",
-      "alis": 2.2758,
-      "satis": 2.2765,
-      "degisimYuzde": -0.03
+      "alis": 2.2767,
+      "satis": 2.2775,
+      "degisimYuzde": 0.01
     },
     {
       "kod": "PLN",
-      "alis": 12.6936,
-      "satis": 12.6977,
-      "degisimYuzde": -0.04
+      "alis": 12.6556,
+      "satis": 12.6601,
+      "degisimYuzde": -0.34
     },
     {
       "kod": "RON",
-      "alis": 10.5283,
-      "satis": 10.5464,
-      "degisimYuzde": -0.01
+      "alis": 10.5276,
+      "satis": 10.5383,
+      "degisimYuzde": -0.05
     },
     {
       "kod": "CNY",
-      "alis": 7.2729,
-      "satis": 7.2758,
-      "degisimYuzde": -0.01
+      "alis": 7.2739,
+      "satis": 7.2774,
+      "degisimYuzde": 0.01
     },
     {
       "kod": "ARS",
       "alis": 0.0322,
       "satis": 0.0322,
-      "degisimYuzde": 0.05
+      "degisimYuzde": 0.06
     },
     {
       "kod": "ALL",
-      "alis": 0.6079,
-      "satis": 0.6081,
-      "degisimYuzde": -0.01
+      "alis": 0.6081,
+      "satis": 0.6083,
+      "degisimYuzde": 0.02
     },
     {
       "kod": "AZN",
-      "alis": 28.7331,
-      "satis": 28.7424,
-      "degisimYuzde": 0.05
+      "alis": 28.7334,
+      "satis": 28.7435,
+      "degisimYuzde": 0.06
     },
     {
       "kod": "BAM",
-      "alis": 28.515,
-      "satis": 28.5242,
+      "alis": 28.5153,
+      "satis": 28.5254,
       "degisimYuzde": -0.43
     },
     {
@@ -228,39 +228,39 @@
     },
     {
       "kod": "DZD",
-      "alis": 0.3646,
-      "satis": 0.3648,
-      "degisimYuzde": -0.07
+      "alis": 0.365,
+      "satis": 0.3651,
+      "degisimYuzde": 0.02
     },
     {
       "kod": "EGP",
-      "alis": 0.9499,
-      "satis": 0.9503,
-      "degisimYuzde": 0.02
+      "alis": 0.9438,
+      "satis": 0.9441,
+      "degisimYuzde": -0.63
     },
     {
       "kod": "HKD",
       "alis": 6.2285,
-      "satis": 6.2305,
+      "satis": 6.2307,
       "degisimYuzde": 0.07
     },
     {
       "kod": "ISK",
-      "alis": 0.4027,
+      "alis": 0.4028,
       "satis": 0.4029,
-      "degisimYuzde": 0
+      "degisimYuzde": 0.01
     },
     {
       "kod": "KRW",
       "alis": 0.0356,
-      "satis": 0.0356,
-      "degisimYuzde": -0.33
+      "satis": 0.0357,
+      "degisimYuzde": -0.23
     },
     {
       "kod": "KZT",
-      "alis": 0.1096,
-      "satis": 0.1097,
-      "degisimYuzde": -0.18
+      "alis": 0.1102,
+      "satis": 0.1102,
+      "degisimYuzde": 0.32
     },
     {
       "kod": "LBP",
@@ -270,21 +270,21 @@
     },
     {
       "kod": "LKR",
-      "alis": 0.1482,
-      "satis": 0.1482,
-      "degisimYuzde": -0.04
+      "alis": 0.1479,
+      "satis": 0.148,
+      "degisimYuzde": -0.19
     },
     {
       "kod": "MAD",
-      "alis": 5.086,
-      "satis": 5.0876,
-      "degisimYuzde": -0.02
+      "alis": 5.084,
+      "satis": 5.0858,
+      "degisimYuzde": -0.06
     },
     {
       "kod": "MDL",
-      "alis": 2.7755,
-      "satis": 2.7764,
-      "degisimYuzde": 0.06
+      "alis": 2.7541,
+      "satis": 2.7551,
+      "degisimYuzde": -0.71
     },
     {
       "kod": "MKD",
@@ -294,75 +294,75 @@
     },
     {
       "kod": "MYR",
-      "alis": 11.9701,
-      "satis": 11.9739,
-      "degisimYuzde": 0.04
+      "alis": 11.952,
+      "satis": 11.9563,
+      "degisimYuzde": -0.11
     },
     {
       "kod": "OMR",
-      "alis": 127.0382,
-      "satis": 127.0793,
-      "degisimYuzde": 0.05
+      "alis": 127.0428,
+      "satis": 127.0878,
+      "degisimYuzde": 0.06
     },
     {
       "kod": "PEN",
-      "alis": 14.4217,
-      "satis": 14.4263,
+      "alis": 14.4218,
+      "satis": 14.4269,
       "degisimYuzde": -0.24
     },
     {
       "kod": "PHP",
-      "alis": 0.7782,
-      "satis": 0.7785,
-      "degisimYuzde": 0.02
+      "alis": 0.778,
+      "satis": 0.7783,
+      "degisimYuzde": -0.01
     },
     {
       "kod": "PKR",
-      "alis": 0.1704,
-      "satis": 0.1813,
+      "alis": 0.1756,
+      "satis": 0.1765,
       "degisimYuzde": -0.06
     },
     {
       "kod": "QAR",
-      "alis": 12.8886,
-      "satis": 13.8554,
+      "alis": 12.889,
+      "satis": 13.8548,
       "degisimYuzde": -0.23
     },
     {
       "kod": "RSD",
-      "alis": 0.4741,
+      "alis": 0.4735,
       "satis": 0.4755,
-      "degisimYuzde": 0.15
+      "degisimYuzde": 0.13
     },
     {
       "kod": "SGD",
-      "alis": 38.1641,
-      "satis": 38.1764,
+      "alis": 38.1615,
+      "satis": 38.175,
       "degisimYuzde": 0.06
     },
     {
       "kod": "SYP",
       "alis": 0.4003,
       "satis": 0.4005,
-      "degisimYuzde": 0.05
+      "degisimYuzde": 0.06
     },
     {
       "kod": "THB",
-      "alis": 1.4619,
-      "satis": 1.4624,
-      "degisimYuzde": 0.08
+      "alis": 1.4592,
+      "satis": 1.4598,
+      "degisimYuzde": -0.1
     },
     {
       "kod": "TWD",
-      "alis": 1.5351,
-      "satis": 1.5356,
-      "degisimYuzde": -0.04
+      "alis": 1.5336,
+      "satis": 1.5342,
+      "degisimYuzde": -0.13
     },
     {
       "kod": "UAH",
-      "alis": 1.0876,
-      "satis": 1.088,
-      "degisimYuzde": 0.06
+      "alis": 1.0861,
+      "satis": 1.0865,
+      "degisimYuzde": -0.08
     },
     {
       "kod": "UYU",
@@ -372,14 +372,14 @@
     },
     {
       "kod": "GEL",
-      "alis": 18.6792,
-      "satis": 18.6853,
+      "alis": 18.6794,
+      "satis": 18.686,
       "degisimYuzde": 2.73
     },
     {
       "kod": "TND",
-      "alis": 16.4798,
-      "satis": 16.4852,
+      "alis": 16.48,
+      "satis": 16.4858,
       "degisimYuzde": -0.49
     },
     {
@@ -392,13 +392,13 @@
       "kod": "VND",
       "alis": 0.0019,
       "satis": 0.0019,
-      "degisimYuzde": 0.18
+      "degisimYuzde": 0.17
     }
   ],
   "dovizKaynak": "kur.doviz.com",
-  "bist100": 13251.85,
-  "petrol": 102.21,
-  "ons": 4285.69,
+  "bist100": 13061.49,
+  "petrol": 105.42,
+  "ons": 4264.24,
   "piyasaKaynak": "www.doviz.com",
-  "guncellemeZamani": "2026-09-24T04:17:46.939Z"
+  "guncellemeZamani": "2026-09-24T09:22:08.744Z"
 }
