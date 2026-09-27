@@ -2339,14 +2339,15 @@
 
             document.getElementById("totalCost").innerText = "₺" + Math.round(tNetMaliyet).toLocaleString('tr-TR');
             document.getElementById("totalValue").innerHTML =
-                '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:center; width:100%;">' +
-                    '<div style="text-align:center; min-width:0;">' +
-                        '<div style="font-size:10px; color:var(--green); margin-bottom:4px;">ALIŞ</div>' +
-                        '<div style="font-size:14px; font-weight:700; color:var(--green); white-space:nowrap;">₺' + Math.round(tNetAlisDeger).toLocaleString('tr-TR') + '</div>' +
+                '<div style="display:flex; flex-direction:column; gap:5px; width:100%;">' +
+                    '<div style="display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;">' +
+                        '<span style="font-size:10px; color:var(--green); font-weight:600;">ALIŞ</span>' +
+                        '<span style="font-size:13px; font-weight:700; color:var(--green);">₺' + Math.round(tNetAlisDeger).toLocaleString('tr-TR') + '</span>' +
                     '</div>' +
-                    '<div style="text-align:center; min-width:0; border-left:1px solid var(--border); padding-left:8px;">' +
-                        '<div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">SATIŞ</div>' +
-                        '<div style="font-size:14px; font-weight:700; color:var(--accent-color); white-space:nowrap;">₺' + Math.round(tNetSatisDeger).toLocaleString('tr-TR') + '</div>' +
+                    '<div style="height:1px; background:var(--border); width:100%;"></div>' +
+                    '<div style="display:flex; align-items:center; justify-content:space-between; gap:6px; white-space:nowrap;">' +
+                        '<span style="font-size:10px; color:var(--accent-color); font-weight:600;">SATIŞ</span>' +
+                        '<span style="font-size:13px; font-weight:700; color:var(--accent-color);">₺' + Math.round(tNetSatisDeger).toLocaleString('tr-TR') + '</span>' +
                     '</div>' +
                 '</div>';
 
