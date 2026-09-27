@@ -2002,21 +2002,30 @@
             let basarili = false;
             let kaynak = '';
 
-            const veriyiIsle = (data) => {
+            const veriyiIsle = (data, sadeceEksikleri = false) => {
                 let herhangiBirSey = false;
+
+                // Döviz verisini yalnızca gerçekten geldiyse güncelle.
                 if (Array.isArray(data.dovizler) && data.dovizler.length > 0) {
                     dovizListesi = data.dovizler;
                     localStorage.setItem('kasam_doviz_listesi', JSON.stringify(dovizListesi));
                     localStorage.setItem('kasam_son_doviz_zamani', new Date().toISOString());
                     herhangiBirSey = true;
                 }
+
+                // Piyasa verilerini alan alan işle. Worker bazı alanları döndürmese bile
+                // diğer gelen veriler kaybolmasın.
                 ['bist100', 'petrol', 'ons'].forEach(anahtar => {
-                    if (typeof data[anahtar] === 'number') {
-                        piyasaListesi[anahtar] = data[anahtar];
-                        localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
+                    if (typeof data[anahtar] === 'number' && isFinite(data[anahtar])) {
+                        if (!sadeceEksikleri || piyasaListesi[anahtar] === null || !isFinite(piyasaListesi[anahtar])) {
+                            piyasaListesi[anahtar] = data[anahtar];
+                            localStorage.setItem('kasam_piyasa_' + anahtar, String(data[anahtar]));
+                        }
+                        herhangiBirSey = true;
                     }
                 });
-                if (!herhangiBirSey) throw new Error("Geçersiz döviz verisi");
+
+                if (!herhangiBirSey) throw new Error("Geçersiz döviz/piyasa verisi");
             };
 
             // 1. KADEME: Cloudflare Worker (birincil, en güncel kaynak) — altından
@@ -2025,6 +2034,26 @@
                 const response = await fetchYenidenDene("https://kasam-piyasa.sedonet23.workers.dev/");
                 const data = await response.json();
                 veriyiIsle(data);
+
+                // Worker dövizleri verse bile piyasa alanlarından biri eksik olabilir.
+                // Eksik BIST/Brent/Ons değerlerini statik yedekten tamamla.
+                const piyasaEksik =
+                    piyasaListesi.bist100 === null || !isFinite(piyasaListesi.bist100) ||
+                    piyasaListesi.petrol  === null || !isFinite(piyasaListesi.petrol) ||
+                    piyasaListesi.ons     === null || !isFinite(piyasaListesi.ons);
+
+                if (piyasaEksik) {
+                    try {
+                        const yedekResponse = await fetch(VERI_JSON_URL + "?t=" + Date.now());
+                        if (yedekResponse.ok) {
+                            const yedekData = await yedekResponse.json();
+                            veriyiIsle(yedekData, true);
+                        }
+                    } catch (yedekHata) {
+                        console.warn("Eksik piyasa verileri yedekten tamamlanamadı:", yedekHata);
+                    }
+                }
+
                 basarili = true;
                 kaynak = 'worker';
             } catch (error) {
