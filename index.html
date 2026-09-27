@@ -2232,8 +2232,12 @@
         }
 
         const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };
+        const TUR_SATIS_FIYAT_KEY = { gram24: 'gram24s', gram22: 'gram22s', ceyrek: 'ceyreks', yarim: 'yarims', ata: 'atas' };
         function turGuncelAlisFiyati(t) {
             return TUR_ALIS_FIYAT_KEY[t] ? canliFiyatlar[TUR_ALIS_FIYAT_KEY[t]] || 0 : 0;
+        }
+        function turGuncelSatisFiyati(t) {
+            return TUR_SATIS_FIYAT_KEY[t] ? canliFiyatlar[TUR_SATIS_FIYAT_KEY[t]] || 0 : 0;
         }
 
         // PORTFOY EKRANA BAS
@@ -2321,18 +2325,22 @@
             // ÜST KARTLAR: net poz1syona gore hesapla (alis - satis sonrasi kalan miktarlar)
             const ozet = netPozisyonlariHesapla();
             let tNetMaliyet = 0;
-            let tNetDeger = 0;
+            let tNetAlisDeger = 0;
+            let tNetSatisDeger = 0;
             Object.keys(TUR_BILGI).forEach(t => {
                 const net = ozet[t].net;
-                if (net <= 0) return; // elde hic yok veya negatif (anormal durum), katma
+                if (net <= 0) return;
                 tNetMaliyet += ozet[t].maliyet;
-                tNetDeger += net * turGuncelAlisFiyati(t);
+                tNetAlisDeger += net * turGuncelAlisFiyati(t);
+                tNetSatisDeger += net * turGuncelSatisFiyati(t);
             });
 
-            const totalProfitPct = tNetMaliyet > 0 ? ((tNetDeger - tNetMaliyet) / tNetMaliyet) * 100 : 0;
+            const totalProfitPct = tNetMaliyet > 0 ? ((tNetAlisDeger - tNetMaliyet) / tNetMaliyet) * 100 : 0;
 
             document.getElementById("totalCost").innerText = "₺" + Math.round(tNetMaliyet).toLocaleString('tr-TR');
-            document.getElementById("totalValue").innerText = "₺" + Math.round(tNetDeger).toLocaleString('tr-TR');
+            document.getElementById("totalValue").innerHTML =
+                '<div style="font-size:11px; color:var(--green); margin-bottom:3px;">Alış ₺' + Math.round(tNetAlisDeger).toLocaleString('tr-TR') + '</div>' +
+                '<div style="font-size:11px; color:var(--accent-color);">Satış ₺' + Math.round(tNetSatisDeger).toLocaleString('tr-TR') + '</div>';
 
             const profitEl = document.getElementById("totalProfit");
             if (tNetMaliyet === 0) {
@@ -2363,7 +2371,10 @@
                 varAdet++;
 
                 const guncelAlisFiyati = turGuncelAlisFiyati(t);
-                const guncelDeger = net * guncelAlisFiyati;
+                const guncelSatisFiyati = turGuncelSatisFiyati(t);
+                const guncelAlisDegeri = net * guncelAlisFiyati;
+                const guncelSatisDegeri = net * guncelSatisFiyati;
+                const guncelDeger = guncelAlisDegeri;
                 toplamGuncelDeger += guncelDeger;
 
                 const maliyet = ozet[t].maliyet;
@@ -2379,13 +2390,14 @@
                             <div class="item-icon" style="background:transparent; width:36px; height:36px;">${turIkonu(t)}</div>
                             <div>
                                 <div class="item-details-title">${TUR_BILGI[t].isim}</div>
-                                <div class="item-details-sub">${miktarStr} ${TUR_BILGI[t].birim} &bull; Güncel alış fiyatı: ₺${guncelAlisFiyati.toLocaleString('tr-TR')}</div>
+                                <div class="item-details-sub">${miktarStr} ${TUR_BILGI[t].birim} &bull; Alış ₺${guncelAlisFiyati.toLocaleString('tr-TR')} · Satış ₺${guncelSatisFiyati.toLocaleString('tr-TR')}</div>
                             </div>
                         </div>
                         <div class="item-right">
                             <div style="text-align:right;">
-                                <div class="item-val">₺${Math.round(guncelDeger).toLocaleString('tr-TR')}</div>
-                                ${maliyet > 0 ? `<div class="item-cost-profit"><span style="color:${karRenk}; font-weight:500;">₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>` : ''}
+                                <div style="font-size:12px; color:var(--green); font-weight:bold;">Alış ₺${Math.round(guncelAlisDegeri).toLocaleString('tr-TR')}</div>
+                                <div style="font-size:12px; color:var(--accent-color); font-weight:bold;">Satış ₺${Math.round(guncelSatisDegeri).toLocaleString('tr-TR')}</div>
+                                ${maliyet > 0 ? `<div class="item-cost-profit"><span style="color:${karRenk}; font-weight:500;">Kâr/Zarar ₺${Math.round(karZarar).toLocaleString('tr-TR')} (%${karYuzde.toFixed(1)})</span></div>` : ''}
                             </div>
                         </div>
                     </div>
@@ -2402,11 +2414,14 @@
                             <div class="item-icon" style="color: var(--accent-color);">💰</div>
                             <div>
                                 <div class="item-details-title">Toplam Güncel Varlık Değeri</div>
-                                <div class="item-details-sub">Elinizdeki tüm altınların güncel alış değeri</div>
+                                <div class="item-details-sub">Tüm altınların anlık alış ve satış karşılığı</div>
                             </div>
                         </div>
                         <div class="item-right">
-                            <div class="item-val" style="color: var(--accent-color); font-size: 17px;">₺${Math.round(toplamGuncelDeger).toLocaleString('tr-TR')}</div>
+                            <div style="text-align:right;">
+                                <div style="font-size:13px; color:var(--green); font-weight:bold;">Alış ₺${Math.round(toplamGuncelDeger).toLocaleString('tr-TR')}</div>
+                                <div style="font-size:13px; color:var(--accent-color); font-weight:bold;">Satış ₺${Math.round(Object.keys(TUR_BILGI).reduce((s, tur) => { const net = ozet[tur].net; return s + (net > 0 ? net * turGuncelSatisFiyati(tur) : 0); }, 0)).toLocaleString('tr-TR')}</div>
+                            </div>
                         </div>
                     </div>
                 `;
