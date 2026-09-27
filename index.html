@@ -2339,8 +2339,16 @@
 
             document.getElementById("totalCost").innerText = "₺" + Math.round(tNetMaliyet).toLocaleString('tr-TR');
             document.getElementById("totalValue").innerHTML =
-                '<div style="font-size:11px; color:var(--green); margin-bottom:3px;">Alış ₺' + Math.round(tNetAlisDeger).toLocaleString('tr-TR') + '</div>' +
-                '<div style="font-size:11px; color:var(--accent-color);">Satış ₺' + Math.round(tNetSatisDeger).toLocaleString('tr-TR') + '</div>';
+                '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:center; width:100%;">' +
+                    '<div style="text-align:center; min-width:0;">' +
+                        '<div style="font-size:10px; color:var(--green); margin-bottom:4px;">ALIŞ</div>' +
+                        '<div style="font-size:14px; font-weight:700; color:var(--green); white-space:nowrap;">₺' + Math.round(tNetAlisDeger).toLocaleString('tr-TR') + '</div>' +
+                    '</div>' +
+                    '<div style="text-align:center; min-width:0; border-left:1px solid var(--border); padding-left:8px;">' +
+                        '<div style="font-size:10px; color:var(--accent-color); margin-bottom:4px;">SATIŞ</div>' +
+                        '<div style="font-size:14px; font-weight:700; color:var(--accent-color); white-space:nowrap;">₺' + Math.round(tNetSatisDeger).toLocaleString('tr-TR') + '</div>' +
+                    '</div>' +
+                '</div>';
 
             const profitEl = document.getElementById("totalProfit");
             if (tNetMaliyet === 0) {
