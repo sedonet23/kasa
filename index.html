@@ -752,11 +752,23 @@
                         <div class="price-row-icon">
                             <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>
                         </div>
-                        <div class="price-row-name">24A Gram</div>
+                        <div class="price-row-name">24 Ayar Has</div>
                         <div class="price-row-cols">
                             <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24a">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24s">₺0</div></div>
                             <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-gram24" class="price-change sabit">—</div></div>
+                        </div>
+                    </div>
+
+                    <div class="price-row" onclick="altinDetayAc('gram24_1g')">
+                        <div class="price-row-icon">
+                            <svg width="38" height="38" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">1G</text></svg>
+                        </div>
+                        <div class="price-row-name">24 Ayar 1 Gram</div>
+                        <div class="price-row-cols">
+                            <div class="price-col-item"><div class="price-col-label">Alış</div><div class="price-col-buy" id="p-gram24_1g_a">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Satış</div><div class="price-col-sell" id="p-gram24_1g_s">₺0</div></div>
+                            <div class="price-col-item"><div class="price-col-label">Değişim</div><div id="ch-gram24_1g" class="price-change sabit">—</div></div>
                         </div>
                     </div>
 
@@ -851,7 +863,7 @@
                     <button class="filtre-btn aktif" onclick="filtreAyarla('hepsi', this)">Tümü</button>
                     <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
                     <button class="filtre-btn" onclick="filtreAyarla('satis', this)">📤 Satışlar</button>
-                    <button class="filtre-btn" onclick="filtreAyarla('gram24', this)">24A Gram</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('gram24', this)">24 Ayar Has</button>
                     <button class="filtre-btn" onclick="filtreAyarla('gram22', this)">22A Bilezik</button>
                     <button class="filtre-btn" onclick="filtreAyarla('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="filtreAyarla('yarim', this)">Yarım</button>
@@ -878,7 +890,8 @@
                         <button class="btn btn-active" onclick="fiyatGecmisineKaydet(true)" style="padding: 5px 12px; font-size: 13px;">💾 Şimdi Kaydet</button>
                     </div>
                     <div class="filtre-row" id="grafikTurRow">
-                        <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24A Gram</button>
+                        <button class="filtre-btn aktif" onclick="grafikTuruSec('gram24', this)">24 Ayar Has</button>
+                        <button class="filtre-btn" onclick="grafikTuruSec('gram24_1g', this)">24 Ayar 1 Gram</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('gram22', this)">22A Bilezik</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('ceyrek', this)">Çeyrek</button>
                         <button class="filtre-btn" onclick="grafikTuruSec('yarim', this)">Yarım</button>
@@ -916,7 +929,7 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="fiyatGrafikWrapper" style="position:relative;">
-                    <div class="chart-title" id="fiyatGrafikBaslik">📊 24A Gram Altın - Alış/Satış</div>
+                    <div class="chart-title" id="fiyatGrafikBaslik">📊 24 Ayar Has - Alış/Satış</div>
                     <canvas id="fiyatGrafik" style="width:100%; height:220px; touch-action:none;"></canvas>
                     <div id="fiyatTooltip" style="display:none; position:absolute; pointer-events:none; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.25); white-space:nowrap; z-index:10;"></div>
                 </div>
@@ -1083,8 +1096,8 @@
 
         <label style="font-size: 12px; color: var(--text-muted);">Altın Türü:</label>
         <select id="alTur">
-            <option value="gram24s">24A Gram Altın — Satış</option>
-            <option value="gram24a">24A Gram Altın — Alış</option>
+            <option value="gram24s">24 Ayar Has — Satış</option>
+            <option value="gram24a">24 Ayar Has — Alış</option>
             <option value="gram22s">22 Ayar Bilezik — Satış</option>
             <option value="gram22a">22 Ayar Bilezik — Alış</option>
             <option value="ceyreks">Çeyrek Altın — Satış</option>
@@ -1303,7 +1316,7 @@
         const VERI_JSON_URL = "https://raw.githubusercontent.com/sedonet23/kasa/main/veri/kasam-veri.json";
 
         let canliFiyatlar = {
-            gram24s: 3120, gram24a: 3105, gram22s: 2860, gram22a: 2840,
+            gram24s: 3120, gram24a: 3105, gram24_1g_s: 0, gram24_1g_a: 0, gram22s: 2860, gram22a: 2840,
             ceyreks: 5120, ceyreka: 5040, yarims: 10240, yarima: 10080,
             atas: 21100, ataa: 20850
         };
@@ -1650,6 +1663,7 @@
 
         const DEGISIM_TUR_MAP = {
             'ch-gram24': 'gram24s',
+            'ch-gram24_1g': 'gram24_1g_s',
             'ch-gram22': 'gram22s',
             'ch-ceyrek': 'ceyreks',
             'ch-yarim':  'yarims',
@@ -1692,6 +1706,7 @@
         function fiyatlariEkranaYaz() {
             const tums = [
                 ['p-gram24s', 'gram24s'], ['p-gram24a', 'gram24a'],
+                ['p-gram24_1g_s', 'gram24_1g_s'], ['p-gram24_1g_a', 'gram24_1g_a'],
                 ['p-gram22s', 'gram22s'], ['p-gram22a', 'gram22a'],
                 ['p-ceyreks', 'ceyreks'], ['p-ceyreka', 'ceyreka'],
                 ['p-yarims',  'yarims'],  ['p-yarima',  'yarima'],
@@ -1810,6 +1825,7 @@
             const altiniIsle = (data) => {
                 const f = {
                     gram24s: sayi(data.gram24s), gram24a: sayi(data.gram24a),
+                    gram24_1g_s: sayi(data.gram24_1g_s), gram24_1g_a: sayi(data.gram24_1g_a),
                     gram22s: sayi(data.gram22s), gram22a: sayi(data.gram22a),
                     ceyreks: sayi(data.ceyreks), ceyreka: sayi(data.ceyreka),
                     yarims: sayi(data.yarims),   yarima: sayi(data.yarima),
@@ -2586,7 +2602,8 @@
         let seciliGrafikPeriyot = 'gunluk'; // 'gunluk' | 'haftalik' | 'aylik' | 'yillik'
 
         const GRAFIK_TUR_BILGI = {
-            gram24: { isim: '24A Gram Altın', alis: 'gram24a', satis: 'gram24s' },
+            gram24: { isim: '24 Ayar Has', alis: 'gram24a', satis: 'gram24s' },
+            gram24_1g: { isim: '24 Ayar 1 Gram', alis: 'gram24_1g_a', satis: 'gram24_1g_s' },
             gram22: { isim: '22A Bilezik',    alis: 'gram22a', satis: 'gram22s' },
             ceyrek: { isim: 'Çeyrek Altın',   alis: 'ceyreka', satis: 'ceyreks' },
             yarim:  { isim: 'Yarım Altın',    alis: 'yarima',  satis: 'yarims' },
@@ -2666,7 +2683,7 @@
         // Fiyat değişikliği kontrolü: son kayıtla canlı fiyatı karşılaştırır,
         // herhangi bir alanda değişiklik varsa yeni kayıt atar. Değişiklik yoksa kayıt yapmaz.
         // canliFiyatlariYukle() her çalıştığında (20 sn'de bir) tetiklenir, yani sürekli kontrol edilir.
-        const FIYAT_ANAHTARLARI = ['gram24s','gram24a','gram22s','gram22a','ceyreks','ceyreka','yarims','yarima','atas','ataa'];
+        const FIYAT_ANAHTARLARI = ['gram24s','gram24a','gram24_1g_s','gram24_1g_a','gram22s','gram22a','ceyreks','ceyreka','yarims','yarima','atas','ataa'];
         function fiyatDegisimKontrolEt() {
             if (!fiyatGecmisiYuklendi) return; // gecmis yuklenmeden yazma
             if (!canliFiyatlar || !canliFiyatlar.gram24s) return; // henuz gecerli fiyat yoksa bekle
@@ -3817,7 +3834,8 @@
 
         // ===== ALTIN DETAY SAYFASI =====
         const TUR_DETAY = {
-            gram24: { isim: '24 Ayar Gram Altın', sKey: 'gram24s', aKey: 'gram24a' },
+            gram24: { isim: '24 Ayar Has', sKey: 'gram24s', aKey: 'gram24a' },
+            gram24_1g: { isim: '24 Ayar 1 Gram', sKey: 'gram24_1g_s', aKey: 'gram24_1g_a' },
             gram22: { isim: '22 Ayar Bilezik',    sKey: 'gram22s', aKey: 'gram22a' },
             ceyrek: { isim: 'Çeyrek Altın',        sKey: 'ceyreks', aKey: 'ceyreka' },
             yarim:  { isim: 'Yarım Altın',          sKey: 'yarims',  aKey: 'yarima'  },
