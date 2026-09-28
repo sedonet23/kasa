@@ -1636,21 +1636,30 @@
         // degisimFiltreSec kaldirildi — ana liste her zaman gunluk degisim gosterir
 
         function gecmisteKiyasFiyatBul(turKey, dakikaGeri) {
-            // fiyatGecmisi array: [{zaman, gram24s, gram22s, ceyreks, yarims, atas}, ...]
+            // Yalnızca istenen fiyat alanını gerçekten içeren geçmiş kaydı kullan.
+            // Böylece sonradan eklenen 24 Ayar 1 Gram alanı, eski kayıtlardaki
+            // eksik alanlar yüzünden gereksiz yere "—" göstermez.
             if (!fiyatGecmisi || fiyatGecmisi.length === 0) return null;
             const hedef = new Date(Date.now() - dakikaGeri * 60 * 1000);
-            // En yakın kaydı bul (hedefe en yakın, geçmişte olan)
+
             let en_yakin = null;
             let en_fark = Infinity;
+
             for (const kayit of fiyatGecmisi) {
+                const deger = Number(kayit[turKey] || 0);
+                if (!(deger > 0)) continue;
+
                 const t = new Date(kayit.zaman);
+                if (isNaN(t.getTime())) continue;
+
                 const fark = Math.abs(t - hedef);
                 if (fark < en_fark) {
                     en_fark = fark;
                     en_yakin = kayit;
                 }
             }
-            return en_yakin ? (en_yakin[turKey] || null) : null;
+
+            return en_yakin ? (Number(en_yakin[turKey]) || null) : null;
         }
 
         const DEGISIM_DAKIKA = {
@@ -1678,7 +1687,20 @@
                 if (!el) continue;
 
                 const guncelFiyat = canliFiyatlar[turKey];
-                const eskiFiyat = gecmisteKiyasFiyatBul(turKey, dakika);
+                let eskiFiyat = gecmisteKiyasFiyatBul(turKey, dakika);
+
+                // 24 Ayar 1 Gram yeni eklendiği için eski fiyat geçmişinde bu alan
+                // henüz bulunmayabilir. Bu durumda 24 Ayar Has'ın aynı dönem
+                // değişimini, 1 gram fiyatının da aynı piyasa hareketini izlediği
+                // varsayımıyla geçici gösterge olarak kullan. 1 gram geçmiş kayıtları
+                // oluşmaya başladığında otomatik olarak kendi verisini kullanır.
+                if (!eskiFiyat && turKey === 'gram24_1g_s') {
+                    const hasGuncel = canliFiyatlar.gram24s || 0;
+                    const hasEski = gecmisteKiyasFiyatBul('gram24s', dakika);
+                    if (hasGuncel > 0 && hasEski > 0) {
+                        eskiFiyat = guncelFiyat * (hasEski / hasGuncel);
+                    }
+                }
 
                 if (!eskiFiyat || !guncelFiyat || eskiFiyat === 0) {
                     el.textContent = '—';
