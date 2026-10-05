@@ -864,6 +864,7 @@
                     <button class="filtre-btn" onclick="filtreAyarla('alis', this)">📥 Alışlar</button>
                     <button class="filtre-btn" onclick="filtreAyarla('satis', this)">📤 Satışlar</button>
                     <button class="filtre-btn" onclick="filtreAyarla('gram24', this)">24A Has</button>
+                    <button class="filtre-btn" onclick="filtreAyarla('gram24_1g', this)">24 Ayar 1 Gram Altın</button>
                     <button class="filtre-btn" onclick="filtreAyarla('gram22', this)">22A Bilezik</button>
                     <button class="filtre-btn" onclick="filtreAyarla('ceyrek', this)">Çeyrek</button>
                     <button class="filtre-btn" onclick="filtreAyarla('yarim', this)">Yarım</button>
@@ -1214,6 +1215,7 @@
 
         <label style="font-size: 12px; color: var(--text-muted);">Altın Türü:</label>
         <select id="mType" onchange="turDegisti()">            <option value="gram24">24A Has</option>
+            <option value="gram24_1g">24 Ayar 1 Gram Altın</option>
             <option value="gram22">22 Ayar Bilezik</option>
             <option value="ceyrek">Çeyrek Altın</option>
             <option value="yarim">Yarım Altın</option>
@@ -2184,12 +2186,14 @@
             const islem = document.getElementById("mIslem").value;
             if (islem === "satis") {
                 if (tur === "gram24") return canliFiyatlar.gram24a;
+                if (tur === "gram24_1g") return canliFiyatlar.gram24_1g_a;
                 if (tur === "gram22") return canliFiyatlar.gram22a;
                 if (tur === "ceyrek") return canliFiyatlar.ceyreka;
                 if (tur === "yarim")  return canliFiyatlar.yarima;
                 if (tur === "ata")    return canliFiyatlar.ataa;
             } else {
                 if (tur === "gram24") return canliFiyatlar.gram24s;
+                if (tur === "gram24_1g") return canliFiyatlar.gram24_1g_s;
                 if (tur === "gram22") return canliFiyatlar.gram22s;
                 if (tur === "ceyrek") return canliFiyatlar.ceyreks;
                 if (tur === "yarim")  return canliFiyatlar.yarims;
@@ -2212,7 +2216,7 @@
             if (infoEl) infoEl.innerText = `(${islem === "satis" ? "Alış" : "Satış"} Fiyatı)`;
             // Miktar label dinamik
             const amountLabel = document.querySelector('#addModal label[for="mAmount"]') || document.querySelector('#addModal label');
-            const birimAdi = (tur === "gram24" || tur === "gram22") ? "Gram" : "Adet";
+            const birimAdi = (tur === "gram24" || tur === "gram24_1g" || tur === "gram22") ? "Gram" : "Adet";
             if (amountLabel) amountLabel.childNodes[0].textContent = `Miktar (${birimAdi}): `;
             // Yeni kayit modunda (editIndex == -1) tur degisince guncel fiyati her zaman yaz
             const editIndex = parseInt(document.getElementById("editIndex").value);
@@ -2256,6 +2260,7 @@
         // YARDIMCI: Altın türüne göre SVG ikonu
         function turIkonu(type) {
             if (type === "gram24") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>`;
+            if (type === "gram24_1g") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">1G</text></svg>`;
             if (type === "gram22") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#F5A623" stroke-width="6"/><circle cx="20" cy="20" r="17" fill="none" stroke="#E8920F" stroke-width="2" stroke-dasharray="4 4"/><circle cx="20" cy="3" r="3" fill="#F5A623"/></svg>`;
             if (type === "ceyrek") return `<svg width="32" height="32" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">Ç</text></svg>`;
             if (type === "yarim")  return `<svg width="32" height="32" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="16" ry="10" fill="#C8960A"/><ellipse cx="20" cy="18" rx="16" ry="10" fill="#F5A623"/><ellipse cx="20" cy="18" rx="12" ry="7" fill="#E8920F"/><ellipse cx="20" cy="18" rx="8" ry="4.5" fill="#F5A623"/><text x="20" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">Y</text></svg>`;
@@ -2265,12 +2270,13 @@
 
         // YARDIMCI: Miktar birimi
         function miktarBirimi(type) {
-            return (type === "gram24" || type === "gram22") ? "Gram" : "Adet";
+            return (type === "gram24" || type === "gram24_1g" || type === "gram22") ? "Gram" : "Adet";
         }
 
         // YARDIMCI: Tur bilgisi ve net poz1syon hesaplama (Varlik Ozeti ve ozet kartlar icin paylasilir)
         const TUR_BILGI = {
             gram24:  { isim: "24A Has", birim: "Gram" },
+            gram24_1g: { isim: "24 Ayar 1 Gram Altın", birim: "Gram" },
             gram22:  { isim: "22 Ayar Bilezik", birim: "Gram" },
             ceyrek:  { isim: "Çeyrek Altın",    birim: "Adet" },
             yarim:   { isim: "Yarım Altın",     birim: "Adet" },
@@ -2301,8 +2307,8 @@
             return ozet;
         }
 
-        const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };
-        const TUR_SATIS_FIYAT_KEY = { gram24: 'gram24s', gram22: 'gram22s', ceyrek: 'ceyreks', yarim: 'yarims', ata: 'atas' };
+        const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram24_1g: 'gram24_1g_a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };
+        const TUR_SATIS_FIYAT_KEY = { gram24: 'gram24s', gram24_1g: 'gram24_1g_s', gram22: 'gram22s', ceyrek: 'ceyreks', yarim: 'yarims', ata: 'atas' };
         function turGuncelAlisFiyati(t) {
             return TUR_ALIS_FIYAT_KEY[t] ? canliFiyatlar[TUR_ALIS_FIYAT_KEY[t]] || 0 : 0;
         }
@@ -2344,6 +2350,7 @@
                 let guncelSatisFiyati = 0;
 
                 if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "24A Has"; }
+                else if (item.type === "gram24_1g") { guncelSatisFiyati = canliFiyatlar.gram24_1g_s; guncelAlisFiyati = canliFiyatlar.gram24_1g_a; isim = "24 Ayar 1 Gram Altın"; }
                 else if (item.type === "gram22") { guncelSatisFiyati = canliFiyatlar.gram22s; guncelAlisFiyati = canliFiyatlar.gram22a; isim = "22 Ayar Bilezik"; }
                 else if (item.type === "ceyrek") { guncelSatisFiyati = canliFiyatlar.ceyreks; guncelAlisFiyati = canliFiyatlar.ceyreka; isim = "Çeyrek Altın"; }
                 else if (item.type === "yarim")  { guncelSatisFiyati = canliFiyatlar.yarims;  guncelAlisFiyati = canliFiyatlar.yarima;  isim = "Yarım Altın"; }
@@ -2519,6 +2526,7 @@
             let isim = "";
             let guncelAlisFiyati = 0;
             if (item.type === "gram24") { isim = "Gram Altın 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }
+            else if (item.type === "gram24_1g") { isim = "24 Ayar 1 Gram Altın"; guncelAlisFiyati = canliFiyatlar.gram24_1g_a; }
             else if (item.type === "gram22") { isim = "22 Ayar Bilezik"; guncelAlisFiyati = canliFiyatlar.gram22a; }
             else if (item.type === "ceyrek") { isim = "Çeyrek Altın"; guncelAlisFiyati = canliFiyatlar.ceyreka; }
             else if (item.type === "yarim")  { isim = "Yarım Altın"; guncelAlisFiyati = canliFiyatlar.yarima; }
@@ -3373,6 +3381,7 @@
         // ===== V2.1: PASTA GRAFİĞİ (HiDPI + tıklama popup) =====
         const PIE_RENKLER = {
             gram24: '#F5A623',
+            gram24_1g: '#E8920F',
             gram22: '#E8920F',
             ceyrek: '#2ecc71',
             yarim:  '#3498db',
@@ -4212,7 +4221,7 @@
             const sKey = TUR_DETAY[tur].sKey;
             const aKey = TUR_DETAY[tur].aKey;
             const guncelAlisFiyat = canliFiyatlar[aKey] || canliFiyatlar[sKey] || 0;
-            const kalemBirimi = (tur === 'gram24' || tur === 'gram22') ? 'gr' : 'adet';
+            const kalemBirimi = (tur === 'gram24' || tur === 'gram24_1g' || tur === 'gram22') ? 'gr' : 'adet';
 
             const kartHtml = (y, isAlim) => {
                 const birimFiyat = y.cost && y.amount ? Math.round(y.cost / y.amount) : 0;
