@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -23,14 +26,42 @@ jobs:
       - name: Veriyi çek ve veri/kasam-veri.json'a yaz
         run: node scripts/veri-cek.js
 
+      - name: 24 Ayar 1 Gram varlık desteğini uygula
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("index.html")
+          s = p.read_text(encoding="utf-8")
+          replacements = [
+            ('return (type === "gram24" || type === "gram22") ? "Gram" : "Adet";', 'return (type === "gram24" || type === "gram24_1g" || type === "gram22") ? "Gram" : "Adet";'),
+            ('gram24:  { isim: "24A Has", birim: "Gram" },', 'gram24:  { isim: "24A Has", birim: "Gram" },\n            gram24_1g: { isim: "24 Ayar 1 Gram Altın", birim: "Gram" },'),
+            ("const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };", "const TUR_ALIS_FIYAT_KEY = { gram24: 'gram24a', gram24_1g: 'gram24_1g_a', gram22: 'gram22a', ceyrek: 'ceyreka', yarim: 'yarima', ata: 'ataa' };"),
+            ("const TUR_SATIS_FIYAT_KEY = { gram24: 'gram24s', gram22: 'gram22s', ceyrek: 'ceyreks', yarim: 'yarims', ata: 'atas' };", "const TUR_SATIS_FIYAT_KEY = { gram24: 'gram24s', gram24_1g: 'gram24_1g_s', gram22: 'gram22s', ceyrek: 'ceyreks', yarim: 'yarims', ata: 'atas' };"),
+            ('<button class="filtre-btn" onclick="filtreAyarla(\'gram24\', this)">24A Has</button>', '<button class="filtre-btn" onclick="filtreAyarla(\'gram24\', this)">24A Has</button>\n                    <button class="filtre-btn" onclick="filtreAyarla(\'gram24_1g\', this)">24 Ayar 1 Gram Altın</button>'),
+            ('<option value="gram24">24A Has</option>', '<option value="gram24">24A Has</option>\n            <option value="gram24_1g">24 Ayar 1 Gram Altın</option>'),
+            ('if (type === "gram24") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>`;', 'if (type === "gram24") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4a00">24A</text></svg>`;\n            if (type === "gram24_1g") return `<svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#F5A623"/><circle cx="20" cy="20" r="14" fill="#E8920F"/><circle cx="20" cy="20" r="9" fill="#F5A623"/><text x="20" y="24" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a4a00">1G</text></svg>`;'),
+            ('const birimAdi = (tur === "gram24" || tur === "gram22") ? "Gram" : "Adet";', 'const birimAdi = (tur === "gram24" || tur === "gram24_1g" || tur === "gram22") ? "Gram" : "Adet";'),
+            ('if (tur === "gram24") return canliFiyatlar.gram24a;', 'if (tur === "gram24") return canliFiyatlar.gram24a;\n                if (tur === "gram24_1g") return canliFiyatlar.gram24_1g_a;'),
+            ('if (tur === "gram24") return canliFiyatlar.gram24s;', 'if (tur === "gram24") return canliFiyatlar.gram24s;\n                if (tur === "gram24_1g") return canliFiyatlar.gram24_1g_s;'),
+            ('if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "24A Has"; }', 'if (item.type === "gram24") { guncelSatisFiyati = canliFiyatlar.gram24s; guncelAlisFiyati = canliFiyatlar.gram24a; isim = "24A Has"; }\n                else if (item.type === "gram24_1g") { guncelSatisFiyati = canliFiyatlar.gram24_1g_s; guncelAlisFiyati = canliFiyatlar.gram24_1g_a; isim = "24 Ayar 1 Gram Altın"; }'),
+            ('if (item.type === "gram24") { isim = "Gram Altın 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }', 'if (item.type === "gram24") { isim = "Gram Altın 24A"; guncelAlisFiyati = canliFiyatlar.gram24a; }\n            else if (item.type === "gram24_1g") { isim = "24 Ayar 1 Gram Altın"; guncelAlisFiyati = canliFiyatlar.gram24_1g_a; }'),
+            ("const kalemBirimi = (tur === 'gram24' || tur === 'gram22') ? 'gr' : 'adet';", "const kalemBirimi = (tur === 'gram24' || tur === 'gram24_1g' || tur === 'gram22') ? 'gr' : 'adet';"),
+            ("gram24: '#F5A623',", "gram24: '#F5A623',\n            gram24_1g: '#E8920F',"),
+          ]
+          for old, new in replacements:
+              if old in s:
+                  s = s.replace(old, new, 1)
+          p.write_text(s, encoding="utf-8")
+          PY
+
       - name: Değişiklik varsa commit + push
         run: |
           git config user.name "Kasam Veri Botu"
           git config user.email "actions@github.com"
-          git add veri/kasam-veri.json
+          git add index.html veri/kasam-veri.json
           if git diff --cached --quiet; then
             echo "Değişiklik yok, commit atlanıyor."
           else
-            git commit -m "Veri güncelle: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git commit -m "24 Ayar 1 Gram varlık desteğini düzelt"
             git push
           fi
